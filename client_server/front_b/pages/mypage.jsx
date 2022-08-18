@@ -2,20 +2,13 @@ import {useState,useEffect} from 'react';
 import { Box, Button, Flex, Text, Input, FormControl,
     FormLabel, FormErrorMessage, FormHelperText,} from "@chakra-ui/react";
 
-import Cookie from 'js-cookie';
-import cookie from 'cookie'
 
-const mypage = ({initialUserid}) => {
-    //console.log(initialUserid)
-    const [ userId, setUserid ] = useState(initialUserid)
+const mypage = ({userId})  => {
     const [ point, setPoint ] = useState(0)
-
-    useEffect(() => {
-        Cookie.set('userId', userId)
-    }, [userId])
     
     const didRegister = () => {
         console.log('did 연동 페이지로 이동!')
+        console.log(userId)
     }
 
     const getPoint = async () => {
@@ -37,12 +30,12 @@ const mypage = ({initialUserid}) => {
     )
 }
 
-mypage.getInitialProps = ({req}) => {
-    const cookies = cookie.parse(req ? req.headers.cookie || "" : document.cookie )
-    // console.log(cookies)
-    return {
-      initialUserid: cookies.userId
-    }
-}
+// mypage.getInitialProps = ({req}) => {
+//     const cookies = cookie.parse(req ? req.headers.cookie || "" : document.cookie )
+//     // console.log(cookies)
+//     return {
+//       initialUserid: cookies.userId
+//     }
+// }
 
 export default mypage;

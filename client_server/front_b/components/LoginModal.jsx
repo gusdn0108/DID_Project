@@ -1,12 +1,26 @@
 import { Button, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text, FormControl, FormLabel, Input } from "@chakra-ui/react";
+import axios from 'axios';
+import { frontend, backend } from '../utils/ip.js'
+import { getCookie, setCookie } from 'cookies-next'
 
-const LoginModal = ({isOpen, onClose, getRemain, getTokenTable}) => {
+const LoginModal = ({isOpen, onClose}) => {
 
-    const loginHandler = () => {
-        const userEmail = document.querySelector('#userEmail')
-        const userPw = document.querySelector('#userPw')
-
-        console.log(userEmail.value, userPw.value)
+    const loginHandler = async ({req,res}) => {
+        try {
+            const userEmail = document.querySelector('#Email').value
+            const userPw = document.querySelector('#userPw').value
+            const loginData = {userEmail,userPw}
+            const response = await axios.post(`${backend}/api/auth/login`, {
+                loginData
+            })
+            const [ header, payload, signature ] = response.data.token.split('.')
+            setCookie('loginInfo', payload, {req, res, maxAge:60*60*24*1000})
+            location.href=`${frontend}`
+        }
+        catch(e) {
+            alert('Email/Password를 확인해주세요')
+            console.error(e);
+        }
     }
 
     const didLoginHandler = () => {
@@ -24,7 +38,7 @@ const LoginModal = ({isOpen, onClose, getRemain, getTokenTable}) => {
                 <ModalBody px='5rem' pt='4rem' pb='6'>
                     <FormControl>
                         <FormLabel fontSize='2xl' mb='2.5'>Email</FormLabel>
-                        <Input type='text' placeholder='email을 입력해주세요' size='md' id='userEmail' mb='5'/>
+                        <Input type='text' placeholder='email을 입력해주세요' size='md' id='Email' mb='5'/>
 
                         <FormLabel fontSize='2xl' mb='2.5'>Password</FormLabel>
                         <Input type='password' placeholder='password을 입력해주세요' size='md' id='userPw' mb='5'/>
