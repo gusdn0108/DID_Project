@@ -1,12 +1,21 @@
 import { Box, Button, Flex, Text, Input, FormControl,
     FormLabel, FormErrorMessage, FormHelperText,} from "@chakra-ui/react";
+import axios from 'axios'
+import {backend} from '../utils/ip.js'
 
 const register = () => {
-    const register = () => {
-        const userEmail = document.querySelector('#userEmail')
-        const userPw = document.querySelector('#password')
-        const userNickname = document.querySelector('#userNickname')
-        console.log(userEmail.value, userPw.value, userNickname.value)
+    const register = async () => {
+        const email = document.querySelector('#userEmail').value
+        const userPw = document.querySelector('#password').value
+        const userName = document.querySelector('#userNickname').value
+        const userMobile = document.querySelector('#userPhone').value
+
+        const signupData = { email, userPw, userName, userMobile }
+        console.log(signupData)
+        console.log(backend)
+    
+        const response = await axios.post(`${backend}/api/auth/Signup`, signupData )
+        console.log(response)
     }
 
     return(
@@ -20,6 +29,9 @@ const register = () => {
 
                     <FormLabel>Nickname</FormLabel>
                     <Input type='text' placeholder='Nickname을 입력해주세요' id='userNickname' size='sm'/>
+
+                    <FormLabel>Mobile</FormLabel>
+                    <Input type='text' placeholder='Mobile을 입력해주세요' id='userPhone' size='sm'/>
                     
                     <FormLabel>Password</FormLabel>
                     <Input type='password' placeholder='password을 입력해주세요' id='password' size='sm'/>

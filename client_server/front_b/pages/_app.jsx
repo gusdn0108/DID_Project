@@ -1,31 +1,31 @@
 import { ChakraProvider } from '@chakra-ui/react'
 import Layout from '../components/Layout.jsx'
 
-import wrapper from '../store/useStore.jsx'
-import { Provider } from 'react-redux';
-import {useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
-import { CookiesProvider, useCookies } from 'react-cookie';
-import Cookie from 'js-cookie';
-import cookie from 'cookie'
+import { CookiesProvider } from 'react-cookie';
+import { getCookie } from 'cookies-next'
 
-import { getCookie, setCookie } from 'cookies-next'
-
-function MyApp({ Component, pageProps, initialUserid }) {
-  const [cookies, setCookie, removeCookie ] = useCookies(['userId'])
+function MyApp({ Component, pageProps }) {
+  // const [cookies, setCookie, removeCookie ] = useCookies(['loginInfo'])
   const [ userId, setUserid ] = useState(undefined)
 
-  const asdf = getCookie('userId')
+  const userCookie = getCookie('loginInfo');
+  let userInfo = ''
 
+  if(userCookie) {
+    userInfo = JSON.parse(Buffer.from(userCookie, 'base64').toString('utf-8')).username
+  }
+  
   useEffect(() => {
-      setUserid(asdf) 
-  },[asdf])
+      setUserid(userInfo)
+  },[])
 
   return (
     <CookiesProvider>
       <ChakraProvider>
-        <Layout m='2'>
-        <Component {...pageProps} userId={asdf} />
+        <Layout m='2' userId={userId}>
+        <Component {...pageProps} userId={userId}/>
         </Layout>
       </ChakraProvider>
     </CookiesProvider>
@@ -38,7 +38,7 @@ function MyApp({ Component, pageProps, initialUserid }) {
 //   //const cookies = cookie.parse(req.headers.cookie)
 
 //   return {
-//     initialUserid: cookies.userId
+//     initialUserid: cookies.loginInfo
 //   }
 // }
 

@@ -1,10 +1,21 @@
-import { Box, Button, Flex, useDisclosure, Image, Input } from '@chakra-ui/react';
+import { Box, Button, Flex, useDisclosure, Image, Input, Text } from '@chakra-ui/react';
 import Link from 'next/link';
 import LoginModal from './LoginModal'
-import {useState} from 'react'
+import {useEffect, useState} from 'react'
+import { deleteCookie } from 'cookies-next';
+import { cookieDomain, frontend } from '../utils/ip';
 
-const Header = () => {
+const Header = ({userId}) => {
     const {isOpen, onOpen, onClose} = useDisclosure();
+
+    const logoutHandler = () => {
+        deleteCookie('loginInfo', {path: '/', domain:`${cookieDomain}`})
+        location.href=`${frontend}`
+    }
+
+    useEffect(() => {
+
+    },[userId])
 
     return (
         <Box border='1px' borderColor='gray.200'>
@@ -14,12 +25,19 @@ const Header = () => {
                     <Input type='text' w = '24rem' borderRadius='2rem' pt='0rem'/>
                 </Box>
                 <Box>
-                    <Button colorScheme='blue'onClick={onOpen}>login</Button>
-                    <LoginModal isOpen={isOpen} onClose={onClose}/>
-
-                    
-                    {/* 로그인 되어있다면 로그아웃, vice versa가 되도록 */}
-                    
+                    {
+                        userId 
+                        ?
+                        <>
+                            <Text>{userId}</Text>
+                            <Button onClick={logoutHandler}>logout</Button>
+                        </>
+                        :
+                        <>
+                            <Button colorScheme='blue'onClick={onOpen}>login</Button>
+                            <LoginModal isOpen={isOpen} onClose={onClose}/>
+                        </>
+                    }
                     <Link href='mypage'><Button size='sm' variant='ghost'>my page</Button></Link>
                 </Box>
             </Flex>
