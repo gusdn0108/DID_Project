@@ -161,15 +161,17 @@ router.post('/email', async (req, res) => {
 });
 
 router.post('/SignUp', async (req, res) => {
+    const { email, userPw, userName, userMobile} =req.body
+   
     try {
         const exEmail = await Auth.findOne({
             where: {
-                email: req.body.email,
+                email: email
             },
         });
         const exUserName = await Auth.findOne({
             where: {
-                username: req.body.username,
+                userName: userName,
             },
         });
 
@@ -180,41 +182,45 @@ router.post('/SignUp', async (req, res) => {
             return res.status(403).send('이미 사용중인 닉네임입니다 ');
         }
 
-        const hash = await bcrypt.hash(req.body.password, 12);
-
+        const hash = await bcrypt.hash(userPw, 12);
+        console.log(hash)
         await Auth.create({
-            email: req.body.email,
+            email: email,
             password: hash,
-            username: req.body.username,
-            mobile: req.body.mobile,
-            point: point,
+
+            username: userName,
+            mobile:userMobile,
+            point:50000
         });
+
         res.status(201).send('회원가입이 완료되었슴니당 ㅎㅎ');
+
     } catch (error) {
         console.log(error);
     }
 });
 
 router.post('/login', async (req, res) => {
+    const {userEmail,userPw} = req.body.loginData
+    
     try {
         const _user = await Auth.findOne({
             where: {
                 email: {
-                    [Op.eq]: req.body.email,
+                    [Op.eq]: userEmail
                 },
             },
         });
 
         if (_user) {
-            if (bcrypt.compareSync(req.body.password, _user.dataValues.password)) {
+            
+            if (bcrypt.compareSync(userPw, _user.dataValues.password)) {
                 delete _user.dataValues.password;
                 console.log(_user.dataValues);
 
                 let token = jwt.sign(
                     {
                         ..._user.dataValues,
-                        exp: Math.floor(Date.now() / 1000) + 60000,
-                        iat: Math.floor(Date.now() / 1000),
                     },
                     process.env.SECRET_KEY,
                 );
@@ -222,11 +228,9 @@ router.post('/login', async (req, res) => {
                 res.cookie('user', token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
                 res.json({
                     status: true,
-                    userData: _user.dataValues,
+                    // userData: _user.dataValues,
                     token: token,
                 });
-
-                console.log(token);
             } else {
                 res.json({
                     status: false,
