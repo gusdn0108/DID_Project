@@ -3,7 +3,7 @@ import { Box, Button, Flex, Text, Input, FormControl,
     FormLabel, FormErrorMessage, FormHelperText,} from "@chakra-ui/react";
 
 
-const mypage = ({userId})  => {
+const mypage = ({userId, email, mobile})  => {
     const [ point, setPoint ] = useState(0)
     
     const didRegister = () => {
@@ -20,8 +20,11 @@ const mypage = ({userId})  => {
     },[])
 
     return (
-        <Box pt='4rem'>
+        <Box pt='6rem'>
             <Text>{userId}님 안녕하세요</Text>
+            <Text> email : {email}</Text>
+            <Text>mobile: {mobile}</Text>
+
             <Text>point : {point}</Text>
             <Button onClick={didRegister}>
                 DID login 연동하기

@@ -22,23 +22,24 @@ const Header = ({userId}) => {
             <Flex position="fixed" justifyContent="space-between" px="10" py="2" w="full" bg="white" alignItems='center' >
                 <Box>
                     <Link href="/"><Button size='sm' variant='ghost' fontSize='xl' pt='0.5rem'>Kyungil Tour</Button></Link>
-                    <Input type='text' w = '24rem' borderRadius='2rem' pt='0rem'/>
+                    <Input type='text' w = '24rem' borderRadius='1.25rem' pt='0rem'/>
                 </Box>
                 <Box>
                     {
                         userId 
                         ?
                         <>
-                            <Text>{userId}</Text>
                             <Button onClick={logoutHandler}>logout</Button>
+                            <Link href='mypage'><Button size='sm' variant='ghost'>my page</Button></Link>
                         </>
                         :
                         <>
                             <Button colorScheme='blue'onClick={onOpen}>login</Button>
                             <LoginModal isOpen={isOpen} onClose={onClose}/>
+                            <Button colorScheme='gray' w='32' m='0.25rem'><Link href='/register'>회원 가입</Link></Button>
                         </>
                     }
-                    <Link href='mypage'><Button size='sm' variant='ghost'>my page</Button></Link>
+                    
                 </Box>
             </Flex>
         </Box>

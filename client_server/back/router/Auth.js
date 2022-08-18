@@ -159,7 +159,7 @@ router.post('/email', async (req, res) => {
 });
 
 router.post('/SignUp', async (req, res) => {
-    const { email, userPw, userName, userMobile} =req.body
+    const { email, userPw, userName, userMobile} = req.body
    
     try {
         const exEmail = await Auth.findOne({
@@ -198,7 +198,7 @@ router.post('/SignUp', async (req, res) => {
 });
 
 router.post('/login', async (req, res) => {
-    const {userEmail,userPw} = req.body.loginData
+    const {userEmail,userPw} = req.body
     
     try {
         const _user = await Auth.findOne({

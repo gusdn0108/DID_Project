@@ -9,23 +9,31 @@ import { getCookie } from 'cookies-next'
 function MyApp({ Component, pageProps }) {
   // const [cookies, setCookie, removeCookie ] = useCookies(['loginInfo'])
   const [ userId, setUserid ] = useState(undefined)
+  const [ email, setEmail ] = useState(undefined)
+  const [mobile, setMobile ] = useState(undefined)
 
   const userCookie = getCookie('loginInfo');
-  let userInfo = ''
+  let userName = ''
+  let userEmail= ''
+  let userMobile = ''
 
   if(userCookie) {
-    userInfo = JSON.parse(Buffer.from(userCookie, 'base64').toString('utf-8')).username
+    userName = JSON.parse(Buffer.from(userCookie, 'base64').toString('utf-8')).username
+    userEmail = JSON.parse(Buffer.from(userCookie, 'base64').toString('utf-8')).email
+    userMobile = JSON.parse(Buffer.from(userCookie, 'base64').toString('utf-8')).mobile
   }
   
   useEffect(() => {
-      setUserid(userInfo)
+      setUserid(userName)
+      setEmail(userEmail)
+      setMobile(userMobile)
   },[])
 
   return (
     <CookiesProvider>
       <ChakraProvider>
         <Layout m='2' userId={userId}>
-        <Component {...pageProps} userId={userId}/>
+        <Component {...pageProps} userId={userId} email={email} mobile={mobile}/>
         </Layout>
       </ChakraProvider>
     </CookiesProvider>

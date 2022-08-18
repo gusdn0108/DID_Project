@@ -4,7 +4,8 @@ import {useState, useEffect } from 'react';
 import Cookie from 'js-cookie';
 import cookie from 'cookie'
 
-const Home = ({userId}) => {
+const Home = ({userId, email, mobile}) => {
+  
   return (
     <Box>
       <h1>여행 사이트 경일투어</h1>
