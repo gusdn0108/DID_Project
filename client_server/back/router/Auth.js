@@ -276,4 +276,63 @@ router.post('/idCheck', async (req, res) => {
     } catch (e) {}
 });
 
+router.post('/usePoint', async (req, res) => {
+    const price = req.body.price;
+    console.log('first');
+    try {
+        // 사용자 이메일가져오기
+        console.log(`연결?`);
+        const _user = await Auth.findOne({
+            where: {
+                email: {
+                    [Op.eq]: req.body.email,
+                },
+            },
+        });
+        console.log(_user);
+
+        console.log(_user.dataValues.point);
+
+        if (_user.dataValues.point >= price) {
+            const usePoint = _user.dataValues.point - price;
+            const updateClient = _user.dataValues.email;
+
+            await Auth.update({ point: usePoint }, { where: { email: updateClient } });
+            res.json({
+                status: true,
+                msg: '구매완료되었습니다',
+            });
+        } else {
+            res.json({
+                status: false,
+                msg: '금액 모자릅니다  ',
+            });
+        }
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+router.post('/pointInquiry', async (req, res) => {
+    // 사용자 가져와야함
+    console.log('연결????');
+    try {
+        const _user = await Auth.findOne({
+            where: {
+                email: {
+                    [Op.eq]: req.body.email,
+                },
+            },
+        });
+        // 데이터베이스에 있는 사용자 포인트 가져오기
+        const getPoint = _user.dataValues.point;
+        res.json({
+            status: true,
+            point: getPoint,
+        });
+    } catch (error) {
+        console.log(error);
+    }
+});
+
 module.exports = router;
