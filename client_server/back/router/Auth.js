@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const router = express.Router();
 const { Auth, sequelize } = require('../models');
 const { Op } = require('sequelize');
+const { clearConfigCache } = require('prettier');
 
 const generateRandom = (min, max) => {
     const ranNum = (Math.floor(Math.random() * (max - min + 1)) + min).toString();
@@ -18,6 +19,7 @@ const generateRandom = (min, max) => {
 };
 
 router.post('/email', async (req, res) => {
+    console.log(req.body);
     const number = generateRandom(111111, 999999);
     let email = req.body.email;
     const mailPoster = nodeMailer.createTransport({
@@ -152,6 +154,7 @@ router.post('/email', async (req, res) => {
             console.log(error);
         } else {
             console.log('Email sent: ' + info.response);
+            res.status(201);
             res.json({
                 status: true,
                 number: number,
@@ -249,63 +252,28 @@ router.post('/login', async (req, res) => {
     }
 });
 
-router.post('/usePoint', async (req, res) => {
-    const price = req.body.price;
-    console.log('first');
+router.post('/idCheck', async (req, res) => {
+    const { email } = req.body;
+
     try {
-        // 사용자 이메일가져오기
-        console.log(`연결?`);
-        const _user = await Auth.findOne({
+        const _email = await Auth.findOne({
             where: {
-                email: {
-                    [Op.eq]: req.body.email,
-                },
+                email: email,
             },
         });
-        console.log(_user);
 
-        console.log(_user.dataValues.point);
-
-        if (_user.dataValues.point >= price) {
-            const usePoint = _user.dataValues.point - price;
-            const updateClient = _user.dataValues.email;
-
-            await Auth.update({ point: usePoint }, { where: { email: updateClient } });
+        if (_email === null) {
+            // 사용가능
             res.json({
-                status: true,
-                msg: '구매완료되었습니다',
+                status: 1,
             });
         } else {
+            // 사용불가
             res.json({
-                status: false,
-                msg: '금액 모자릅니다  ',
+                status: 2,
             });
         }
-    } catch (error) {
-        console.log(error);
-    }
-});
-
-router.post('/pointInquiry', async (req, res) => {
-    // 사용자 가져와야함
-    console.log('연결????');
-    try {
-        const _user = await Auth.findOne({
-            where: {
-                email: {
-                    [Op.eq]: req.body.email,
-                },
-            },
-        });
-        // 데이터베이스에 있는 사용자 포인트 가져오기
-        const getPoint = _user.dataValues.point;
-        res.json({
-            status: true,
-            point: getPoint,
-        });
-    } catch (error) {
-        console.log(error);
-    }
+    } catch (e) {}
 });
 
 module.exports = router;
