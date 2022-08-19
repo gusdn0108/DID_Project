@@ -21,7 +21,6 @@ const generateRandom = (min, max) => {
 router.post('/email', async (req, res) => {
     console.log(req.body);
     const number = generateRandom(111111, 999999);
-    console.log('짤짤짤짤짤ㅉ라ㅉ라ㅉ라짜', number);
     let email = req.body.email;
     const mailPoster = nodeMailer.createTransport({
         service: 'Naver',
@@ -191,6 +190,7 @@ router.post('/SignUp', async (req, res) => {
         await Auth.create({
             email: email,
             password: hash,
+
             username: userName,
             mobile: userMobile,
             point: 50000,
