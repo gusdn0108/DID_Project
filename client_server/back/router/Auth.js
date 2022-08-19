@@ -159,7 +159,7 @@ router.post('/email', async (req, res) => {
 });
 
 router.post('/SignUp', async (req, res) => {
-    const { email, userPw, userName, userMobile} = req.body
+    const { email, userPw, userName } = req.body
    
     try {
         const exEmail = await Auth.findOne({
@@ -186,7 +186,6 @@ router.post('/SignUp', async (req, res) => {
             email: email,
             password: hash,
             username: userName,
-            mobile:userMobile,
             point:50000
         });
 

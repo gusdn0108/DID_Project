@@ -38,20 +38,12 @@ const Header = ({userId}) => {
                             <LoginModal isOpen={isOpen} onClose={onClose}/>
                             <Button colorScheme='gray' w='32' m='0.25rem'><Link href='/register'>회원 가입</Link></Button>
                         </>
-                    }
-                    
+                    }                    
                 </Box>
             </Flex>
         </Box>
     );
 }
 
-// Header.getInitialProps = ({req}) => {
-//     const cookies = cookie.parse(req ? req.headers.cookie || "" : document.cookie )
-//     // console.log(cookies)
-//     return {
-//       initialUserid: cookies.userId
-//     }
-// }
 
 export default Header;

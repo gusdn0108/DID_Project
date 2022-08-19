@@ -1,7 +1,6 @@
 import { Box, Button, Flex, Text, Input, FormControl,
     FormLabel, FormErrorMessage, FormHelperText,} from "@chakra-ui/react";
 import axios from 'axios'
-import { useEffect } from "react";
 import { useState } from "react";
 import { backend } from '../utils/ip.js'
 import { phoneCheck, pwdCheck } from "../utils/regiCheck.js";

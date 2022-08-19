@@ -26,12 +26,7 @@ const LoginModal = ({isOpen, onClose}) => {
     const didLoginHandler = () => {
         console.log('did login req')
     }
-
-    const goRegister = () => {
-        location.href='/register'
-        onClose
-    }
-
+    
     return(
         <>
             <Modal isOpen={isOpen} onClose={onClose}>
