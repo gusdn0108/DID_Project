@@ -9,9 +9,18 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@chakra-ui/icons": "^2.0.8",
+    "@chakra-ui/react": "^2.2.8",
+    "@emotion/react": "^11.10.0",
+    "@emotion/styled": "^11.10.0",
+    "axios": "^0.27.2",
+    "babel-plugin-styled-components": "^2.0.7",
     "next": "12.2.5",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-alice-carousel": "^2.6.4",
+    "react-dom": "18.2.0",
+    "react-responsive-carousel": "^3.2.23",
+    "styled-components": "^5.3.5"
   },
   "devDependencies": {
     "eslint": "8.22.0",
