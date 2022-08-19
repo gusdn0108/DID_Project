@@ -1,7 +1,7 @@
 import { Avatar, AvatarBadge, AvatarGroup, Button, Flex, Box, Center, Text, useDisclosure, Wrap, WrapItem, Container, Spacer } from '@chakra-ui/react';
 import { ArrowForwardIcon, ArrowBackIcon } from '@chakra-ui/icons';
 import { useEffect, useState } from 'react';
-import Carousel from '../components/styles/Carousel.js';
+import Carousel from '../components/styles/Carousel.jsx';
 import MainTemplate from '../components/styles/Mainstyle';
 import ItemCarousel from '../components/styles/ItemCarousel';
 

@@ -1,16 +1,22 @@
-import HeaderTemplate from '../components/styles/HeaderStyle';
+import HeaderTemplate from './styles/HeaderStyle';
 import Link from 'next/link';
 import { Button, Flex, Box, Center, Text, useDisclosure, SimpleGrid } from '@chakra-ui/react';
-import { useState } from 'react';
-import JoinModal from '../components/JoinModal.js';
-import LoginModal from '../components/LoginModal.js';
+import { useState, useEffect } from 'react';
+import JoinModal from './JoinModal.jsx';
+import LoginModal from './LoginModal.jsx';
 
-export default function Home() {
+export default function Home({ user }) {
   const [menu, setMenu] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
 
   const { isOpen: loginIsOpen, onOpen: loginOnOpen, onClose: loginOnClose } = useDisclosure();
   const { isOpen: joinIsOpen, onOpen: joinOnOpen, onClose: joinOnClose } = useDisclosure();
+
+  useEffect(() => {
+    if (user !== {}) {
+      setIsLogin(true);
+    }
+  }, []);
 
   return (
     <>
@@ -45,19 +51,26 @@ export default function Home() {
             </Center>
           </Flex>
           <Flex className="user">
-            <Button onClick={joinOnOpen} colorScheme="teal" variant="outline">
-              JOIN
-            </Button>
             {isLogin ? (
-              <Link href="/profile">
-                <Button colorScheme="teal" variant="outline">
-                  MY PAGE
+              <>
+                <Button onClick={console.log('hello')} colorScheme="teal" variant="outline">
+                  LOGOUT
                 </Button>
-              </Link>
+                <Link href="/profile">
+                  <Button colorScheme="teal" variant="outline">
+                    MY PAGE
+                  </Button>
+                </Link>
+              </>
             ) : (
-              <Button onClick={loginOnOpen} colorScheme="teal" variant="outline">
-                LOGIN
-              </Button>
+              <>
+                <Button onClick={joinOnOpen} colorScheme="teal" variant="outline">
+                  JOIN
+                </Button>
+                <Button onClick={loginOnOpen} colorScheme="teal" variant="outline">
+                  LOGIN
+                </Button>
+              </>
             )}
           </Flex>
           <JoinModal joinIsOpen={joinIsOpen} joinOnClose={joinOnClose} />
