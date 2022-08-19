@@ -13,13 +13,19 @@ module.exports = (sequelize, DataTypes) => {
             password: {
                 type: DataTypes.STRING,
                 allowNull: false,
+<<<<<<< HEAD
 
             },
             point : {
                 type:DataTypes.INTEGER,
+=======
+            },
+            point: {
+                type: DataTypes.INTEGER,
+>>>>>>> a5a1b19928760e87b6f632b2b03272c06bac3e07
                 allowNull: false,
-                default: 0
-            }
+                default: 0,
+            },
         },
         {
             timestamps: false,

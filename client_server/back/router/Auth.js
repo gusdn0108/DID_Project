@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const router = express.Router();
 const { Auth, sequelize } = require('../models');
 const { Op } = require('sequelize');
+const { clearConfigCache } = require('prettier');
 
 const generateRandom = (min, max) => {
     const ranNum = (Math.floor(Math.random() * (max - min + 1)) + min).toString();
@@ -175,6 +176,7 @@ router.post('/email', async (req, res) => {
             console.log(error);
         } else {
             console.log('Email sent: ' + info.response);
+            res.status(201);
             res.json({
                 status: true,
                 number: number,
@@ -189,7 +191,7 @@ router.post('/SignUp', async (req, res) => {
     try {
         const exEmail = await Auth.findOne({
             where: {
-                email: email
+                email: email,
             },
         });
         const exUserName = await Auth.findOne({
@@ -227,13 +229,12 @@ router.post('/login', async (req, res) => {
         const _user = await Auth.findOne({
             where: {
                 email: {
-                    [Op.eq]: userEmail
+                    [Op.eq]: userEmail,
                 },
             },
         });
 
         if (_user) {
-            
             if (bcrypt.compareSync(userPw, _user.dataValues.password)) {
                 delete _user.dataValues.password;
                 delete _user.dataValues.point
@@ -271,6 +272,30 @@ router.post('/login', async (req, res) => {
             msg: '관리자한태 문의바랍니다 ',
         });
     }
+});
+
+router.post('/idCheck', async (req, res) => {
+    const { email } = req.body;
+
+    try {
+        const _email = await Auth.findOne({
+            where: {
+                email: email,
+            },
+        });
+
+        if (_email === null) {
+            // 사용가능
+            res.json({
+                status: 1,
+            });
+        } else {
+            // 사용불가
+            res.json({
+                status: 2,
+            });
+        }
+    } catch (e) {}
 });
 
 module.exports = router;
