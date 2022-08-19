@@ -3,21 +3,12 @@ import { Box, Button, Flex, Text, Input, FormControl,
     FormLabel, FormErrorMessage, FormHelperText,} from "@chakra-ui/react";
 
 
-const mypage = ({userId, email})  => {
-    const [ point, setPoint ] = useState(0)
+const mypage = ({userId, email, point})  => {
     
     const didRegister = () => {
         console.log('did 연동 페이지로 이동!')
         console.log(userId)
     }
-
-    const getPoint = async () => {
-        await setPoint(100)
-    }
-
-    useEffect(() => {
-        getPoint()
-    },[])
 
     return (
         <Box pt='6rem'>
@@ -31,13 +22,5 @@ const mypage = ({userId, email})  => {
         </Box>
     )
 }
-
-// mypage.getInitialProps = ({req}) => {
-//     const cookies = cookie.parse(req ? req.headers.cookie || "" : document.cookie )
-//     // console.log(cookies)
-//     return {
-//       initialUserid: cookies.userId
-//     }
-// }
 
 export default mypage;

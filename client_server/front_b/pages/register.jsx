@@ -16,10 +16,6 @@ const register = () => {
     const [ email, setEmail] = useState('')
     const [ nickName, setNick ] = useState('')
 
-    const qwer = () => {
-        console.log(verifyNum)
-    }
-
     const setpwdCheck = (e) => {
         setPassword(e.target.value)
         setpsError(pwdCheck(password))
@@ -102,7 +98,7 @@ const register = () => {
                             <Input type='text' onChange={getNick} placeholder='Nickname을 입력해주세요' id='userNickname' size='sm' defaultValue='sila'/>
 
                             <FormLabel>Password</FormLabel>
-                            <Input type='password' onChange={setpwdCheck} placeholder='password을 입력해주세요' id='password' size='sm'/>
+                            <Input type='password' onChange={setpwdCheck} placeholder=' password을 입력해주세요' id='password' size='sm'/>
                             <FormHelperText>
                                 {
                                     psError == true
@@ -124,7 +120,6 @@ const register = () => {
                         <Input type='text' placeholder="발송된 6자리 숫자를 입력하세요" id='verifier'/>
                         <FormHelperText>인증 번호는 3분간 유효합니다.</FormHelperText>
                         <Input type='submit' onClick={verifyAccount}/>
-                        <Button onClick={qwer}></Button>
                         </>
                     }
                     

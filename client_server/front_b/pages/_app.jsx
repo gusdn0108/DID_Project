@@ -5,6 +5,8 @@ import { useState, useEffect } from 'react';
 
 import { CookiesProvider } from 'react-cookie';
 import { getCookie } from 'cookies-next'
+import { backend } from '../utils/ip'
+import axios from 'axios'
 
 function MyApp({ Component, pageProps }) {
   // const [cookies, setCookie, removeCookie ] = useCookies(['loginInfo'])
@@ -17,8 +19,11 @@ function MyApp({ Component, pageProps }) {
   let userEmail= ''
 
   const getPoint = async () => {
-    const email = JSON.parse(Buffer.from(userCookie, 'base64').toString('utf-8')).email
-    // const response = await axios.
+    if(userCookie) {
+      const email = JSON.parse(Buffer.from(userCookie, 'base64').toString('utf-8')).email
+      const response = await axios.post(`${backend}/api/auth/pointInquiry`, {email})
+      setPoint(response.data.point)
+    }
   }
 
   if(userCookie){
@@ -30,28 +35,18 @@ function MyApp({ Component, pageProps }) {
   useEffect(() => {
       setUserid(userName)
       setEmail(userEmail)
+      getPoint()
   },[])
 
   return (
     <CookiesProvider>
       <ChakraProvider>
         <Layout m='2' userId={userId}>
-        <Component {...pageProps} userId={userId} email={email}/>
+        <Component {...pageProps} userId={userId} email={email} point={point}/>
         </Layout>
       </ChakraProvider>
     </CookiesProvider>
   )
 }
 
-// MyApp.getInitialProps = ({req}) => {
-//   const cookies = cookie.parse(req ? req.headers.cookie || "" : document.cookie)
-//   // console.log(cookies)
-//   //const cookies = cookie.parse(req.headers.cookie)
-
-//   return {
-//     initialUserid: cookies.loginInfo
-//   }
-// }
-
 export default MyApp;
-//export default wrapper.withRedux(MyApp);
