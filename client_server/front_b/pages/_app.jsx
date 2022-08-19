@@ -10,30 +10,33 @@ function MyApp({ Component, pageProps }) {
   // const [cookies, setCookie, removeCookie ] = useCookies(['loginInfo'])
   const [ userId, setUserid ] = useState(undefined)
   const [ email, setEmail ] = useState(undefined)
-  const [mobile, setMobile ] = useState(undefined)
+  const [ point, setPoint ] = useState(0)
 
   const userCookie = getCookie('loginInfo');
   let userName = ''
   let userEmail= ''
-  let userMobile = ''
 
-  if(userCookie) {
+  const getPoint = async () => {
+    const email = JSON.parse(Buffer.from(userCookie, 'base64').toString('utf-8')).email
+    // const response = await axios.
+  }
+
+  if(userCookie){
     userName = JSON.parse(Buffer.from(userCookie, 'base64').toString('utf-8')).username
     userEmail = JSON.parse(Buffer.from(userCookie, 'base64').toString('utf-8')).email
-    userMobile = JSON.parse(Buffer.from(userCookie, 'base64').toString('utf-8')).mobile
   }
+
   
   useEffect(() => {
       setUserid(userName)
       setEmail(userEmail)
-      setMobile(userMobile)
   },[])
 
   return (
     <CookiesProvider>
       <ChakraProvider>
         <Layout m='2' userId={userId}>
-        <Component {...pageProps} userId={userId} email={email} mobile={mobile}/>
+        <Component {...pageProps} userId={userId} email={email}/>
         </Layout>
       </ChakraProvider>
     </CookiesProvider>
