@@ -26,7 +26,7 @@ router.post('/email', async (req, res) => {
         port: 587,
         auth: {
             user: 'gusdn6671@naver.com',
-            pass: 'iks1312!#!@',
+            pass: 'asdf1234!@#$',
         },
     });
     let mailOptions = {
@@ -161,12 +161,12 @@ router.post('/email', async (req, res) => {
 });
 
 router.post('/SignUp', async (req, res) => {
-    const { email, userPw, userName, userMobile} =req.body
-   
+    const { email, userPw, userName } = req.body;
+
     try {
         const exEmail = await Auth.findOne({
             where: {
-                email: email
+                email: email,
             },
         });
         const exUserName = await Auth.findOne({
@@ -183,37 +183,34 @@ router.post('/SignUp', async (req, res) => {
         }
 
         const hash = await bcrypt.hash(userPw, 12);
-        console.log(hash)
+        console.log(hash);
         await Auth.create({
             email: email,
             password: hash,
-
             username: userName,
-            mobile:userMobile,
-            point:50000
+            point: 50000,
         });
 
         res.status(201).send('회원가입이 완료되었슴니당 ㅎㅎ');
-
     } catch (error) {
         console.log(error);
     }
 });
 
 router.post('/login', async (req, res) => {
-    const {userEmail,userPw} = req.body.loginData
-    
+    console.log(req.body);
+    const { userEmail, userPw } = req.body;
+
     try {
         const _user = await Auth.findOne({
             where: {
                 email: {
-                    [Op.eq]: userEmail
+                    [Op.eq]: userEmail,
                 },
             },
         });
 
         if (_user) {
-            
             if (bcrypt.compareSync(userPw, _user.dataValues.password)) {
                 delete _user.dataValues.password;
                 console.log(_user.dataValues);
@@ -249,6 +246,65 @@ router.post('/login', async (req, res) => {
             status: false,
             msg: '관리자한태 문의바랍니다 ',
         });
+    }
+});
+
+router.post('/usePoint', async (req, res) => {
+    const price = req.body.price;
+    console.log('first');
+    try {
+        // 사용자 이메일가져오기
+        console.log(`연결?`);
+        const _user = await Auth.findOne({
+            where: {
+                email: {
+                    [Op.eq]: req.body.email,
+                },
+            },
+        });
+        console.log(_user);
+
+        console.log(_user.dataValues.point);
+
+        if (_user.dataValues.point >= price) {
+            const usePoint = _user.dataValues.point - price;
+            const updateClient = _user.dataValues.email;
+
+            await Auth.update({ point: usePoint }, { where: { email: updateClient } });
+            res.json({
+                status: true,
+                msg: '구매완료되었습니다',
+            });
+        } else {
+            res.json({
+                status: false,
+                msg: '금액 모자릅니다  ',
+            });
+        }
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+router.post('/pointInquiry', async (req, res) => {
+    // 사용자 가져와야함
+    console.log('연결????');
+    try {
+        const _user = await Auth.findOne({
+            where: {
+                email: {
+                    [Op.eq]: req.body.email,
+                },
+            },
+        });
+        // 데이터베이스에 있는 사용자 포인트 가져오기
+        const getPoint = _user.dataValues.point;
+        res.json({
+            status: true,
+            point: getPoint,
+        });
+    } catch (error) {
+        console.log(error);
     }
 });
 
