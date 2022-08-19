@@ -251,6 +251,7 @@ router.post('/login', async (req, res) => {
 
 router.post('/usePoint', async (req, res) => {
     const price = req.body.price;
+    console.log('first');
     try {
         // 사용자 이메일가져오기
         console.log(`연결?`);
@@ -287,15 +288,24 @@ router.post('/usePoint', async (req, res) => {
 
 router.post('/pointInquiry', async (req, res) => {
     // 사용자 가져와야함
-    const _user = await Auth.findOne({
-        where: {
-            email: {
-                [Op.eq]: req.body.email,
+    console.log('연결????');
+    try {
+        const _user = await Auth.findOne({
+            where: {
+                email: {
+                    [Op.eq]: req.body.email,
+                },
             },
-        },
-    });
-
-    console.log(_user);
+        });
+        // 데이터베이스에 있는 사용자 포인트 가져오기
+        const getPoint = _user.dataValues.point;
+        res.json({
+            status: true,
+            point: getPoint,
+        });
+    } catch (error) {
+        console.log(error);
+    }
 });
 
 module.exports = router;
