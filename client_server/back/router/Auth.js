@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const router = express.Router();
 const { Auth, sequelize } = require('../models');
 const { Op } = require('sequelize');
+const { clearConfigCache } = require('prettier');
 
 const generateRandom = (min, max) => {
     const ranNum = (Math.floor(Math.random() * (max - min + 1)) + min).toString();
@@ -18,6 +19,7 @@ const generateRandom = (min, max) => {
 };
 
 router.post('/email', async (req, res) => {
+    console.log(req.body);
     const number = generateRandom(111111, 999999);
     console.log('짤짤짤짤짤ㅉ라ㅉ라ㅉ라짜', number);
     let email = req.body.email;
@@ -27,7 +29,7 @@ router.post('/email', async (req, res) => {
         port: 587,
         auth: {
             user: 'gusdn6671@naver.com',
-            pass: 'iks1312!#!@',
+            pass: 'asdf1234!@#$',
         },
     });
     let mailOptions = {
@@ -154,17 +156,21 @@ router.post('/email', async (req, res) => {
         } else {
             console.log('Email sent: ' + info.response);
             res.status(201);
+            res.json({
+                status: true,
+                number: number,
+            });
         }
     });
 });
 
 router.post('/SignUp', async (req, res) => {
-    const { email, userPw, userName, userMobile} =req.body
-   
+    const { email, userPw, userName, userMobile } = req.body;
+
     try {
         const exEmail = await Auth.findOne({
             where: {
-                email: email
+                email: email,
             },
         });
         const exUserName = await Auth.findOne({
@@ -181,36 +187,34 @@ router.post('/SignUp', async (req, res) => {
         }
 
         const hash = await bcrypt.hash(userPw, 12);
-        console.log(hash)
+        console.log(hash);
         await Auth.create({
             email: email,
             password: hash,
             username: userName,
-            mobile:userMobile,
-            point:50000
+            mobile: userMobile,
+            point: 50000,
         });
 
         res.status(201).send('회원가입이 완료되었슴니당 ㅎㅎ');
-
     } catch (error) {
         console.log(error);
     }
 });
 
 router.post('/login', async (req, res) => {
-    const {userEmail,userPw} = req.body.loginData
-    
+    const { userEmail, userPw } = req.body.loginData;
+
     try {
         const _user = await Auth.findOne({
             where: {
                 email: {
-                    [Op.eq]: userEmail
+                    [Op.eq]: userEmail,
                 },
             },
         });
 
         if (_user) {
-            
             if (bcrypt.compareSync(userPw, _user.dataValues.password)) {
                 delete _user.dataValues.password;
                 console.log(_user.dataValues);
@@ -247,6 +251,30 @@ router.post('/login', async (req, res) => {
             msg: '관리자한태 문의바랍니다 ',
         });
     }
+});
+
+router.post('/idCheck', async (req, res) => {
+    const { email } = req.body;
+
+    try {
+        const _email = await Auth.findOne({
+            where: {
+                email: email,
+            },
+        });
+
+        if (_email === null) {
+            // 사용가능
+            res.json({
+                status: 1,
+            });
+        } else {
+            // 사용불가
+            res.json({
+                status: 2,
+            });
+        }
+    } catch (e) {}
 });
 
 module.exports = router;
