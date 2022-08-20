@@ -1,4 +1,5 @@
 import { ChakraProvider } from '@chakra-ui/react'
+import { Search2icon } from '@chakra-ui/icons'
 import Layout from '../components/Layout.jsx'
 
 import { useState, useEffect } from 'react';
@@ -36,13 +37,13 @@ function MyApp({ Component, pageProps }) {
       setUserid(userName)
       setEmail(userEmail)
       getPoint()
-  },[])
+  },[point])
 
   return (
     <CookiesProvider>
       <ChakraProvider>
         <Layout m='2' userId={userId}>
-        <Component {...pageProps} userId={userId} email={email} point={point}/>
+        <Component {...pageProps} userId={userId} email={email} point={point} setPoint={setPoint}/>
         </Layout>
       </ChakraProvider>
     </CookiesProvider>

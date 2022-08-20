@@ -300,10 +300,8 @@ router.post('/idCheck', async (req, res) => {
 
 router.post('/usePoint', async (req, res) => {
     const price = req.body.price;
-    console.log('first');
     try {
         // 사용자 이메일가져오기
-        console.log(`연결?`);
         const _user = await Auth.findOne({
             where: {
                 email: {
@@ -311,9 +309,6 @@ router.post('/usePoint', async (req, res) => {
                 },
             },
         });
-        console.log(_user);
-
-        console.log(_user.dataValues.point);
 
         if (_user.dataValues.point >= price) {
             const usePoint = _user.dataValues.point - price;
