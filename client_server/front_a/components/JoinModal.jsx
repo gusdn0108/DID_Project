@@ -81,9 +81,13 @@ const JoinModal = ({ joinIsOpen, joinOnClose }) => {
   const auth = async () => {
     const response = await axios.post('http://localhost:4000/api/auth/email', { email: email + domain });
 
-    setEmailAuth(true);
-    setEmailNum(response.data.number);
-    setEmailCheck('');
+    if (response.data.status) {
+      setEmailAuth(true);
+      setEmailNum(response.data.number);
+      setEmailCheck('');
+    }
+
+    console.log(response.data.number);
   };
 
   const emailAuthInput = () => {
@@ -102,6 +106,23 @@ const JoinModal = ({ joinIsOpen, joinOnClose }) => {
     });
   };
 
+  const onClose = () => {
+    setEmail('');
+    setEmailCheck('');
+    setDomain('');
+
+    setPassword('');
+    setPasswordCheck('');
+    setNickname('');
+
+    setEmailAuth(false);
+    setEmailNum([]);
+    setInputEmailNum([0, 0, 0, 0, 0, 0]);
+    setEmailNumCheck('');
+
+    joinOnClose();
+  };
+
   const onClick = async () => {
     const body = {
       email: email + domain,
@@ -111,12 +132,29 @@ const JoinModal = ({ joinIsOpen, joinOnClose }) => {
 
     const response = await axios.post('http://localhost:4000/api/auth/SignUp', body);
 
-    console.log(response.data);
+    if (response.data.status === 1) {
+      setEmail('');
+      setEmailCheck('');
+      setDomain('');
+
+      setPassword('');
+      setPasswordCheck('');
+      setNickname('');
+
+      setEmailAuth(false);
+      setEmailNum([]);
+      setInputEmailNum([0, 0, 0, 0, 0, 0]);
+      setEmailNumCheck('');
+
+      alert('회원가입이 완료되었습니다.');
+
+      joinOnClose();
+    }
   };
 
   return (
     <>
-      <Modal isOpen={joinIsOpen} onClose={joinOnClose}>
+      <Modal isOpen={joinIsOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Join</ModalHeader>
@@ -215,10 +253,10 @@ const JoinModal = ({ joinIsOpen, joinOnClose }) => {
           </ModalBody>
 
           <ModalFooter>
-            <Button width="5rem" colorScheme="blue" mr={3} onClick={joinOnClose}>
+            <Button width="5rem" colorScheme="teal" mr={3} onClick={onClose}>
               취소
             </Button>
-            <Button width="5rem" colorScheme="blue" mr={3} variant="outline" onClick={onClick} disabled={emailNumCheck && passwordCheck && nickname !== '' ? false : true}>
+            <Button width="5rem" colorScheme="teal" mr={3} variant="outline" onClick={onClick} disabled={emailNumCheck && passwordCheck && nickname !== '' ? false : true}>
               회원가입
             </Button>
           </ModalFooter>
