@@ -89,7 +89,7 @@ const Home = ({userId, email, point, setPoint}) => {
           </Box>
 
           <Box w='50%' h='38rem' pt='1rem' zIndex={'1'}> 
-            <MainCarousel zIndex='-1'/>
+            <MainCarousel/>
           </Box>
 
         </Flex>

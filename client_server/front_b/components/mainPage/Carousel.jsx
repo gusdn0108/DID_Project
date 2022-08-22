@@ -43,8 +43,8 @@ const MainCarousel = () => {
       };
     
       return (
-        <Box>
-          <Carousel style={trans}>
+        <Box zIndex='-1'>
+          <Carousel style={trans} >
             <Slider>{Items()}</Slider>
           </Carousel>
 
