@@ -27,17 +27,13 @@ router.post('/email', async (req, res) => {
                 email: email,
             },
         });
-        const exUserName = await Auth.findOne({
-            where: {
-                userName: nickName,
-            },
-        });
 
         if (exEmail) {
             return res.status(403).send('이미 사용중인 메일입니다 ');
         }
-    } catch (e) {
-        console.log(e);
+
+    } catch(e) {
+        console.log(e)
     }
     // 중복 체크하고
     const number = generateRandom(111111, 999999);
