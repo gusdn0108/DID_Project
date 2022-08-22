@@ -25,7 +25,7 @@ const MypageDrawer = ({ MypageIsOpen, MypageOnClose, user }) => {
           <DrawerCloseButton size="lg" />
           <DrawerHeader borderBottom="0.5px solid #000">
             <Text fontSize="2rem" mt="3rem" textAlign="center">
-               WELCOME {username} 🥳
+              WELCOME {username} 🥳
             </Text>
           </DrawerHeader>
 
@@ -67,7 +67,7 @@ const MypageDrawer = ({ MypageIsOpen, MypageOnClose, user }) => {
                     블랙 레이온 혼방 핏앤플레어 져지 원피스
                   </Box>
 
-                  <Box>204,350 ₩</Box>
+                  <Box>20400 P</Box>
                   <Box mt="2" alignItems="center">
                     {Array(5)
                       .fill('')
