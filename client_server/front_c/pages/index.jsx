@@ -48,7 +48,7 @@ const Home = () => {
                 샐러드
               </Text>
             </Avatar>
-            <Avatar size="xl" src="19.jpeg" color="blue" background="#fff" border="0.01rem solid #24d024">
+            <Avatar size="lg" src="19.jpeg" color="blue" background="#fff" border="0.01rem solid #24d024">
               <Text textAlign="center" pl={5} fontSize={14} fontWeight="bold">
                 프리미엄
               </Text>

@@ -126,8 +126,8 @@ const JoinModal = ({ joinIsOpen, joinOnClose }) => {
   const onClick = async () => {
     const body = {
       email: email + domain,
-      userPw: password,
-      userName: nickname,
+      password,
+      nickName: nickname,
     };
 
     const response = await axios.post('http://localhost:4000/api/auth/SignUp', body);
@@ -225,6 +225,7 @@ const JoinModal = ({ joinIsOpen, joinOnClose }) => {
             <Input
               variant="flushed"
               placeholder="Password"
+              type="password"
               onChange={(e) => {
                 onChange(e, 'Password');
               }}
