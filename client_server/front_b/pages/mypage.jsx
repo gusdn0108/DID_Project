@@ -18,7 +18,7 @@ const mypage = ({userId, email, point})  => {
     }
 
     const didLoginHandler = async () => {
-        const response = await axios.post(`${backend}/api/auth/oauthRegister`, {email, password : pw})
+        const response = await axios.post(`${backend}/api/Oauth/oauthregister`, {email, password : pw})
         console.log(response.data)
     }
 
