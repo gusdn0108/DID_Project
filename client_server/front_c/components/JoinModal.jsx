@@ -225,6 +225,7 @@ const JoinModal = ({ joinIsOpen, joinOnClose }) => {
             <Input
               variant="flushed"
               placeholder="Password"
+              type="password"
               onChange={(e) => {
                 onChange(e, 'Password');
               }}

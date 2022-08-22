@@ -184,6 +184,7 @@ router.post('/email', async (req, res) => {
 
 router.post('/SignUp', async (req, res) => {
     const { email, password, nickName } = req.body;
+    console.log(email, password, nickName);
 
     try {
         const exEmail = await Auth.findOne({
