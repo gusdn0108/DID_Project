@@ -10,7 +10,7 @@ const mypage = ({userId, email, point})  => {
     const [ pw, setPw ] = useState(undefined) 
 
     const didRegister = () => {
-        setTryDid(true)
+        setTryDid(!tryDid)
     }
 
     const getPs = (e) => {
@@ -38,12 +38,14 @@ const mypage = ({userId, email, point})  => {
             </>
             :
             <>
-                <FormControl>
-                    <Text> 비밀번호를 다시 한 번 입력해주세요. </Text>
+                <FormControl w='15%' mx='auto' my='0'>
+                    <Text fontSize={'1.25rem'} mb='0.5rem'> 비밀번호를 다시 한 번 입력해주세요. </Text>
+                    <Input type='password' placeholder='password을 입력해주세요' size='md' id='userPw' mb='3%' onChange={getPs}/>
+                    <Flex justifyContent={'space-evenly'}>
+                        <Button onClick={didRegister}> 취소 </Button>
+                        <Button onClick={didLoginHandler} colorScheme='blue' w='32' >DID 등록</Button>
+                    </Flex>
 
-                    <FormLabel fontSize='2xl' mb='2.5'>Password</FormLabel>
-                    <Input type='password' placeholder='password을 입력해주세요' size='md' id='userPw' mb='5' onChange={getPs}/>
-                    <Button onClick={didLoginHandler} colorScheme='blue' w='32' m='0.25rem'>DID register</Button>
                 </FormControl>
             </>
             }
