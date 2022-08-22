@@ -1,0 +1,18 @@
+{
+  "name": "last",
+  "version": "1.0.0",
+  "description": "(0) 0x884592D5BE23f2d05e092aE76002108027cc1658 (1000 ETH) (1) 0x9c2126FD1F105e62E774780Fa47b94501AF11a36 (1000 ETH)",
+  "main": "truffle-config.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "dotenv": "^16.0.1"
+  }
+}
