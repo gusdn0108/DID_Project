@@ -19,12 +19,12 @@ const generateRandom = (min, max) => {
 };
 
 router.post('/email', async (req, res) => {
-    const { email, nickName } = req.body
-   
+    const { email, nickName } = req.body;
+
     try {
         const exEmail = await Auth.findOne({
             where: {
-                email: email
+                email: email,
             },
         });
         const exUserName = await Auth.findOne({
@@ -36,13 +36,10 @@ router.post('/email', async (req, res) => {
         if (exEmail) {
             return res.status(403).send('이미 사용중인 메일입니다 ');
         }
-        if (exUserName) {
-            return res.status(403).send('이미 사용중인 닉네임입니다 ');
-        }
-    } catch(e) {
-        console.log(e)
+    } catch (e) {
+        console.log(e);
     }
-        // 중복 체크하고
+    // 중복 체크하고
     const number = generateRandom(111111, 999999);
     const mailPoster = nodeMailer.createTransport({
         service: 'Naver',
@@ -50,7 +47,7 @@ router.post('/email', async (req, res) => {
         port: 587,
         auth: {
             user: process.env.EMAIL_SENDER,
-            pass: process.env.EMAIL_PASSWORD
+            pass: process.env.EMAIL_PASSWORD,
         },
     });
     let mailOptions = {
@@ -186,8 +183,8 @@ router.post('/email', async (req, res) => {
 });
 
 router.post('/SignUp', async (req, res) => {
-    const { email, password, nickName } = req.body
-   
+    const { email, password, nickName } = req.body;
+
     try {
         const exEmail = await Auth.findOne({
             where: {
@@ -205,26 +202,25 @@ router.post('/SignUp', async (req, res) => {
         }
 
         const hash = await bcrypt.hash(password, 12);
-        console.log(hash)
+        console.log(hash);
         await Auth.create({
             email: email,
             password: hash,
             username: nickName,
-            point:50000
+            point: 50000,
         });
 
         res.status(201).json({
-            status:1
+            status: 1,
         });
-
     } catch (error) {
         console.log(error);
     }
 });
 
 router.post('/login', async (req, res) => {
-    const {userEmail,userPw} = req.body
-    
+    const { userEmail, userPw } = req.body;
+
     try {
         const _user = await Auth.findOne({
             where: {
@@ -237,7 +233,7 @@ router.post('/login', async (req, res) => {
         if (_user) {
             if (bcrypt.compareSync(userPw, _user.dataValues.password)) {
                 delete _user.dataValues.password;
-                delete _user.dataValues.point
+                delete _user.dataValues.point;
                 console.log(_user.dataValues);
 
                 let token = jwt.sign(
