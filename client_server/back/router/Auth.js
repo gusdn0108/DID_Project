@@ -28,7 +28,7 @@ router.post('/email', async (req, res) => {
         port: 587,
         auth: {
             user: 'gusdn6671@naver.com',
-            pass: 'asdf1234!@#$',
+            pass: 'ok8080!#!@',
         },
     });
     let mailOptions = {

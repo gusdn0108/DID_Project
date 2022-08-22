@@ -38,7 +38,7 @@ const LoginModal = ({ loginIsOpen, loginOnClose }) => {
           <ModalFooter>
             <Button
               width="7rem"
-              colorScheme="teal"
+              colorScheme="blue"
               variant="outline"
               mr="7.2rem"
               onClick={() => {
@@ -47,10 +47,10 @@ const LoginModal = ({ loginIsOpen, loginOnClose }) => {
             >
               DID 로그인
             </Button>
-            <Button width="5rem" colorScheme="teal" mr={3} onClick={loginOnClose}>
+            <Button width="5rem" colorScheme="blue" mr={3} onClick={loginOnClose}>
               취소
             </Button>
-            <Button width="5rem" colorScheme="teal" variant="outline" onClick={onClick}>
+            <Button width="5rem" colorScheme="blue" variant="outline" onClick={onClick}>
               로그인
             </Button>
           </ModalFooter>

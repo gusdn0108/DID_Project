@@ -204,7 +204,7 @@ const JoinModal = ({ joinIsOpen, joinOnClose }) => {
                 <Center>
                   <Button
                     mt={5}
-                    colorScheme="teal"
+                    colorScheme="blue"
                     variant="outline"
                     onClick={() => {
                       console.log(inputEmailNum.toString());
@@ -253,10 +253,10 @@ const JoinModal = ({ joinIsOpen, joinOnClose }) => {
           </ModalBody>
 
           <ModalFooter>
-            <Button width="5rem" colorScheme="teal" mr={3} onClick={onClose}>
+            <Button width="5rem" colorScheme="blue" mr={3} onClick={onClose}>
               취소
             </Button>
-            <Button width="5rem" colorScheme="teal" mr={3} variant="outline" onClick={onClick} disabled={emailNumCheck && passwordCheck && nickname !== '' ? false : true}>
+            <Button width="5rem" colorScheme="blue" mr={3} variant="outline" onClick={onClick} disabled={emailNumCheck && passwordCheck && nickname !== '' ? false : true}>
               회원가입
             </Button>
           </ModalFooter>
