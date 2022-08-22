@@ -19,7 +19,10 @@ const mypage = ({userId, email, point})  => {
 
     const didLoginHandler = async () => {
         const response = await axios.post(`${backend}/api/Oauth/oauthregister`, {email, password : pw})
-        console.log(response.data)
+        if(response.data.status == false ) {
+            alert('비밀 번호를 확인해주세요')
+            return;
+        }
     }
 
     return (

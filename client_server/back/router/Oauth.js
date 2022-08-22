@@ -81,6 +81,7 @@ router.post('/oAuthRegister', async (req, res) => {
 
         const getEncodedHash = bcrypt.compareSync(password, _user.dataValues.password);
         if (getEncodedHash) {
+            const response = await axios.post('http://localhost:8000/oauth/register', { id, pw })
         } else {
             res.json({
                 status: false,
