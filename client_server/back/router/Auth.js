@@ -28,7 +28,7 @@ router.post('/email', async (req, res) => {
         port: 587,
         auth: {
             user: 'gusdn6671@naver.com',
-            pass: 'asdf1234!@#$',
+            pass: 'ok8080!#!@',
         },
     });
     let mailOptions = {
@@ -172,17 +172,9 @@ router.post('/SignUp', async (req, res) => {
                 email: email,
             },
         });
-        const exUserName = await Auth.findOne({
-            where: {
-                userName: userName,
-            },
-        });
 
         if (exEmail) {
             return res.status(403).send('이미 사용중인 메일입니다 ');
-        }
-        if (exUserName) {
-            return res.status(403).send('이미 사용중인 닉네임입니다 ');
         }
 
         const hash = await bcrypt.hash(userPw, 12);
@@ -194,7 +186,9 @@ router.post('/SignUp', async (req, res) => {
             point: 50000,
         });
 
-        res.status(201).send('회원가입이 완료되었슴니당 ㅎㅎ');
+        res.status(201).json({
+            status: 1,
+        });
     } catch (error) {
         console.log(error);
     }

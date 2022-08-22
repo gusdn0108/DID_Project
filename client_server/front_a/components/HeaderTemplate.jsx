@@ -1,24 +1,33 @@
-import HeaderTemplate from '../components/styles/HeaderStyle';
+import HeaderTemplate from './styles/HeaderStyle';
 import Link from 'next/link';
 import { Button, Flex, Box, Center, Text, useDisclosure, SimpleGrid } from '@chakra-ui/react';
-import { useState } from 'react';
-import JoinModal from '../components/JoinModal.js';
-import LoginModal from '../components/LoginModal.js';
+import { useState, useEffect } from 'react';
+import JoinModal from './JoinModal.jsx';
+import LoginModal from './LoginModal.jsx';
+import MypageDrawer from './MypageDrawer.jsx';
+import { deleteCookie } from 'cookies-next';
 
-export default function Home() {
+export default function Home({ user }) {
   const [menu, setMenu] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
 
   const { isOpen: loginIsOpen, onOpen: loginOnOpen, onClose: loginOnClose } = useDisclosure();
   const { isOpen: joinIsOpen, onOpen: joinOnOpen, onClose: joinOnClose } = useDisclosure();
+  const { isOpen: MypageIsOpen, onOpen: MypageOnOpen, onClose: MypageOnClose } = useDisclosure();
+
+  useEffect(() => {
+    if (user) {
+      setIsLogin(true);
+    }
+  }, []);
 
   return (
     <>
       <HeaderTemplate>
         <Flex className="header">
           <Link href="">
-            <Center className="logo" h="4rem">
-              Logo
+            <Center className="logo" h="4rem" fontSize="1.5rem" fontWeight="bold">
+              Kyungil Mall
             </Center>
           </Link>
           <Flex className="menu" onMouseOver={() => setMenu(true)} onMouseOut={() => setMenu(false)}>
@@ -45,23 +54,37 @@ export default function Home() {
             </Center>
           </Flex>
           <Flex className="user">
-            <Button onClick={joinOnOpen} colorScheme="teal" variant="outline">
-              JOIN
-            </Button>
             {isLogin ? (
-              <Link href="/profile">
-                <Button colorScheme="teal" variant="outline">
-                  MY PAGE
+              <>
+                <Button
+                  onClick={(req, res) => {
+                    deleteCookie('user', { req, res, maxAge: 60 * 60 * 24 * 1000 });
+                    setIsLogin(false);
+                    window.location.replace('/');
+                  }}
+                  colorScheme="teal"
+                  variant="outline"
+                >
+                  LOGOUT
                 </Button>
-              </Link>
+                <Button onClick={MypageOnOpen} colorScheme="teal" variant="outline">
+                  PROFILE
+                </Button>
+              </>
             ) : (
-              <Button onClick={loginOnOpen} colorScheme="teal" variant="outline">
-                LOGIN
-              </Button>
+              <>
+                <Button onClick={joinOnOpen} colorScheme="teal" variant="outline">
+                  JOIN
+                </Button>
+                <Button onClick={loginOnOpen} colorScheme="teal" variant="outline">
+                  LOGIN
+                </Button>
+              </>
             )}
           </Flex>
           <JoinModal joinIsOpen={joinIsOpen} joinOnClose={joinOnClose} />
           <LoginModal loginIsOpen={loginIsOpen} loginOnClose={loginOnClose} />
+          {user ? <MypageDrawer MypageIsOpen={MypageIsOpen} MypageOnClose={MypageOnClose} user={user} /> : null}
         </Flex>
         {menu ? (
           <Box className="menuHover">
