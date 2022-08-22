@@ -1,5 +1,5 @@
 import { Box, Button, Flex, Text, Input, FormControl,
-    FormLabel, FormErrorMessage, FormHelperText,} from "@chakra-ui/react";
+    FormLabel, FormErrorMessage, FormHelperText, Radio, Select,} from "@chakra-ui/react";
 import axios from 'axios'
 import { useEffect } from "react";
 import { useState } from "react";
@@ -8,13 +8,14 @@ import { phoneCheck, pwdCheck } from "../utils/regiCheck.js";
 
 const register = () => {
     const [ password, setPassword ] = useState(undefined)
-    const [ psError, setpsError] = useState(true)
+    const [ psError, setpsError] = useState(false)
     
     const [ sentEmail, setSentEmail ] = useState(false)
     const [ verifyNum, setVerifyNum ] = useState(undefined)
 
     const [ email, setEmail] = useState('')
     const [ nickName, setNick ] = useState('')
+    const [ domain, setDomain ] = useState(undefined) 
 
     const setpwdCheck = (e) => {
         setPassword(e.target.value)
@@ -27,6 +28,10 @@ const register = () => {
 
     const getNick = (e) => {
         setNick(e.target.value)
+    }
+
+    const domainSelect = (e) => {
+        setDomain(e.target.value)
     }
 
     const invalidation = () => {
@@ -47,9 +52,10 @@ const register = () => {
             return;      
         }
 
+        const regiEmail = email + domain
+        
         try {
-            const response = await axios.post(`${backend}/api/auth/email`, {email, nickName})
-
+            const response = await axios.post(`${backend}/api/auth/email`, { email: regiEmail, nickName})
             setSentEmail(true)
             const verifyArray = response.data.number
             const verfifyNumber = verifyArray[0]+verifyArray[1]+verifyArray[2]+verifyArray[3]+verifyArray[4]+verifyArray[5]
@@ -58,7 +64,7 @@ const register = () => {
             invalidation
         }
         catch(e) {
-            console.error(e)
+            alert(e.response.data)
         }
     }
 
@@ -71,6 +77,7 @@ const register = () => {
                     alert('회원가입이 완료되었습니다.')
                     location.href=`${frontend}`
                 }
+                
             }
             catch(e) {
                 console.error(e)
@@ -86,20 +93,27 @@ const register = () => {
         <Box display='flex' justifyContent='center'>
             <Box pt='4rem' display='flex' justifyContent='center' w='20rem'>                
                 <FormControl mt='3'>
-                    <Text>회원 가입</Text>
+                    <Text mb='8%' textAlign={'center'} fontSize='1.5rem'>회원 가입</Text>
                     {
                         sentEmail == false
                         ?
                         <>
                             <FormLabel>Email</FormLabel>
-                            <Input type='text' onChange={getEmail}placeholder='email을 입력해주세요' id='userEmail' size='sm' defaultValue='619049@naver.com' />
+                            <Flex justifyContent={'center'}>
+                                <Input type='text' onChange={getEmail} placeholder='email을 입력해주세요' id='userEmail' size='sm' defaultValue='619049a' mb='5%'/>
+                                <Select placeholder="Select Domain" size='sm' id='domainSelector' onChange={domainSelect}>
+                                    <option value="@kakao.com">@kakao.com</option>
+                                    <option value="@naver.com">@naver.com</option>
+                                    <option value="@gmail.com">@gmail.com</option>
+                                </Select>
+                            </Flex>
 
                             <FormLabel>Nickname</FormLabel>
-                            <Input type='text' onChange={getNick} placeholder='Nickname을 입력해주세요' id='userNickname' size='sm' defaultValue='sila'/>
+                            <Input type='text' onChange={getNick} placeholder='Nickname을 입력해주세요' id='userNickname' size='sm' defaultValue='sil' mb='5%'/>
 
                             <FormLabel>Password</FormLabel>
-                            <Input type='password' onChange={setpwdCheck} placeholder=' password을 입력해주세요' id='password' size='sm'/>
-                            <FormHelperText>
+                            <Input type='password' onChange={setpwdCheck} placeholder=' password을 입력해주세요' id='password' size='sm' />
+                            <FormHelperText mb='6%'>
                                 {
                                     psError == true
                                     ?

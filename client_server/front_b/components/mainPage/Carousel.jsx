@@ -15,7 +15,7 @@ const MainCarousel = () => {
     const [ slide, setSlide ] = useState(0)
 
     const trans = {
-        transform: `translateX(${slide * -40}rem)`,
+        transform: `translateX(${slide * -40 - 6}rem)`,
     };
 
     const leftHandler = () => {
@@ -43,7 +43,7 @@ const MainCarousel = () => {
       };
     
       return (
-        <Box zIndex='-1'>
+        <Box>
           <Carousel style={trans} >
             <Slider>{Items()}</Slider>
           </Carousel>
@@ -74,5 +74,5 @@ const Slider = styled.div`
 
 const SlideBtn = styled.div`
   width: 100%;
-  padding-top: 35rem;
+  padding-top: 34rem;
 `;

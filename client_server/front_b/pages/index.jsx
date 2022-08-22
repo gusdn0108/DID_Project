@@ -46,7 +46,7 @@ const Home = ({userId, email, point, setPoint}) => {
   return (
     <>
       <Box bg='blue.200' letterSpacing='-5%' zIndex='1000' >
-        <Flex justifyContent='space-around' w='80%' mx='auto' my='0' py='4rem' alignItems='center' bg='blue.200' zIndex={'1100'}>
+        <Flex justifyContent='space-around' w='75%' mx='auto' my='0' py='4rem' alignItems='center' bg='blue.200' zIndex={'1100'}>
           <Box px='2.5rem' pt='4rem' pb='4rem' w='30%' zIndex={'1000'} bg='blue.200'>
             <Box fontSize='175%'>고객님,</Box>
             <Box fontSize='175%' pb='8%' fontWeight='700'>어떤 여행을 꿈꾸시나요?</Box>
@@ -88,7 +88,7 @@ const Home = ({userId, email, point, setPoint}) => {
             
           </Box>
 
-          <Box w='50%' h='38rem' pt='1rem' zIndex={'1'}> 
+          <Box w='40%' h='38rem' pt='1rem' px='6rem' position="relative" zIndex="100" overflow='hidden'> 
             <MainCarousel/>
           </Box>
 
