@@ -32,7 +32,7 @@ const Header = ({userId}) => {
                             ?
                             <>
                                 <Button onClick={logoutHandler}>logout</Button>
-                                <Link href='mypage'><Button size='sm' variant='ghost'>my page</Button></Link>
+                                <Link href='mypage'><Button size='sm' variant='ghost' h='40px' bg='blue.200' mx='0.25rem'>my page</Button></Link>
                             </>
                             :
                             <>

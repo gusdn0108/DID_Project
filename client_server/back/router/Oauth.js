@@ -8,15 +8,17 @@ const { Auth, sequelize } = require('../models');
 const { Op } = require('sequelize');
 
 const baseUrl = 'http://localhost:8000/api/Oauth';
-const getHash = crypto.createHash('sha256');
-const CiD = 'DIDPROEJCT';
-getHash.update(CiD);
-const getClientId = getHash.digest('hex');
+// const getHash = crypto.createHash('sha256');
+// const CiD = 'DIDPROEJCT';
+// getHash.update(CiD);
+// const getClientId = getHash.digest('hex');
 
 const Otp = {
-    clientId: getClientId,
+    clientId: 'aaaa',
     redirectUri: 'http://localhost:3500',
 };
+
+const RestAPI = Otp.clientId;
 
 router.get('/RedirectUrl', (req, res) => {
     const url = `http://localhost:8000/api/Oauth/authorize?clientId=${Otp.clientId}&redirectUri=${Otp.redirectUri}&response_type=code`;
@@ -79,23 +81,23 @@ router.post('/oAuthRegister', async (req, res) => {
             },
         });
 
-        //console.log(_user.dataValues.email, _user.dataValues.password);
+        console.log(_user.dataValues.email, _user.dataValues.password);
         const getEncodedHash = bcrypt.compareSync(password, _user.dataValues.password);
+        console.log(getEncodedHash)
         if (getEncodedHash === true) {
             const userPwHash = _user.dataValues.password;
 
-            console.log(userPwHash);
-            const response = {
+            const toBlockData = {
                 email: email,
                 password: userPwHash,
                 clientId: Otp.clientId,
-                redirectUri: Otp.redirectUri,
             };
 
-            await axios.post('http://localhost:8000/api/Oauth/register', response);
+            const response = await axios.post('http://localhost:8000/api/Oauth/register', toBlockData);
+            console.log(response.data)
             res.json({
                 status: true,
-                response: response,
+                data: response.data.email,
             });
         } else {
             res.json({
@@ -104,7 +106,7 @@ router.post('/oAuthRegister', async (req, res) => {
             });
         }
     } catch (error) {
-        console.log(error);
+        console.log(error.message);
     }
 });
 

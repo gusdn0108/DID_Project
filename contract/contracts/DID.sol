@@ -13,6 +13,7 @@ contract DID is IDID {
 
     function registerUser (string memory _hashedId ,User memory _data) external{
         require(!registeredUser[_hashedId]);
+        
         User memory userObj;
 
         userObj.email = _data.email;

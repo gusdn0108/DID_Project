@@ -97,47 +97,39 @@ router.post('/getToken', async (req, res) => {
 
 router.post('/register', async (req, res) => {
     const { email, password, clientId } = req.body;
-
-    const userHash = email + password;
-
-    console.log(userHash);
-
-    const hash = await bcrypt.hash(userHash, 12);
-
-    console.log(hash);
-
-    // const a = bcrypt.compareSync(userHash, hash);
-    // console.log(a);
-
-    const DATA = {
-        email: email,
-        password: password,
-    };
-
-    const networkId = await web3.eth.net.getId();
-    const CA = DID.networks[networkId].address;
-    const abi = DID.abi;
-    const deployed = await new web3.eth.Contract(abi, CA);
-    const data = await deployed.methods.registerUser(hash, DATA).send({
-        from: '0x6a2EACa317ebc2cf9055eB5407F6F2Ee25582622',
-        gas: 1000000,
-    });
-
-    const adf = await deployed.methods.getUser(hash).call();
-
-    console.log(adf);
-
     if (clientId == 'aaaa') {
         try {
-            const response = {
-                DATA,
+            const userHash = email + password;
+            const hash = await bcrypt.hash(userHash, 12);
+
+            const DATA = {
+                email: email,
+                password: password,
             };
 
+            const networkId = await web3.eth.net.getId();
+            const CA = DID.networks[networkId].address;
+            const abi = DID.abi;
+
+            const deployed = await new web3.eth.Contract(abi, CA);
+            const data = await deployed.methods.registerUser(hash, DATA).send({
+                from: '0x6182CA9BF8d993d0E3Cb0891971C97dAD694f063',
+                gas: 1000000
+            });
+
+            const result = await deployed.methods.getUser(hash).call();
+            console.log(result)
+            const response = { 
+                email : result.email,
+                status : true 
+            } 
+            res.json(response)
             //블록체인 안에 넣어줘야함
         } catch (e) {
             console.log(e.message);
         }
-    } else {
+    } 
+    else {
         const response = {
             status: 'fail',
             msg: '등록되지 않은 클라이언트 서버입니다. ',
