@@ -1,6 +1,7 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const axios = require('axios');
+const { fail } = require('assert');
 const router = express.Router();
 
 router.get('/authorize', (req, res) => {
@@ -89,5 +90,25 @@ router.post('/getToken', async (req, res) => {
         console.log(error);
     }
 });
+
+router.post('/register', (req, res) => {
+    const { email, password, clientId} = req.body
+
+    if( clientId == 'aaaa') {
+        try {
+
+        }
+        catch(e) {
+            console.log(e.message)
+        }
+    }
+    else {
+        const response = {
+            status: 'fail',
+            msg:"등록되지 않은 클라이언트 서버입니다. "
+        }
+        res.json
+    }
+})
 
 module.exports = router;

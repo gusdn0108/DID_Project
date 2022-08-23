@@ -72,7 +72,8 @@ const register = () => {
         const verifier = document.querySelector('#verifier').value
         if(verifier == verifyNum) {
             try {
-                const response = await axios.post(`${backend}/api/auth/Signup`, { email, password, nickName } )
+                const regiEmail = email + domain
+                const response = await axios.post(`${backend}/api/auth/Signup`, { email:regiEmail, password, nickName } )
                 if(response.data.status == 1) {
                     alert('회원가입이 완료되었습니다.')
                     location.href=`${frontend}`

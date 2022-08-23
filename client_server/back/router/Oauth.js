@@ -71,17 +71,17 @@ router.post('/oAuthGetToken', async (req, res) => {
 
 router.post('/oAuthRegister', async (req, res) => {
     const { email, password } = req.body;
-
+    console.log(req.body);
     try {
         const _user = await Auth.findOne({
             where: {
                 email: email,
             },
         });
-        //console.log(_user.dataValues.email, _user.dataValues.password);
-        console.log(req.body);
+
         const getEncodedHash = bcrypt.compareSync(password, _user.dataValues.password);
         if (getEncodedHash) {
+            const response = await axios.post('http://localhost:8000/oauth/register', { id, pw })
         } else {
             res.json({
                 status: false,
@@ -92,5 +92,9 @@ router.post('/oAuthRegister', async (req, res) => {
         console.log(error);
     }
 });
+
+router.post('/test', (req,res) => {
+    console.log(req.body)
+})
 
 module.exports = router;
