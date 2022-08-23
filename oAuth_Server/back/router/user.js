@@ -96,7 +96,7 @@ router.post('/register', (req, res) => {
 
     if( clientId == 'aaaa') {
         try {
-
+            
         }
         catch(e) {
             console.log(e.message)
