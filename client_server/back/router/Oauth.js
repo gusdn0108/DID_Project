@@ -95,10 +95,7 @@ router.post('/oAuthRegister', async (req, res) => {
             console.log(oauthRegiData);
 
             const response = await axios.post('http://localhost:8000/api/oauth/register', oauthRegiData)
-            res.json({
-                status:true,
-                response:response
-            })
+            
         } else {
             res.json({
                 status: false,

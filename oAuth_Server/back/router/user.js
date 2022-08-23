@@ -3,6 +3,14 @@ const jwt = require('jsonwebtoken');
 const axios = require('axios');
 const { fail } = require('assert');
 const router = express.Router();
+const Web3 = require('web3')
+const DIDContract = require('../contract/DID.json');
+
+const web3 = new Web3(new Web3.providers.HttpProvider('http://127.0.0.1:8545'));
+const deployed = new web3.eth.Contract (
+    DIDContract.abi,
+    '0xe7B0dF1F8B35D103122507e0821981953BD78f05'
+)
 
 router.get('/authorize', (req, res) => {
     res.render('index.html');
@@ -91,12 +99,13 @@ router.post('/getToken', async (req, res) => {
     }
 });
 
-router.post('/register', (req, res) => {
-    const { email, password, clientId} = req.body
+router.post('/register', async (req, res) => {
+    const { email, password, clientId } = req.body
 
     if( clientId == 'aaaa') {
         try {
-            
+            const response = await deployed.methods.getUser('0x884592D5BE23f2d05e092aE76002108027cc1658').call()
+            console.log(response)
         }
         catch(e) {
             console.log(e.message)
@@ -107,7 +116,7 @@ router.post('/register', (req, res) => {
             status: 'fail',
             msg:"등록되지 않은 클라이언트 서버입니다. "
         }
-        res.json
+        res.json(response)
     }
 })
 
