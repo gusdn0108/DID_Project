@@ -5,7 +5,6 @@ const jwt = require('jsonwebtoken');
 const router = express.Router();
 const { Auth, sequelize } = require('../models');
 const { Op } = require('sequelize');
-const { clearConfigCache } = require('prettier');
 
 const generateRandom = (min, max) => {
     const ranNum = (Math.floor(Math.random() * (max - min + 1)) + min).toString();
@@ -31,9 +30,8 @@ router.post('/email', async (req, res) => {
         if (exEmail) {
             return res.status(403).send('이미 사용중인 메일입니다 ');
         }
-
-    } catch(e) {
-        console.log(e)
+    } catch (e) {
+        console.log(e);
     }
     // 중복 체크하고
     const number = generateRandom(111111, 999999);
