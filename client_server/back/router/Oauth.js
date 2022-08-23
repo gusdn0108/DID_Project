@@ -81,23 +81,23 @@ router.post('/oAuthRegister', async (req, res) => {
             },
         });
 
-        //console.log(_user.dataValues.email, _user.dataValues.password);
+        console.log(_user.dataValues.email, _user.dataValues.password);
         const getEncodedHash = bcrypt.compareSync(password, _user.dataValues.password);
+        console.log(getEncodedHash)
         if (getEncodedHash === true) {
             const userPwHash = _user.dataValues.password;
 
-            console.log(userPwHash);
-            const response = {
+            const toBlockData = {
                 email: email,
                 password: userPwHash,
                 clientId: Otp.clientId,
-                redirectUri: Otp.redirectUri,
             };
 
-            await axios.post('http://localhost:8000/api/Oauth/register', response);
+            const response = await axios.post('http://localhost:8000/api/Oauth/register', toBlockData);
+            console.log(response.data)
             res.json({
                 status: true,
-                response: response,
+                data: response.data.email,
             });
         } else {
             res.json({

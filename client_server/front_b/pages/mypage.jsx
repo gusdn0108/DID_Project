@@ -24,6 +24,7 @@ const mypage = ({userId, email, point})  => {
             alert('비밀 번호를 확인해주세요')
             return;
         }
+        alert(response)
     }
 
     return (
