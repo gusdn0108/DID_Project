@@ -1,16 +1,12 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 const axios = require('axios');
-const { fail } = require('assert');
+const Web3 = require('web3');
 const router = express.Router();
-const Web3 = require('web3')
-const DIDContract = require('../contract/DID.json');
+const DID = require('../contracts/DID.json');
 
 const web3 = new Web3(new Web3.providers.HttpProvider('http://127.0.0.1:8545'));
-const deployed = new web3.eth.Contract (
-    DIDContract.abi,
-    '0xe7B0dF1F8B35D103122507e0821981953BD78f05'
-)
 
 router.get('/authorize', (req, res) => {
     res.render('index.html');
@@ -100,24 +96,53 @@ router.post('/getToken', async (req, res) => {
 });
 
 router.post('/register', async (req, res) => {
-    const { email, password, clientId } = req.body
+    const { email, password, clientId } = req.body;
 
-    if( clientId == 'aaaa') {
+    const userHash = email + password;
+
+    console.log(userHash);
+
+    const hash = await bcrypt.hash(userHash, 12);
+
+    console.log(hash);
+
+    // const a = bcrypt.compareSync(userHash, hash);
+    // console.log(a);
+
+    const DATA = {
+        email: email,
+        password: password,
+    };
+
+    const networkId = await web3.eth.net.getId();
+    const CA = DID.networks[networkId].address;
+    const abi = DID.abi;
+    const deployed = await new web3.eth.Contract(abi, CA);
+    const data = await deployed.methods.registerUser(hash, DATA).send({
+        from: '0x6a2EACa317ebc2cf9055eB5407F6F2Ee25582622',
+        to: '0x18Edfd1601db3136E67DEbdaEfE4f1edF5B36657',
+    });
+
+    console.log(data);
+
+    if (clientId == 'aaaa') {
         try {
-            const response = await deployed.methods.getUser('0x884592D5BE23f2d05e092aE76002108027cc1658').call()
-            console.log(response)
+            const response = {
+                DATA,
+            };
+
+            //블록체인 안에 넣어줘야함
+        } catch (e) {
+            console.log(e.message);
         }
-        catch(e) {
-            console.log(e.message)
-        }
-    }
-    else {
+    } else {
         const response = {
             status: 'fail',
-            msg:"등록되지 않은 클라이언트 서버입니다. "
-        }
-        res.json(response)
+            msg: '등록되지 않은 클라이언트 서버입니다. ',
+        };
+        res.json({
+            response: response,
+        });
     }
-})
-
+});
 module.exports = router;

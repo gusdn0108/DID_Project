@@ -194,7 +194,11 @@
   "sourceMap": "",
   "deployedSourceMap": "",
   "source": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.15;\n\ninterface IDID {\n    \n    struct User{\n        string email;\n        string password;\n        bool A;\n        bool B;\n        bool C;\n        bool D;\n    }\n\n    function registerUser (string memory _hashedId ,User memory _data) external;\n    function updateUser (string memory _hashedId, User memory _data) external;\n    function deleteUser (string memory _hashedId) external;\n    function getUser (string memory _hashedId) view external returns(User memory);\n    function isRegistered(string memory _hashedId) view external returns(bool);\n}",
+<<<<<<< HEAD
   "sourcePath": "/Users/chronica/Desktop/lsj/blockchain5/dao/Team_DAO/contract/contracts/IDID.sol",
+=======
+  "sourcePath": "/home/rayna1221/BP/Team_DAO/contract/contracts/IDID.sol",
+>>>>>>> bda89d3716cb9f2bb39cecde4197d4a9a51a59a8
   "ast": {
     "absolutePath": "project:/contracts/IDID.sol",
     "exportedSymbols": {
@@ -825,8 +829,13 @@
     "version": "0.8.15+commit.e14f2714.Emscripten.clang"
   },
   "networks": {},
+<<<<<<< HEAD
   "schemaVersion": "3.4.9",
   "updatedAt": "2022-08-23T03:14:38.241Z",
+=======
+  "schemaVersion": "3.4.8",
+  "updatedAt": "2022-08-23T03:10:20.535Z",
+>>>>>>> bda89d3716cb9f2bb39cecde4197d4a9a51a59a8
   "devdoc": {
     "kind": "dev",
     "methods": {},
