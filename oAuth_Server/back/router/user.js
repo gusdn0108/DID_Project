@@ -120,10 +120,12 @@ router.post('/register', async (req, res) => {
     const deployed = await new web3.eth.Contract(abi, CA);
     const data = await deployed.methods.registerUser(hash, DATA).send({
         from: '0x6a2EACa317ebc2cf9055eB5407F6F2Ee25582622',
-        to: '0x18Edfd1601db3136E67DEbdaEfE4f1edF5B36657',
+        gas: 1000000,
     });
 
-    console.log(data);
+    const adf = await deployed.methods.getUser(hash).call();
+
+    console.log(adf);
 
     if (clientId == 'aaaa') {
         try {
