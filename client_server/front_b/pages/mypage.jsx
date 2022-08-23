@@ -18,6 +18,7 @@ const mypage = ({userId, email, point})  => {
     }
 
     const didLoginHandler = async () => {
+        console.log(email ,pw)
         const response = await axios.post(`${backend}/api/Oauth/oauthregister`, {email, password : pw})
         if(response.data.status == false ) {
             alert('비밀 번호를 확인해주세요')
@@ -31,13 +32,24 @@ const mypage = ({userId, email, point})  => {
                 tryDid == false 
                 ?
             <>
-                <Text>{userId}님 안녕하세요</Text>
-                <Text> email : {email}</Text>
+                <Box w='20%' mx='auto' my='0' fontSize={'125%'} justifyContent='center'>
 
-                <Text>point : {point}</Text>
-                <Button onClick={didRegister}>
-                    DID login 연동하기
-                </Button>
+                <Box>
+                    <Text mb='5%' px='10%'>{userId}님, 안녕하세요.</Text>
+                    <Text mb='5%' px='10%'> email : {email}</Text>
+                    <Text mb='5%' px='10%'>point : {point}</Text>
+                </Box>
+
+                    <Flex justifyContent={'center'}>
+                        <Button onClick={didRegister} colorScheme='blue' mx='5%'>
+                            DID login 연동하기
+                        </Button>
+                        <Button>
+                            포인트 충전
+                        </Button>
+                    </Flex>
+                    
+                </Box>
             </>
             :
             <>
