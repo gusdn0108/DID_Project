@@ -97,7 +97,6 @@ router.post('/register', async (req, res) => {
         try {
             const userHash = email + password;
             const hash = crypto.createHash('sha256').update(userHash).digest('base64');
-            console.log('새로운해시', hash);
 
             const DATA = {
                 email: email,
@@ -117,7 +116,7 @@ router.post('/register', async (req, res) => {
             });
 
             const result = await deployed.methods.getUser(hash).call();
-            console.log('asdf???', result);
+            console.log(result);
             const getuuid = result[2];
             const getBlockId = result[0];
             console.log(getBlockId);

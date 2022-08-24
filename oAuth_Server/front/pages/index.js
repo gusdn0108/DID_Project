@@ -37,7 +37,7 @@ export default function Home() {
           <FormControl mb='1rem'>
               <FormLabel fontSize='xl' mb='2.5'>Email</FormLabel>
               <Input type='text' placeholder='email을 입력해주세요'
-                size='md' id='Email' mb='5%'
+                size='md' id='Email' mb='7%'
                 onChange = {getId}
                 />
 
