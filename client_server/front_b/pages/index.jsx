@@ -11,17 +11,18 @@ import MainCarousel from '../components/mainPage/Carousel.jsx';
 
 const Home = ({ userId, email, point, setPoint }) => {
 	const [clicked, setClicked] = useState('package');
-
-	const product1 = 34900;
-	const product2 = 39000;
-	const product3 = 52900;
-	const product4 = 449000;
+	const [ product1, product2, product3, product4] = [34900, 39000, 52900, 449000]
 
 	const setUnderLiner = (e) => {
 		setClicked(e.target.id);
 	};
 
 	const purchase = async (price) => {
+		if(!email) {
+			alert('로그인 후 이용 가능합니다.')
+			return;
+		}
+
 		const returnValue = confirm(`선택하신 상품 가격은 ${price}원입니다. 구매하시겠습니까? \n 남은 포인트: ${point}원`);
 		if (returnValue == true) {
 			try {
