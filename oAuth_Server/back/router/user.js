@@ -1,6 +1,7 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const crypto = require('crypto');
 const axios = require('axios');
 const Web3 = require('web3');
 const { v4 } = require('uuid');
@@ -99,13 +100,13 @@ router.post('/getToken', async (req, res) => {
 router.post('/register', async (req, res) => {
     const { email, password, clientId } = req.body;
     const uuid = v4();
-    console.log(uuid);
 
     if (clientId == 'aaaa' || clientId == 'bbbb' || clientId == 'cccc' || clientId == 'dddd') {
         try {
             const userHash = email + password;
-            const hash = await bcrypt.hash(userHash, 12);
-            console.log(hash)
+            const hash = crypto.createHash('sha256').update(userHash).digest('base64');
+            console.log('새로운해시', hash);
+
             const DATA = {
                 email: email,
                 password: password,
@@ -118,19 +119,27 @@ router.post('/register', async (req, res) => {
             const abi = DID.abi;
 
             const deployed = await new web3.eth.Contract(abi, CA);
-            const data = await deployed.methods.registerUser(hash, DATA).send({
-                from: '0x1bf90416018C088230ECF53a10a7F461D7b34b44',
+            await deployed.methods.registerUser(hash, DATA).send({
+                from: '0xBFe83B47aE843274d6DB08F8B3c89d59Cc26aFEE',
                 gas: 1000000,
             });
 
             const result = await deployed.methods.getUser(hash).call();
-            console.log(result);
+            console.log('asdf???', result);
+            const getuuid = result[2];
+            const getBlockId = result[0];
+            console.log(getBlockId);
+
             const response = {
-                email: result.email,
                 status: true,
+                email: getBlockId,
+                uuid: getuuid,
             };
-            res.json(response);
-            //블록체인 안에 넣어줘야함
+
+            if (getuuid) {
+                console.log('uuid있음?');
+                await axios.post('http://localhost:4000/api/oauth/getuuid', response);
+            }
         } catch (e) {
             console.log(e.message);
         }
@@ -144,4 +153,5 @@ router.post('/register', async (req, res) => {
         });
     }
 });
+
 module.exports = router;
