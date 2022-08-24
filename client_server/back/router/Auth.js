@@ -344,4 +344,39 @@ router.post('/pointInquiry', async (req, res) => {
     }
 });
 
+router.post('/updateUser', async (req, res) => {
+    const { email, password } = req.body;
+    try {
+        const _user = await Auth.findOne({
+            where: {
+                email: {
+                    [Op.eq]: email,
+                },
+            },
+        });
+        if (_user) {
+            const updateUser = await Auth.update({ password: password }, { where: { email: email } });
+            if (updateUser) {
+                delete _user.dataValues.password;
+                delete _user.dataValues.point;
+                delete _user.dataValues.uuid;
+                console.log('삭제된 db', _user);
+
+                let token = jwt.sign(
+                    {
+                        ..._user.dataValues,
+                    },
+                    process.env.SECRET_KEY,
+                );
+                res.json({
+                    status: 1,
+                    token: token,
+                });
+            }
+        }
+    } catch (e) {
+        console.log(e);
+    }
+});
+
 module.exports = router;
