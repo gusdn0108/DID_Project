@@ -1,8 +1,9 @@
 import { Button, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text, FormControl, FormLabel, Input } from "@chakra-ui/react";
 import axios from 'axios';
-import { frontend, backend } from '../utils/ip.js'
+import { frontend, backend, oauth } from '../utils/ip.js'
 import { getCookie, setCookie } from 'cookies-next'
 import Link from "next/link.js";
+
 
 const LoginModal = ({isOpen, onClose}) => {
 
@@ -25,6 +26,7 @@ const LoginModal = ({isOpen, onClose}) => {
 
     const didLoginHandler = () => {
         console.log('did login req')
+        location.href=`${backend}/api/oauth/RedirectUrl`
     }
     
     return(
