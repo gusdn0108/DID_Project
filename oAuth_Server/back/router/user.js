@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const axios = require('axios');
 const Web3 = require('web3');
+const { v4 } = require('uuid');
 const router = express.Router();
 const DID = require('../contracts/DID.json');
 
@@ -97,6 +98,9 @@ router.post('/getToken', async (req, res) => {
 
 router.post('/register', async (req, res) => {
     const { email, password, clientId } = req.body;
+    const uuid = v4();
+    console.log(uuid);
+
     if (clientId == 'aaaa') {
         try {
             const userHash = email + password;
@@ -105,6 +109,7 @@ router.post('/register', async (req, res) => {
             const DATA = {
                 email: email,
                 password: password,
+                uuid: uuid,
             };
 
             const networkId = await web3.eth.net.getId();
@@ -114,22 +119,21 @@ router.post('/register', async (req, res) => {
             const deployed = await new web3.eth.Contract(abi, CA);
             const data = await deployed.methods.registerUser(hash, DATA).send({
                 from: '0x6182CA9BF8d993d0E3Cb0891971C97dAD694f063',
-                gas: 1000000
+                gas: 1000000,
             });
 
             const result = await deployed.methods.getUser(hash).call();
-            console.log(result)
-            const response = { 
-                email : result.email,
-                status : true 
-            } 
-            res.json(response)
+            console.log(result);
+            const response = {
+                email: result.email,
+                status: true,
+            };
+            res.json(response);
             //블록체인 안에 넣어줘야함
         } catch (e) {
             console.log(e.message);
         }
-    } 
-    else {
+    } else {
         const response = {
             status: 'fail',
             msg: '등록되지 않은 클라이언트 서버입니다. ',
