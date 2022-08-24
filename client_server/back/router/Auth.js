@@ -344,4 +344,27 @@ router.post('/pointInquiry', async (req, res) => {
     }
 });
 
+router.post('/updateUser', async (req, res) => {
+    const { email, password } = req.body;
+    try {
+        const _user = await Auth.findOne({
+            where: {
+                email: {
+                    [Op.eq]: email,
+                },
+            },
+        });
+        if (_user) {
+            const hash = await bcrypt.hash(password, 12);
+            await Auth.update({ password: hash }, { where: { email: email } });
+
+            res.json({
+                status: 1,
+            });
+        }
+    } catch (e) {
+        console.log(e);
+    }
+});
+
 module.exports = router;
