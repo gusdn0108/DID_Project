@@ -4,26 +4,17 @@ import { Box, Button, Flex, Text, Input, FormControl,
 import axios from 'axios';
 import { backend,frontend } from '../utils/ip';
 
-const mypage = ({ userId, email, point }) => {
-  const [tryDid, setTryDid] = useState(false);
-  const [pw, setPw] = useState(undefined);
 
-  const didRegister = () => {
-    setTryDid(!tryDid);
-  };
+const mypage = ({userId, email, point})  => {
+    const [tryDid, setTryDid] = useState(false)
+    const [ pw, setPw ] = useState(undefined) 
 
-  const getPs = (e) => {
-    setPw(e.target.value);
-  };
+    const didRegister = () => {
+        setTryDid(!tryDid)
+    }
 
-  const didLoginHandler = async () => {
-    const response = await axios.post(`${backend}/api/Oauth/oauthregister`, {
-      email,
-      password: pw,
-    });
-    if (response.data.status == false && response.data.msg == 1) {
-      alert("비밀 번호를 확인해주세요");
-      return;
+    const getPs = (e) => {
+        setPw(e.target.value)
     }
 
     const didLoginHandler = async () => {
@@ -38,8 +29,6 @@ const mypage = ({ userId, email, point }) => {
         }
         alert(`${response.data.data} 이메일로 did login이 연동되었습니다.`)
     }
-    alert(`${response.data.data} 이메일로 did login이 연동되었습니다.`);
-  };
 
     const changePw = () => {
         location.href=`${frontend}/changePw`
@@ -83,40 +72,11 @@ const mypage = ({ userId, email, point }) => {
                         <Button onClick={didLoginHandler} colorScheme='blue' w='32' >DID 등록</Button>
                     </Flex>
 
-            <Flex justifyContent={"center"}>
-              <Button onClick={didRegister} colorScheme="blue" mx="5%">
-                DID login 연동하기
-              </Button>
-              <Button>포인트 충전</Button>
-            </Flex>
-          </Box>
-        </>
-      ) : (
-        <>
-          <FormControl w="15%" mx="auto" my="0">
-            <Text fontSize={"1.25rem"} mb="0.5rem">
-              {" "}
-              비밀번호를 다시 한 번 입력해주세요.{" "}
-            </Text>
-            <Input
-              type="password"
-              placeholder="password을 입력해주세요"
-              size="md"
-              id="userPw"
-              mb="3%"
-              onChange={getPs}
-            />
-            <Flex justifyContent={"space-evenly"}>
-              <Button onClick={didRegister}> 취소 </Button>
-              <Button onClick={didLoginHandler} colorScheme="blue" w="32">
-                DID 등록
-              </Button>
-            </Flex>
-          </FormControl>
-        </>
-      )}
-    </Box>
-  );
-};
+                </FormControl>
+            </>
+            }
+        </Box>
+    )
+}
 
 export default mypage;
