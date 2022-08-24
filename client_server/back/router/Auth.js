@@ -197,7 +197,7 @@ router.post('/SignUp', async (req, res) => {
         }
 
         const hash = await bcrypt.hash(password, 12);
-        console.log(hash);
+        console.log('asdf??', hash);
         await Auth.create({
             email: email,
             password: hash,
