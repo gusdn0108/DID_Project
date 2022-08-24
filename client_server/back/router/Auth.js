@@ -355,24 +355,12 @@ router.post('/updateUser', async (req, res) => {
             },
         });
         if (_user) {
-            const updateUser = await Auth.update({ password: password }, { where: { email: email } });
-            if (updateUser) {
-                delete _user.dataValues.password;
-                delete _user.dataValues.point;
-                delete _user.dataValues.uuid;
-                console.log('삭제된 db', _user);
+            const hash = await bcrypt.hash(password, 12);
+            await Auth.update({ password: hash }, { where: { email: email } });
 
-                let token = jwt.sign(
-                    {
-                        ..._user.dataValues,
-                    },
-                    process.env.SECRET_KEY,
-                );
-                res.json({
-                    status: 1,
-                    token: token,
-                });
-            }
+            res.json({
+                status: 1,
+            });
         }
     } catch (e) {
         console.log(e);
