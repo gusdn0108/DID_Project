@@ -1,6 +1,6 @@
 import {useState,useEffect} from 'react';
 import { Box, Button, Flex, Text, Input, FormControl,
-    FormLabel, FormErrorMessage, FormHelperText,} from "@chakra-ui/react";
+    FormLabel, FormErrorMessage, FormHelperText, useLatestRef,} from "@chakra-ui/react";
 import axios from 'axios';
 import { backend } from '../utils/ip';
 
@@ -18,13 +18,15 @@ const mypage = ({userId, email, point})  => {
     }
 
     const didLoginHandler = async () => {
-        console.log(email ,pw)
         const response = await axios.post(`${backend}/api/Oauth/oauthregister`, {email, password : pw})
-        if(response.data.status == false ) {
+        if(response.data.status == false && response.data.msg == 1  ) {
             alert('비밀 번호를 확인해주세요')
             return;
         }
-        alert(response)
+        if(response.data.status == false, response.data.msg == 2 ) {
+            alert('이미 연동된 계정입니다.')
+        }
+        alert(`${response.data.data} 이메일로 did login이 연동되었습니다.`)
     }
 
     return (

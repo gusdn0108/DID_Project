@@ -81,20 +81,22 @@ router.post('/oAuthRegister', async (req, res) => {
             },
         });
 
-        console.log(_user.dataValues.email, _user.dataValues.password);
         const getEncodedHash = bcrypt.compareSync(password, _user.dataValues.password);
-        console.log(getEncodedHash);
         if (getEncodedHash === true) {
             const userPwHash = _user.dataValues.password;
-
             const toBlockData = {
                 email: email,
                 password: userPwHash,
                 clientId: Otp.clientId,
             };
-
+            const hasUuid = _user.dataValues.uuid;
+            if(hasUuid !== null) {
+                res.json({
+                    status: false,
+                    msg: 2
+                })
+            }
             const response = await axios.post('http://localhost:8000/api/Oauth/register', toBlockData);
-            console.log(response.data);
             res.json({
                 status: true,
                 data: response.data.email,
@@ -102,7 +104,7 @@ router.post('/oAuthRegister', async (req, res) => {
         } else {
             res.json({
                 status: false,
-                msg: '너 비밀번호 틀림 ',
+                msg: 1,
             });
         }
     } catch (error) {
