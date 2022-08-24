@@ -20,7 +20,7 @@ const Header = ({userId}) => {
             <Box pt='2rem'>
                 <Flex borderBottom='1px' borderColor='gray.200' justifyContent="space-between" px="2.5rem" pb='1rem' w="full" z-index='10'>
                     <Box bg="white">
-                        <Link href="/"><Button size='sm' variant='ghost' fontSize='2xl' pl='5rem' mr='3rem'>Kyungil Tour</Button></Link>
+                        <Link href="/"><Button size='sm' variant='ghost' fontSize='2xl' pl='5rem' mr='3rem' ml='1rem'>Kyungil Tour</Button></Link>
                         <Input type='text' w = '28rem' borderRadius='1.25rem' pd='1.5rem' placeholder='검색어를 입력해주세요'
                         // _after={{content:<Search2Icon/>, display:'inline-block'}}
                         />
@@ -36,9 +36,9 @@ const Header = ({userId}) => {
                             </>
                             :
                             <>
-                                <Button colorScheme='blue'onClick={onOpen}>login</Button>
+                                <Button colorScheme='blue'onClick={onOpen} w='6rem'>login</Button>
                                 <LoginModal isOpen={isOpen} onClose={onClose}/>
-                                <Button colorScheme='gray' w='32' m='0.25rem'><Link href='/register'>회원 가입</Link></Button>
+                                <Button colorScheme='gray' w='6rem' mx='1rem' my='0.25rem'><Link href='/register'>join</Link></Button>
                             </>
                         }                    
                     </Box>
