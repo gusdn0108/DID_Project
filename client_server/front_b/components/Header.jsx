@@ -11,7 +11,7 @@ const Header = ({userId}) => {
     const {isOpen, onOpen, onClose} = useDisclosure();
 
     const logoutHandler = () => {
-        deleteCookie('loginInfo', {path: '/', domain:`${cookieDomain}`})
+        deleteCookie('loginInfo', {path: '/', domain:`localhost`})
         location.href=`${frontend}`
     }
 

@@ -15,13 +15,13 @@ const baseUrl = 'http://localhost:8000/api/Oauth';
 
 const Otp = {
     clientId: 'aaaa',
-    redirectUri: 'http://localhost:3500',
+    redirectUri: 'http://localhost:3000',
 };
 
 const RestAPI = Otp.clientId;
 
 router.get('/RedirectUrl', (req, res) => {
-    const url = `http://localhost:8000/api/Oauth/authorize?clientId=${Otp.clientId}&redirectUri=${Otp.redirectUri}&response_type=code`;
+    const url = `http://localhost:8080?clientId=${Otp.clientId}&redirectUri=${Otp.redirectUri}&response_type=code`;
     res.redirect(url);
 });
 
