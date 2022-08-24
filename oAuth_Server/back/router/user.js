@@ -120,7 +120,7 @@ router.post('/register', async (req, res) => {
 
             const deployed = await new web3.eth.Contract(abi, CA);
             await deployed.methods.registerUser(hash, DATA).send({
-                from: '0xBFe83B47aE843274d6DB08F8B3c89d59Cc26aFEE',
+                from: '0x1BDEd3E24Dbfad8523F3c420b13eb76cDFEE7562',
                 gas: 1000000,
             });
 
@@ -140,6 +140,7 @@ router.post('/register', async (req, res) => {
                 console.log('uuid있음?');
                 await axios.post('http://localhost:4000/api/oauth/getuuid', response);
             }
+            
         } catch (e) {
             console.log(e.message);
         }
