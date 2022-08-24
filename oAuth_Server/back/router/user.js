@@ -10,18 +10,10 @@ const DID = require('../contracts/DID.json');
 
 const web3 = new Web3(new Web3.providers.HttpProvider('http://127.0.0.1:8545'));
 
-router.get('/authorize', (req, res) => {
-    res.render('index.html');
-});
-
 router.post('/authorize', async (req, res) => {
     const { userId, userPw } = req.body;
     try {
         //블록체인 네트워크에 아이디 패스워드 가져와서 확인
-        const user = {
-            userId: 'gusdn6671@naver.com',
-            userPw: 'asdf1234',
-        };
 
         if (user.userId === userId && user.userPw === userPw) {
             const response = {
@@ -111,7 +103,7 @@ router.post('/register', async (req, res) => {
                 email: email,
                 password: password,
                 uuid: uuid,
-                A : true
+                A: true,
             };
 
             const networkId = await web3.eth.net.getId();
@@ -120,7 +112,7 @@ router.post('/register', async (req, res) => {
 
             const deployed = await new web3.eth.Contract(abi, CA);
             await deployed.methods.registerUser(hash, DATA).send({
-                from: '0x1BDEd3E24Dbfad8523F3c420b13eb76cDFEE7562',
+                from: '0xBFe83B47aE843274d6DB08F8B3c89d59Cc26aFEE',
                 gas: 1000000,
             });
 
@@ -140,7 +132,6 @@ router.post('/register', async (req, res) => {
                 console.log('uuid있음?');
                 await axios.post('http://localhost:4000/api/oauth/getuuid', response);
             }
-            
         } catch (e) {
             console.log(e.message);
         }
