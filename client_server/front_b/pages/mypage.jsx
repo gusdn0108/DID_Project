@@ -1,6 +1,6 @@
 import {useState,useEffect} from 'react';
 import { Box, Button, Flex, Text, Input, FormControl,
-    FormLabel, FormErrorMessage, FormHelperText,} from "@chakra-ui/react";
+    FormLabel, FormErrorMessage, FormHelperText, useLatestRef,} from "@chakra-ui/react";
 import axios from 'axios';
 import { backend } from '../utils/ip';
 
@@ -24,7 +24,7 @@ const mypage = ({userId, email, point})  => {
             alert('비밀 번호를 확인해주세요')
             return;
         }
-        alert(response)
+        alert(`${response.data.data} 이메일로 did login이 연동되었습니다.`)
     }
 
     return (

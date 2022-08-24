@@ -101,15 +101,16 @@ router.post('/register', async (req, res) => {
     const uuid = v4();
     console.log(uuid);
 
-    if (clientId == 'aaaa') {
+    if (clientId == 'aaaa' || clientId == 'bbbb' || clientId == 'cccc' || clientId == 'dddd') {
         try {
             const userHash = email + password;
             const hash = await bcrypt.hash(userHash, 12);
-
+            console.log(hash)
             const DATA = {
                 email: email,
                 password: password,
                 uuid: uuid,
+                A : true
             };
 
             const networkId = await web3.eth.net.getId();
@@ -118,7 +119,7 @@ router.post('/register', async (req, res) => {
 
             const deployed = await new web3.eth.Contract(abi, CA);
             const data = await deployed.methods.registerUser(hash, DATA).send({
-                from: '0xd48Ae606895132db9D5dCcb807fF2a2D040bA195',
+                from: '0x1bf90416018C088230ECF53a10a7F461D7b34b44',
                 gas: 1000000,
             });
 
