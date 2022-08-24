@@ -6,6 +6,7 @@ interface IDID {
     struct User{
         string email;
         string password;
+        string uuid;
         bool A;
         bool B;
         bool C;

@@ -8,15 +8,18 @@ contract DID is IDID {
     mapping(string => bool) private registeredUser;
 
     constructor(string memory _hashedId){
-        user[_hashedId] = User('yellow_w@gmail.com','1234',false,false,false,false);
+        user[_hashedId] = User('yellow_w@gmail.com','1234', '11111111-1111-1111-111111111111' ,false,false,false,false);
     }
 
     function registerUser (string memory _hashedId ,User memory _data) external{
         require(!registeredUser[_hashedId]);
+        
         User memory userObj;
 
         userObj.email = _data.email;
         userObj.password = _data.password;
+        userObj.uuid = _data.uuid;
+        
         userObj.A = _data.A;
         userObj.B = _data.B;
         userObj.C = _data.C;
@@ -48,7 +51,7 @@ contract DID is IDID {
         registeredUser[_hashedId] = false;
     }
     
-    function getUser (string memory _hashedId) view external returns(User memory){
+    function getUser(string memory _hashedId) view external returns(User memory){
         return user[_hashedId];
     }
 
