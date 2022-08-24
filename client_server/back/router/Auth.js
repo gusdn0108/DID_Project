@@ -229,6 +229,7 @@ router.post('/login', async (req, res) => {
             if (bcrypt.compareSync(userPw, _user.dataValues.password)) {
                 delete _user.dataValues.password;
                 delete _user.dataValues.point;
+                delete _user.dataValues.uuid;
                 console.log(_user.dataValues);
 
                 let token = jwt.sign(
