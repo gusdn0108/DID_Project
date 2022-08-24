@@ -83,7 +83,7 @@ router.post('/oAuthRegister', async (req, res) => {
 
         console.log(_user.dataValues.email, _user.dataValues.password);
         const getEncodedHash = bcrypt.compareSync(password, _user.dataValues.password);
-        console.log(getEncodedHash)
+        console.log(getEncodedHash);
         if (getEncodedHash === true) {
             const userPwHash = _user.dataValues.password;
 
@@ -94,7 +94,7 @@ router.post('/oAuthRegister', async (req, res) => {
             };
 
             const response = await axios.post('http://localhost:8000/api/Oauth/register', toBlockData);
-            console.log(response.data)
+            console.log(response.data);
             res.json({
                 status: true,
                 data: response.data.email,
@@ -107,6 +107,22 @@ router.post('/oAuthRegister', async (req, res) => {
         }
     } catch (error) {
         console.log(error.message);
+    }
+});
+
+router.post('/getuuid', async (req, res) => {
+    console.log('uuid옴???');
+    const { uuid, email } = req.body;
+    console.log(uuid, email);
+    const _user = await Auth.findOne({
+        where: {
+            email: {
+                [Op.eq]: email,
+            },
+        },
+    });
+    if (_user) {
+        await Auth.update({ uuid: uuid }, { where: { email: email } });
     }
 });
 
