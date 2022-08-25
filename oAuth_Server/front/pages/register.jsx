@@ -116,51 +116,64 @@ const register = () => {
 
     return(
         <Box display='flex' justifyContent='center'>
-            <Box pt='4rem' display='flex' justifyContent='center' w='20rem'>                
+            <Box pt='3rem' display='flex' justifyContent='center' w='22%'>                
                 <FormControl mt='3'>
-                    <Text mb='8%' textAlign={'center'} fontSize='1.5rem'>회원 가입</Text>
+                    <Text mb='8%' textAlign={'center'} fontSize='2rem'>회원 가입</Text>
                     {
                         sentEmail == false
                         ?
                         <>
-                            <FormLabel>Email</FormLabel>
+                            <FormLabel fontSize={'140%'} px='2%' mb='3%'>이메일</FormLabel>
                             <Flex justifyContent={'center'}>
-                                <Input type='text' onChange={getEmail} placeholder='email을 입력해주세요' id='userEmail' size='sm' mb='5%'/>
-                                <Select placeholder="Select Domain" size='sm' id='domainSelector' onChange={domainSelect}>
+                                <Input type='text' onChange={getEmail} placeholder='email을 입력해주세요' id='userEmail' 
+                                size='md' mb='5%'/>
+                                
+                                <Select placeholder="Select Domain" size='md' 
+                                id='domainSelector' onChange={domainSelect}
+                                
+                                >
                                     <option value="@kakao.com">@kakao.com</option>
                                     <option value="@naver.com">@naver.com</option>
                                     <option value="@gmail.com">@gmail.com</option>
                                 </Select>
                             </Flex>
 
-                            <FormLabel>name</FormLabel>
-                            <Input type='text' onChange={getName} placeholder='name을 입력해주세요'size='sm' mb='5%'/>
+                            <FormLabel fontSize={'140%'} px='2%'>이름</FormLabel>
+                            <Input type='text' onChange={getName} 
+                            placeholder='이름을 입력해주세요' size='md' mb='5%'/>
 
-                            <FormLabel>성별</FormLabel>
+                            <FormLabel fontSize={'140%'} px='2%'>성별</FormLabel>
                             <RadioGroup onChange={selectGender}  
-                            value={gender}>
+                            value={gender}
+                            fontSize={'140%'} mb='5%' px='3%'>
                                 <Stack direction='row'>
-                                    <Radio value='m'>남자</Radio>
+                                    <Radio value='m' mr='2%'>남자</Radio>
                                     <Radio value='f'>여자</Radio>
                                 </Stack>
                             </RadioGroup>
                             
-                            <FormLabel>나이</FormLabel>
+                            <FormLabel fontSize={'140%'} px='2%'>나이</FormLabel>
                             <Input
-                            placeholder="나이를 입력해주세요" onChange={getAge}/>
+                            placeholder="나이를 입력해주세요" mb='5%' size='md'
+                            onChange={getAge}/>
 
-                            <FormLabel>생년월일</FormLabel>
-                            <Input placeholder="생년월일 8자리를 입력해주세요" onChange={getBirth}/>
+                            <FormLabel fontSize={'140%'} px='2%'>생년월일</FormLabel>
+                            <Input mb='5%' size='md' 
+                            placeholder="생년월일 8자리를 입력해주세요" onChange={getBirth}/>
 
-                            <FormLabel>주소</FormLabel>
-                            <Input placeholder="주소를 입력해주세요" onChange={getAdr}/>
+                            <FormLabel fontSize={'140%'} px='2%'>주소</FormLabel>
+                            <Input mb='5%'size='md'
+                            placeholder="주소를 입력해주세요" onChange={getAdr}/>
 
-                            <FormLabel>전화번호</FormLabel>
-                            <Input placeholder="전화번호를 입력해주세요" onChange={getPhone}/>
+                            <FormLabel fontSize={'140%'} px='2%'>전화번호</FormLabel>
+                            <Input mb='5%' size='md'
+                            placeholder="전화번호를 입력해주세요" onChange={getPhone}/>
 
-                            <FormLabel>Password</FormLabel>
-                            <Input type='password' onChange={setpwdCheck} placeholder=' password을 입력해주세요' id='password' size='sm' />
-                            <FormHelperText mb='6%'>
+                            <FormLabel fontSize={'140%'} px='2%'>비밀번호</FormLabel>
+                            <Input type='password' 
+                            onChange={setpwdCheck} placeholder='패스워드를 입력해주세요'
+                             id='password' size='md' />
+                            <FormHelperText mb='7%' px='2%'>
                                 {
                                     psError == true
                                     ?
@@ -175,7 +188,7 @@ const register = () => {
                     }
                     {
                         sentEmail == false ?
-                        <Input type='submit' value='회원가입' onClick={sendEmail2}/>
+                        <Input type='submit' value='회원가입' onClick={sendEmail2} bg='gray.200' mb='20%'/>
                         :
                         <>
                         <Input type='text' placeholder="발송된 6자리 숫자를 입력하세요" id='verifier'/>
