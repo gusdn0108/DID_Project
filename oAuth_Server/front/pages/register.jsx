@@ -63,12 +63,7 @@ const register = () => {
     }
 
     const sendEmail = async () => {
-        const temail = document.querySelector('#userEmail').value
         const tuserPw = document.querySelector('#password').value
-        const tuserName = document.querySelector('#userNickname').value
-
-        setEmail(temail)
-        setName(tuserName)
         setPassword(tuserPw)
 
         if(pwdCheck(tuserPw) == false) {
@@ -80,7 +75,7 @@ const register = () => {
         
         try {
             const response = await axios.post(`${backend}/api/auth/email`, { 
-                email: regiEmail, password, name, gender, age, adr, birth, phone})
+                email: regiEmail, password, name, gender, age, addr:adr, birth, mobile:phone})
             setSentEmail(true)
             const verifyArray = response.data.number
             const verfifyNumber = verifyArray[0]+verifyArray[1]+verifyArray[2]+verifyArray[3]+verifyArray[4]+verifyArray[5]
