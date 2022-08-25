@@ -1,5 +1,5 @@
 import { Box, Button, Flex, Text, Input, FormControl,
-    FormLabel, FormErrorMessage, FormHelperText, Select} from "@chakra-ui/react";
+    FormLabel, FormErrorMessage, FormHelperText, Select, Radio, RadioGroup, Stack} from "@chakra-ui/react";
 import axios from 'axios'
 import { useState } from "react";
 import { backend, frontend } from '../utils/ip.js'
@@ -12,9 +12,14 @@ const register = () => {
     const [ sentEmail, setSentEmail ] = useState(false)
     const [ verifyNum, setVerifyNum ] = useState(undefined)
 
-    const [ email, setEmail] = useState('')
-    const [ nickName, setNick ] = useState('')
+    const [ email, setEmail] = useState(undefined)
     const [ domain, setDomain ] = useState(undefined) 
+    const [ name, setName ] = useState(undefined)
+    const [ gender, setGender ] = useState('f')
+    const [ age, setAge ] = useState(undefined)
+    const [ adr, setAdr ] = useState(undefined)
+    const [ birth, setBirth ] = useState(undefined)
+    const [ phone, setPhone ] = useState(undefined)
 
     const setpwdCheck = (e) => {
         setPassword(e.target.value)
@@ -25,16 +30,36 @@ const register = () => {
         setEmail(e.target.value)
     }
 
-    const getNick = (e) => {
-        setNick(e.target.value)
-    }
-
     const domainSelect = (e) => {
         setDomain(e.target.value)
     }
 
-    const invalidation = () => {
-        setTimeout(setVerifyNum(undefined), 1000 * 60 * 3)
+    const getName = (e) => {
+        setName(e.target.value)
+    }
+
+    const getAdr = (e) => {
+        setAdr(e.target.value)
+    }
+
+    const getAge = (e) => {
+        setAge(e.target.value)
+    }
+    
+    const getBirth = (e) => {
+        setBirth(e.target.value)
+    }
+
+    const selectGender = (e) => {
+        setGender(e)
+    }
+
+    const getPhone = (e) => {
+        setPhone(e.target.value)
+    }
+
+    const sendEmail2 = () => {
+        console.log(email, password, name, gender, age, adr, birth, phone)
     }
 
     const sendEmail = async () => {
@@ -43,7 +68,7 @@ const register = () => {
         const tuserName = document.querySelector('#userNickname').value
 
         setEmail(temail)
-        setNick(tuserName)
+        setName(tuserName)
         setPassword(tuserPw)
 
         if(pwdCheck(tuserPw) == false) {
@@ -54,7 +79,8 @@ const register = () => {
         const regiEmail = email + domain
         
         try {
-            const response = await axios.post(`${backend}/api/auth/email`, { email: regiEmail, nickName})
+            const response = await axios.post(`${backend}/api/auth/email`, { 
+                email: regiEmail, password, name, gender, age, adr, birth, phone})
             setSentEmail(true)
             const verifyArray = response.data.number
             const verfifyNumber = verifyArray[0]+verifyArray[1]+verifyArray[2]+verifyArray[3]+verifyArray[4]+verifyArray[5]
@@ -65,6 +91,10 @@ const register = () => {
         catch(e) {
             alert(e.response.data)
         }
+    }
+
+    const invalidation = () => {
+        setTimeout(setVerifyNum(undefined), 1000 * 60 * 3)
     }
 
     const verifyAccount = async() => {
@@ -100,7 +130,7 @@ const register = () => {
                         <>
                             <FormLabel>Email</FormLabel>
                             <Flex justifyContent={'center'}>
-                                <Input type='text' onChange={getEmail} placeholder='email을 입력해주세요' id='userEmail' size='sm' defaultValue='619049a' mb='5%'/>
+                                <Input type='text' onChange={getEmail} placeholder='email을 입력해주세요' id='userEmail' size='sm' mb='5%'/>
                                 <Select placeholder="Select Domain" size='sm' id='domainSelector' onChange={domainSelect}>
                                     <option value="@kakao.com">@kakao.com</option>
                                     <option value="@naver.com">@naver.com</option>
@@ -108,8 +138,30 @@ const register = () => {
                                 </Select>
                             </Flex>
 
-                            <FormLabel>Nickname</FormLabel>
-                            <Input type='text' onChange={getNick} placeholder='Nickname을 입력해주세요' id='userNickname' size='sm' defaultValue='sil' mb='5%'/>
+                            <FormLabel>name</FormLabel>
+                            <Input type='text' onChange={getName} placeholder='name을 입력해주세요'size='sm' mb='5%'/>
+
+                            <FormLabel>성별</FormLabel>
+                            <RadioGroup onChange={selectGender}  
+                            value={gender}>
+                                <Stack direction='row'>
+                                    <Radio value='m'>남자</Radio>
+                                    <Radio value='f'>여자</Radio>
+                                </Stack>
+                            </RadioGroup>
+                            
+                            <FormLabel>나이</FormLabel>
+                            <Input
+                            placeholder="나이를 입력해주세요" onChange={getAge}/>
+
+                            <FormLabel>생년월일</FormLabel>
+                            <Input placeholder="생년월일 8자리를 입력해주세요" onChange={getBirth}/>
+
+                            <FormLabel>주소</FormLabel>
+                            <Input placeholder="주소를 입력해주세요" onChange={getAdr}/>
+
+                            <FormLabel>전화번호</FormLabel>
+                            <Input placeholder="전화번호를 입력해주세요" onChange={getPhone}/>
 
                             <FormLabel>Password</FormLabel>
                             <Input type='password' onChange={setpwdCheck} placeholder=' password을 입력해주세요' id='password' size='sm' />
@@ -128,7 +180,7 @@ const register = () => {
                     }
                     {
                         sentEmail == false ?
-                        <Input type='submit' value='회원가입' onClick={sendEmail}/>
+                        <Input type='submit' value='회원가입' onClick={sendEmail2}/>
                         :
                         <>
                         <Input type='text' placeholder="발송된 6자리 숫자를 입력하세요" id='verifier'/>
