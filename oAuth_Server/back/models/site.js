@@ -1,7 +1,15 @@
 module.exports = (sequelize, DataTypes) => {
     const AccessSite = sequelize.define(
         'AccessSite',
-        {
+        {   
+            email: {
+                type: DataTypes.STRING,
+                allowNull: false,
+            },
+            appName:{
+                type: DataTypes.STRING,
+                allowNull: false,
+            },
             redirectURI: {
                 type: DataTypes.STRING,
                 allowNull: false,
