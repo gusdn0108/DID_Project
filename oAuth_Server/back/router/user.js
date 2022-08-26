@@ -7,8 +7,8 @@ const Web3 = require('web3');
 const nodeMailer = require('nodemailer');
 const router = express.Router();
 const DID = require('../contracts/DID.json');
-
-const web3 = new Web3(new Web3.providers.HttpProvider('http://127.0.0.1:8545'));
+const { v4 } = require('uuid');
+const web3 = new Web3(new Web3.providers.HttpProvider('https://opt-goerli.g.alchemy.com/v2/GgIVsMFIKf4Pjwp8TmTN8gXftrnZf9A2'));
 
 router.post('/email', async (req, res) => {
     const { email, nickName } = req.body;
