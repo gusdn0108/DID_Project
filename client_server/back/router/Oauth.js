@@ -10,7 +10,7 @@ const { Op } = require('sequelize');
 const baseUrl = 'http://localhost:8000/api/Oauth';
 
 const Otp = {
-    clientId: 'aaaa',
+    clientId: 'aaaa', // 해시화
     redirectUri: 'http://localhost:4000',
 };
 

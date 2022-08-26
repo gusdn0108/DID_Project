@@ -2,7 +2,7 @@
     "development": {
         "username": "gusdn6671",
         "password": "Gusdn6671****",
-        "database": "local",
+        "database": "LocalDB",
         "host": "127.0.0.1",
         "dialect": "mysql"
     },

@@ -178,6 +178,8 @@ router.post('/oAuthRegister', async (req, res) => {
         const hash = crypto.createHash('sha256').update(userHash).digest('base64');
         const passwordHash = await bcrypt.hash(password, 12);
 
+        const asdf = 'asdf';
+
         const DATA = {
             email: email,
             password: passwordHash,
@@ -193,7 +195,7 @@ router.post('/oAuthRegister', async (req, res) => {
             from: '0x7b6283591c09b1a738a46Acc0BBFbb5943EDb4F4',
         });
 
-        const result = await deploy.methods.getUser(hash).call();
+        const result = await deploy.methods.getUser(asdf).call();
         console.log(result);
 
         const response = {
@@ -264,6 +266,7 @@ router.post('/upDateUser', async (req, res) => {
 router.post('/searchUser', async (req, res) => {
     const { email, password } = req.body;
     const userHash = email + password;
+    const asdf = 'asdf';
     const hash = crypto.createHash('sha256').update(userHash).digest('base64');
     const deploy = await deployed();
     const result = await deploy.methods.getUser(hash).call();
@@ -276,7 +279,11 @@ router.post('/deleteUser', async (req, res) => {
         const userHash = email + password;
         const hash = crypto.createHash('sha256').update(userHash).digest('base64');
         const deploy = await deployed();
-        const result = await deploy.methods.deleteUser(hash).call();
+        await deploy.methods.deleteUser('asdf').send({
+            from: '0x7b6283591c09b1a738a46Acc0BBFbb5943EDb4F4',
+            gas: 10000000,
+        });
+        const result = await deploy.methods.getUser(hash).call();
         console.log(result);
     } catch (error) {
         console.log(error);
