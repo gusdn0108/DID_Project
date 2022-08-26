@@ -142,7 +142,7 @@ const register = () => {
                             <Input type='text' onChange={getName} 
                             placeholder='이름을 입력해주세요' size='md' mb='5%'/>
 
-                            <FormLabel fontSize={'140%'} px='2%'>성별</FormLabel>
+                            <FormLabel fontSize={'140%'} px='2%' mb='2%'>성별</FormLabel>
                             <RadioGroup onChange={selectGender}  
                             value={gender}
                             fontSize={'140%'} mb='5%' px='3%'>
