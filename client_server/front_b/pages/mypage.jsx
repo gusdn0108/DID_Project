@@ -2,7 +2,7 @@ import {useState,useEffect} from 'react';
 import { Box, Button, Flex, Text, Input, FormControl,
     FormLabel, FormErrorMessage, FormHelperText, useLatestRef,} from "@chakra-ui/react";
 import axios from 'axios';
-import { backend } from '../utils/ip';
+import { backend,frontend } from '../utils/ip';
 
 
 const mypage = ({userId, email, point})  => {
@@ -25,8 +25,13 @@ const mypage = ({userId, email, point})  => {
         }
         if(response.data.status == false, response.data.msg == 2 ) {
             alert('이미 연동된 계정입니다.')
+            return;
         }
         alert(`${response.data.data} 이메일로 did login이 연동되었습니다.`)
+    }
+
+    const changePw = () => {
+        location.href=`${frontend}/changePw`
     }
 
     return (
@@ -35,19 +40,22 @@ const mypage = ({userId, email, point})  => {
                 tryDid == false 
                 ?
             <>
-                <Box w='20%' mx='auto' my='0' fontSize={'125%'} justifyContent='center'>
+                <Box w='30%' mx='auto' my='0' fontSize={'125%'} justifyContent='center'>
 
-                <Box>
-                    <Text mb='5%' px='10%'>{userId}님, 안녕하세요.</Text>
-                    <Text mb='5%' px='10%'> email : {email}</Text>
-                    <Text mb='5%' px='10%'>point : {point}</Text>
-                </Box>
+                    <Box fontSize={'125%'} px='10%' mb='5%'>
+                        <Text mb='2%' px='5%'>{userId}님, 안녕하세요.</Text>
+                        <Text mb='2%' px='5%'> email : {email}</Text>
+                        <Text mb='2%' px='5%'> point : {point}</Text>
+                    </Box>
 
                     <Flex justifyContent={'center'}>
-                        <Button onClick={didRegister} colorScheme='blue' mx='5%'>
-                            DID login 연동하기
+                        <Button onClick={didRegister} colorScheme='blue' mx='1%' w='25%'>
+                            DID login 연동
                         </Button>
-                        <Button>
+                        <Button mx='1%' w='25%' onClick={changePw}>
+                            비밀번호 변경
+                        </Button>
+                        <Button mx='1%' w='25%'>
                             포인트 충전
                         </Button>
                     </Flex>

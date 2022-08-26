@@ -1,10 +1,9 @@
 import { Box, Button, Flex, Text, Input, FormControl,
-    FormLabel, FormErrorMessage, FormHelperText, Radio, Select,} from "@chakra-ui/react";
+    FormLabel, FormErrorMessage, FormHelperText, Select} from "@chakra-ui/react";
 import axios from 'axios'
-import { useEffect } from "react";
 import { useState } from "react";
 import { backend, frontend } from '../utils/ip.js'
-import { phoneCheck, pwdCheck } from "../utils/regiCheck.js";
+import { pwdCheck } from "../utils/regiCheck.js";
 
 const register = () => {
     const [ password, setPassword ] = useState(undefined)
@@ -120,7 +119,7 @@ const register = () => {
                                     ?
                                     '사용 가능한 비밀번호입니다.'
                                     :
-                                    '비밀번호는 영문자, 숫자, 특수문자 포함 8~15자입니다.'
+                                    '비밀번호는 영문자, 숫자, 특수문자 포함 8~15자여야 합니다.'
                                 }
                             </FormHelperText>
                         </>
