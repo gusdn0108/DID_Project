@@ -5,14 +5,12 @@ const config = require(__dirname + '/../config/config.json')[env];
 
 const sequelize = new Sequelize(config.database, config.username, config.password, config);
 
-const Auth = require('./Auth')(sequelize, DataTypes);
-const Site = require('./site')(sequelize, DataTypes);
+const oauth = require('./oauth')(sequelize, DataTypes);
 
 const db = {};
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
-db.Auth = Auth;
-db.Auth = Site;
+db.oauth = oauth;
 
 module.exports = db;
