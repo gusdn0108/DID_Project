@@ -1,24 +1,71 @@
 import { Box, Button, Flex, Text, Input, FormControl, Image,
     FormLabel, FormErrorMessage, FormHelperText, Select, Radio, RadioGroup, Stack} from "@chakra-ui/react";
 import axios from 'axios'
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { backend, frontend } from '../utils/ip.js'
+
 
 // rest api를 발급받고 redirect uri를 발급받을 로컬 서버 관리자는
 // 로그인이 된 상태라고 가정
 
 const ServerRegi = () => {
-    const [ restApi, setRestApi ] = useState()
-    const getRestApi = () => {
-        console.log('우하하')
+    const [ myRestApi, setMyRestApi ] = useState(false)
+    const [confirmAppname, setConfirmAppname ] = useState(false)
+    const [ appName, setAppName ] = useState(undefined)
+
+    const getRestApi = async() => {
+        if(!appName || confirmAppname == false) {
+            alert('어플리케이션 이름을 설정해주세요')
+            return;
+        }
+        setMyRestApi(true)
+        const response = await axios.post(`${backend}/api/oauth/apiDistribution`, {appName})
+        console.log(response.data.status)
     }
+
     return (
       <>
         <Box px='5%' py='5%'>
             <Flex mx='auto' my='0' justifyContent={'center'}>
-                <Box>App name : {location.href.split('?')[1].split('=')[1]}</Box>
-                <Text> RestAPI 를 발급받으려면 버튼을 클릭해주세요 </Text>
-                <Button onClick={getRestApi}>REST API 발급 받기</Button>
+                <Box>
+                    {
+                        confirmAppname == false ?
+                    <>
+                    <Input type='text' placeholder='어플리케이션 이름을 입력해주세요'
+                    onChange={(e) => setAppName(e.target.value)}
+                    defaultValue={appName}
+                    />
+                    <Button onClick={() => setConfirmAppname(!confirmAppname)}>어플리케이션 이름 확인</Button>
+                    </>
+                    :
+                    <>
+                        <Text>어플리케이션 이름 : {appName}</Text>
+                        {
+                            myRestApi == false ?
+                            <Button onClick={() => setConfirmAppname(!confirmAppname)}>수정</Button>
+                            :
+                            <Text>Rest API가 발급되었습니다</Text>
+                        }
+                        
+                    </>
+                    }
+
+                    
+
+                    <Box> RestAPI 를 발급받으려면 버튼을 클릭해주세요 </Box>
+                    {
+                        myRestApi == false ?
+                        <Button onClick={getRestApi}>REST API 발급 받기</Button>
+                        :
+                        <Flex>
+                            <Box>
+                                <Text>rest api</Text>
+                                <Text>client secret</Text>
+                            </Box>
+                        </Flex>
+                    }
+                    
+                </Box>
             </Flex>
         </Box>
       </>

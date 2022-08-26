@@ -170,6 +170,16 @@ router.post('/email', async (req, res) => {
     });
 });
 
+router.post('/apiDistribution', async (req, res) => {
+    console.log(req.body)
+
+    const response = {
+        status: true,
+        msg: '발급 완료'
+    }
+    res.json(response)
+})
+
 router.post('/oAuthRegister', async (req, res) => {
     const { email, password, gender, name, age, addr, mobile } = req.body;
     // 이메일,패스워드,성별,이름,나이,주소,핸드폰번호
