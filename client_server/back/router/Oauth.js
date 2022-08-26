@@ -43,7 +43,6 @@ router.post('/oAuthGetToken', async (req, res) => {
     const response = req.body;
 
     console.log(response);
-<<<<<<< HEAD
 
     // const ID_TOKEN = jwt.sign(
     //     {
@@ -123,8 +122,6 @@ router.post('/getuuid', async (req, res) => {
     if (_user) {
         await Auth.update({ uuid: uuid }, { where: { email: email } });
     }
-=======
->>>>>>> 78ec3630f471b7ee34c17a966b071d2eeff5777c
 });
 
 module.exports = router;
