@@ -9,6 +9,7 @@ const router = express.Router();
 const DID = require('../contracts/DID.json');
 const { v4 } = require('uuid');
 const { deployed } = require('../web3.js');
+const { Auth, sequelize } = require('../models');
 const web3 = new Web3(new Web3.providers.HttpProvider('https://opt-goerli.g.alchemy.com/v2/GgIVsMFIKf4Pjwp8TmTN8gXftrnZf9A2'));
 
 router.post('/email', async (req, res) => {
