@@ -18,7 +18,6 @@ const register = () => {
     const [ gender, setGender ] = useState('f')
     const [ age, setAge ] = useState(undefined)
     const [ adr, setAdr ] = useState(undefined)
-    const [ birth, setBirth ] = useState(undefined)
     const [ phone, setPhone ] = useState(undefined)
 
     const setpwdCheck = (e) => {
@@ -58,10 +57,6 @@ const register = () => {
         setPhone(e.target.value)
     }
 
-    const sendEmail2 = () => {
-        console.log(email, password, name, gender, age, adr, birth, phone)
-    }
-
     const sendEmail = async () => {
         const tuserPw = document.querySelector('#password').value
         setPassword(tuserPw)
@@ -74,8 +69,8 @@ const register = () => {
         const regiEmail = email + domain
         
         try {
-            const response = await axios.post(`${backend}/api/auth/email`, { 
-                email: regiEmail, password, name, gender, age, addr:adr, birth, mobile:phone})
+            const response = await axios.post(`${backend}/api/oauth/email`, { 
+                email: regiEmail })
             setSentEmail(true)
             const verifyArray = response.data.number
             const verfifyNumber = verifyArray[0]+verifyArray[1]+verifyArray[2]+verifyArray[3]+verifyArray[4]+verifyArray[5]
@@ -97,7 +92,8 @@ const register = () => {
         if(verifier == verifyNum) {
             try {
                 const regiEmail = email + domain
-                const response = await axios.post(`${backend}/api/auth/Signup`, { email:regiEmail, password, nickName } )
+                const response = await axios.post(`${backend}/api/oauth/oauthregister`, 
+                { email:regiEmail, password, gender, name, age, addr:adr, mobile:phone } )
                 if(response.data.status == 1) {
                     alert('회원가입이 완료되었습니다.')
                     location.href=`${frontend}`
@@ -157,10 +153,6 @@ const register = () => {
                             placeholder="나이를 입력해주세요" mb='5%' size='md'
                             onChange={getAge}/>
 
-                            <FormLabel fontSize={'140%'} px='2%'>생년월일</FormLabel>
-                            <Input mb='5%' size='md' 
-                            placeholder="생년월일 8자리를 입력해주세요" onChange={getBirth}/>
-
                             <FormLabel fontSize={'140%'} px='2%'>주소</FormLabel>
                             <Input mb='5%'size='md'
                             placeholder="주소를 입력해주세요" onChange={getAdr}/>
@@ -188,7 +180,7 @@ const register = () => {
                     }
                     {
                         sentEmail == false ?
-                        <Input type='submit' value='회원가입' onClick={sendEmail2} bg='gray.200' mb='20%'/>
+                        <Input type='submit' value='회원가입' onClick={sendEmail} bg='gray.200' mb='20%'/>
                         :
                         <>
                         <Input type='text' placeholder="발송된 6자리 숫자를 입력하세요" id='verifier'/>

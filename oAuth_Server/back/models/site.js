@@ -1,40 +1,36 @@
 module.exports = (sequelize, DataTypes) => {
-    const site = sequelize.define(
-        'site',
-        {
-            hashId: {
+    const AccessSite = sequelize.define(
+        'AccessSite',
+        {   
+            email: {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
-            A: {
-                type: DataTypes.BOOLEAN,
+            appName:{
+                type: DataTypes.STRING,
                 allowNull: false,
-                default: false,
             },
-            B: {
-                type: DataTypes.BOOLEAN,
+            redirectURI: {
+                type: DataTypes.STRING,
                 allowNull: false,
-                default: false,
             },
-            C: {
-                type: DataTypes.BOOLEAN,
+            restAPI: {
+                type: DataTypes.STRING,
                 allowNull: false,
-                default: false,
             },
-            D: {
-                type: DataTypes.BOOLEAN,
+            clientSecretKey: {
+                type: DataTypes.STRING,
                 allowNull: false,
-                default: false,
             },
         },
         {
             timestamps: false,
-            tableName: 'oAuth',
+            tableName: 'AccessSite',
             charset: 'utf8mb4',
             collate: 'utf8mb4_general_ci',
             freezeTableName: true,
         },
     );
 
-    return site;
+    return AccessSite;
 };
