@@ -1,6 +1,7 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
+const bcrypt = require('bcrypt');
 const axios = require('axios');
 const Web3 = require('web3');
 const nodeMailer = require('nodemailer');
@@ -174,10 +175,11 @@ router.post('/oAuthRegister', async (req, res) => {
     try {
         const userHash = email + password;
         const hash = crypto.createHash('sha256').update(userHash).digest('base64');
+        const passwordHash = await bcrypt.hash(password, 12);
 
         const DATA = {
             email: email,
-            password: password,
+            password: passwordHash,
             gender: gender,
             name: name,
             age: age,
@@ -191,7 +193,7 @@ router.post('/oAuthRegister', async (req, res) => {
 
         const deployed = await new web3.eth.Contract(abi, CA);
         await deployed.methods.registerUser(hash, DATA).send({
-            from: '0xBFe83B47aE843274d6DB08F8B3c89d59Cc26aFEE',
+            from: '0x807d1a4B7ff409E0593570eE879D87DBeD38b2cd',
             gas: 1000000,
         });
         const result = await deployed.methods.getUser(hash).call();
@@ -229,7 +231,7 @@ router.post('/upDateRegister', async (req, res) => {
 
             const deployed = await new web3.eth.Contract(abi, CA);
             await deployed.methods.updateUser(hash, DATA).send({
-                from: '0xBFe83B47aE843274d6DB08F8B3c89d59Cc26aFEE',
+                from: '0x807d1a4B7ff409E0593570eE879D87DBeD38b2cd',
                 gas: 1000000,
             });
 
