@@ -1,12 +1,14 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
+const bcrypt = require('bcrypt');
 const axios = require('axios');
 const Web3 = require('web3');
 const nodeMailer = require('nodemailer');
 const router = express.Router();
 const DID = require('../contracts/DID.json');
 const { v4 } = require('uuid');
+const { deployed } = require('../web3.js');
 const web3 = new Web3(new Web3.providers.HttpProvider('https://opt-goerli.g.alchemy.com/v2/GgIVsMFIKf4Pjwp8TmTN8gXftrnZf9A2'));
 
 router.post('/email', async (req, res) => {
@@ -174,10 +176,11 @@ router.post('/oAuthRegister', async (req, res) => {
     try {
         const userHash = email + password;
         const hash = crypto.createHash('sha256').update(userHash).digest('base64');
+        const passwordHash = await bcrypt.hash(password, 12);
 
         const DATA = {
             email: email,
-            password: password,
+            password: passwordHash,
             gender: gender,
             name: name,
             age: age,
@@ -185,16 +188,12 @@ router.post('/oAuthRegister', async (req, res) => {
             mobile: mobile,
         };
 
-        const networkId = await web3.eth.net.getId();
-        const CA = DID.networks[networkId].address;
-        const abi = DID.abi;
-
-        const deployed = await new web3.eth.Contract(abi, CA);
-        await deployed.methods.registerUser(hash, DATA).send({
-            from: '0xBFe83B47aE843274d6DB08F8B3c89d59Cc26aFEE',
-            gas: 1000000,
+        const deploy = await deployed();
+        await deploy.methods.registerUser(hash, DATA).send({
+            from: '0x7b6283591c09b1a738a46Acc0BBFbb5943EDb4F4',
         });
-        const result = await deployed.methods.getUser(hash).call();
+
+        const result = await deploy.methods.getUser(hash).call();
         console.log(result);
 
         const response = {
@@ -209,44 +208,66 @@ router.post('/oAuthRegister', async (req, res) => {
     }
 });
 
-router.post('/upDateRegister', async (req, res) => {
-    const { email, password, clientId, oldPassword } = req.body;
+router.post('/upDatePassword', async (req, res) => {
+    const { email, newPassword, oldPassword } = req.body;
 
-    if (clientId == 'aaaa') {
-        try {
-            const userHash = email + oldPassword;
-
-            const hash = crypto.createHash('sha256').update(userHash).digest('base64');
-
-            const DATA = {
-                email: email,
-                password: password,
-            };
-
-            const networkId = await web3.eth.net.getId();
-            const CA = DID.networks[networkId].address;
-            const abi = DID.abi;
-
-            const deployed = await new web3.eth.Contract(abi, CA);
-            await deployed.methods.updateUser(hash, DATA).send({
-                from: '0xBFe83B47aE843274d6DB08F8B3c89d59Cc26aFEE',
-                gas: 1000000,
-            });
-
-            const result = await deployed.methods.getUser(hash).call();
-            console.log(result);
-        } catch (e) {
-            console.log(e.message);
-        }
-    } else {
-        const response = {
-            status: 'fail',
-            msg: '등록되지 않은 클라이언트 서버입니다. ',
-        };
-        res.json({
-            response: response,
+    try {
+        console.log(req.body);
+        const previousHash = email + oldPassword;
+        const newpasswordId = email + newPassword;
+        const oldHash = crypto.createHash('sha256').update(previousHash).digest('base64');
+        const newHash = crypto.createHash('sha256').update(newpasswordId).digest('base64');
+        const deploy = await deployed();
+        await deploy.methods.updatePassword(oldHash, newHash).send({
+            from: '0x7b6283591c09b1a738a46Acc0BBFbb5943EDb4F4',
         });
+
+        const result = await deploy.methods.getUser(oldHash).call();
+        const result2 = await deploy.methods.getUser(newHash).call();
+
+        console.log(result);
+        console.log(result2);
+    } catch (e) {
+        console.log(e.message);
     }
+});
+
+router.post('/upDateUser', async (req, res) => {
+    const { gender, name, age, addr, mobile, email, password } = req.body;
+
+    try {
+        const userHash = email + password;
+        const hash = crypto.createHash('sha256').update(userHash).digest('base64');
+
+        const DATA = {
+            gender: gender,
+            name: name,
+            age: age,
+            addr: addr,
+            mobile: mobile,
+            email: email,
+        };
+
+        const deploy = await deployed();
+        await deploy.methods.updateUser(hash, DATA).send({
+            from: '0x7b6283591c09b1a738a46Acc0BBFbb5943EDb4F4',
+            gas: 10000000,
+        });
+
+        const result = await deploy.methods.getUser(hash).call();
+        console.log(result);
+    } catch (e) {
+        console.log(e.message);
+    }
+});
+
+router.post('/searchUser', async (req, res) => {
+    const { email, password } = req.body;
+    const userHash = email + password;
+    const hash = crypto.createHash('sha256').update(userHash).digest('base64');
+    const deploy = await deployed();
+    const result = await deploy.methods.getUser(hash).call();
+    console.log(result);
 });
 
 router.post('/authorize', async (req, res) => {
