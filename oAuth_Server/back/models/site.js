@@ -1,28 +1,35 @@
 module.exports = (sequelize, DataTypes) => {
     const site = sequelize.define(
-        'A',
+        'site',
         {
-            email: {
+            hashId: {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
-            username: {
-                type: DataTypes.STRING,
+            A: {
+                type: DataTypes.BOOLEAN,
                 allowNull: false,
+                default: false,
             },
-            password: {
-                type: DataTypes.STRING,
+            B: {
+                type: DataTypes.BOOLEAN,
                 allowNull: false,
+                default: false,
             },
-            point: {
-                type: DataTypes.INTEGER,
+            C: {
+                type: DataTypes.BOOLEAN,
                 allowNull: false,
-                default: 0,
+                default: false,
+            },
+            D: {
+                type: DataTypes.BOOLEAN,
+                allowNull: false,
+                default: false,
             },
         },
         {
             timestamps: false,
-            tableName: 'A',
+            tableName: 'oAuth',
             charset: 'utf8mb4',
             collate: 'utf8mb4_general_ci',
             freezeTableName: true,
