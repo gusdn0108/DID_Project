@@ -7,7 +7,7 @@ describe("DID test", async () => {
 		const user = await getDeployed.getUser.call(
 			"0x884592D5BE23f2d05e092aE76002108027cc1658"
 		);
-		console.log(user);
+		// console.log(user);
 	});
 	it("isRegistered", async () => {
 		const getDeployed = await Deploy.deployed();
@@ -15,24 +15,31 @@ describe("DID test", async () => {
 		const isRegistered = await getDeployed.isRegistered.call(
 			"0x884592D5BE23f2d05e092aE76002108027cc1658"
 		);
-		console.log(isRegistered);
+		// console.log(isRegistered);
 	});
 	it("registerUser", async () => {
 		const getDeployed = await Deploy.deployed();
 
-		const user = await getDeployed.registerUser.send(
-			"0x9c2126FD1F105e62E774780Fa47b94501AF11a36",
-			{
-				id: "red",
-				emial: "red@gmail.com",
-			}
-		);
-		const isRegistered = await getDeployed.isRegistered.call(
-			"0x9c2126FD1F105e62E774780Fa47b94501AF11a36"
-		);
-		const userInfo = await getDeployed.getUser.call(
-			"0x9c2126FD1F105e62E774780Fa47b94501AF11a36"
-		);
-		console.log(user, isRegistered, userInfo);
+		const _data = {
+			gender: "female",
+			name: "red",
+			age: 10,
+			addr: "서울시 광진구",
+			mobile: "010-1111-1111",
+			email: "red@gmail.com",
+		};
+		await getDeployed.registerUser("22222", _data);
+		const isRegistered = await getDeployed.isRegistered.call("22222");
+		const userInfo = await getDeployed.getUser.call("22222");
+		console.log(isRegistered, userInfo);
+	});
+
+	it("updatePw", async () => {
+		const getDeployed = await Deploy.deployed();
+		const isRegistered = await getDeployed.isRegistered("22222");
+		const block = await getDeployed.updatePassword("22222", "111");
+		const shouldBeNull = await getDeployed.getUser.call("22222");
+		const afterChanged = await getDeployed.getUser.call("111");
+		console.log(isRegistered, block, shouldBeNull, afterChanged);
 	});
 });
