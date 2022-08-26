@@ -270,6 +270,19 @@ router.post('/searchUser', async (req, res) => {
     console.log(result);
 });
 
+router.post('/deleteUser', async (req, res) => {
+    const { email, password } = req.body;
+    try {
+        const userHash = email + password;
+        const hash = crypto.createHash('sha256').update(userHash).digest('base64');
+        const deploy = await deployed();
+        const result = await deploy.methods.deleteUser(hash).call();
+        console.log(result);
+    } catch (error) {
+        console.log(error);
+    }
+});
+
 router.post('/authorize', async (req, res) => {
     const { userId, userPw } = req.body;
     try {
