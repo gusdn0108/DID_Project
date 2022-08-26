@@ -90,11 +90,11 @@ router.post('/oAuthRegister', async (req, res) => {
                 clientId: Otp.clientId,
             };
             const hasUuid = _user.dataValues.uuid;
-            if(hasUuid !== null) {
+            if (hasUuid !== null) {
                 res.json({
                     status: false,
-                    msg: 2
-                })
+                    msg: 2,
+                });
             }
             const response = await axios.post('http://localhost:8000/api/Oauth/register', toBlockData);
             res.json({

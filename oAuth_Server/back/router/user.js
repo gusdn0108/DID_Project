@@ -4,11 +4,16 @@ const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const axios = require('axios');
 const Web3 = require('web3');
-const { v4 } = require('uuid');
 const router = express.Router();
 const DID = require('../contracts/DID.json');
+const { v4 } = require('uuid');
+const web3 = new Web3(new Web3.providers.HttpProvider('https://opt-goerli.g.alchemy.com/v2/GgIVsMFIKf4Pjwp8TmTN8gXftrnZf9A2'));
+const privatekey = '635fad806d48a8bec83a8f8ee3ddd47d32134ae49521a41fe5a2abdc51a3b33d';
 
-const web3 = new Web3(new Web3.providers.HttpProvider('http://127.0.0.1:8545'));
+// const { ethers } = require('ethers');
+// const { createAlchemyWeb3 } = require('@alch/alchemy-web3');
+// const { Alchemy, Network, Wallet } = require('alchemy-sdk');
+// const web3 = new createAlchemyWeb3('https://opt-goerli.g.alchemy.com/v2/GgIVsMFIKf4Pjwp8TmTN8gXftrnZf9A2');
 
 router.get('/authorize', (req, res) => {
     res.render('index.html');
@@ -111,36 +116,29 @@ router.post('/register', async (req, res) => {
                 email: email,
                 password: password,
                 uuid: uuid,
-                A : true
+                A: true,
             };
-
-            const networkId = await web3.eth.net.getId();
-            const CA = DID.networks[networkId].address;
-            const abi = DID.abi;
 
             const deployed = await new web3.eth.Contract(abi, CA);
-            await deployed.methods.registerUser(hash, DATA).send({
-                from: '0x1BDEd3E24Dbfad8523F3c420b13eb76cDFEE7562',
-                gas: 1000000,
-            });
 
-            const result = await deployed.methods.getUser(hash).call();
-            console.log('asdf???', result);
-            const getuuid = result[2];
-            const getBlockId = result[0];
-            console.log(getBlockId);
+            await deployed.methods.registerUser('test', DATA).send({ from: '0x7b6283591c09b1a738a46Acc0BBFbb5943EDb4F4' });
 
-            const response = {
-                status: true,
-                email: getBlockId,
-                uuid: getuuid,
-            };
+            const result = await deployed.methods.getUser('test').call();
+            console.log(result);
 
-            if (getuuid) {
-                console.log('uuid있음?');
-                await axios.post('http://localhost:4000/api/oauth/getuuid', response);
-            }
-            
+            // const getuuid = result[2];
+            // const getBlockId = result[0];
+
+            // const response = {
+            //     status: true,
+            //     email: getBlockId,
+            //     uuid: getuuid,
+            // };
+
+            // if (getuuid) {
+            //     console.log('uuid있음?');
+            //     await axios.post('http://localhost:4000/api/oauth/getuuid', response);
+            // }
         } catch (e) {
             console.log(e.message);
         }
