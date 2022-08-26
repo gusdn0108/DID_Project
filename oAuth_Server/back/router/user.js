@@ -1,14 +1,253 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const axios = require('axios');
 const Web3 = require('web3');
-const { v4 } = require('uuid');
+const nodeMailer = require('nodemailer');
 const router = express.Router();
 const DID = require('../contracts/DID.json');
 
 const web3 = new Web3(new Web3.providers.HttpProvider('http://127.0.0.1:8545'));
+
+router.post('/email', async (req, res) => {
+    const { email, nickName } = req.body;
+
+    try {
+        const exEmail = await Auth.findOne({
+            where: {
+                email: email,
+            },
+        });
+
+        if (exEmail) {
+            return res.status(403).send('이미 사용중인 메일입니다 ');
+        }
+    } catch (e) {
+        console.log(e);
+    }
+    // 중복 체크하고
+    const number = generateRandom(111111, 999999);
+    const mailPoster = nodeMailer.createTransport({
+        service: 'Naver',
+        host: 'smtp.naver.com',
+        port: 587,
+        auth: {
+            user: process.env.EMAIL_SENDER,
+            pass: process.env.EMAIL_PASSWORD,
+        },
+    });
+    let mailOptions = {
+        from: 'gusdn6671@naver.com',
+        to: email,
+        subject: '인증번호 입력해주세요 ',
+        html: `<div 
+        style='
+        text-align: center; 
+        width: 60%; 
+        height: 50%;
+        margin: 15%;
+        padding: 20px;
+        border:2px solid #FFB6C1;
+        border-radius: 10px;
+        background-color:#FFFAFA;
+        '>
+
+        
+        <h2 style='
+        color:pink;
+        font-weight:bold;
+        '>아래 6자리 숫자를 화면에 입력해주세요.</h2> <br/>  
+        <div style='display: flex;
+            justify-content: space-between ;
+           '>
+           <div style='  width:5rem;
+           height:5rem;
+           border:2px solid #FFB6C1;
+           border-radius: 10px;
+           background-color:#FFFAFA;'>
+           <h1 style='  
+           text-align:center;
+           font-weight:bold;
+           font-size:47px;
+           color:#FFB6C1;'>
+           ${number[0]}
+           </h1>
+           
+        </div>
+        <div style='  width:5rem;
+           height:5rem;
+           border:2px solid #FFB6C1;
+           border-radius: 10px;
+           background-color:#FFFAFA;'>
+           <h1 style='  
+           text-align:center;
+           font-weight:bold;
+           font-size:47px;
+           color:#FFB6C1;'>
+           ${number[1]}
+           </h1>
+           
+        </div>
+        <div style='  width:5rem;
+           height:5rem;
+           border:2px solid #FFB6C1;
+           border-radius: 10px;
+           background-color:#FFFAFA;'>
+           <h1 style='  
+           text-align:center;
+           font-weight:bold;
+           font-size:47px;
+           color:#FFB6C1;'>
+           ${number[2]}
+           </h1>
+           
+        </div>
+
+        <div style='  width:5rem;
+           height:5rem;
+           border:2px solid #FFB6C1;
+           border-radius: 10px;
+           background-color:#FFFAFA;'>
+           <h1 style='  
+           text-align:center;
+           font-weight:bold;
+           font-size:47px;
+           color:#FFB6C1;'>
+           ${number[3]}
+           </h1>
+           
+        </div>
+
+        <div style='  width:5rem;
+           height:5rem;
+           border:2px solid #FFB6C1;
+           border-radius: 10px;
+           background-color:#FFFAFA;'>
+           <h1 style='  
+           text-align:center;
+           font-weight:bold;
+           font-size:47px;
+           color:#FFB6C1;'>
+           ${number[4]}
+           </h1>
+           
+        </div>
+
+        <div style='  width:5rem;
+           height:5rem;
+           border:2px solid #FFB6C1;
+           border-radius: 10px;
+           background-color:#FFFAFA;'>
+           <h1 style='  
+           text-align:center;
+           font-weight:bold;
+           font-size:47px;
+           color:#FFB6C1;'>
+           ${number[5]}
+           </h1>
+           
+        </div>
+
+   </div>
+
+
+</div> `,
+    };
+
+    mailPoster.sendMail(mailOptions, function (error, info) {
+        if (error) {
+            console.log(error);
+        } else {
+            console.log('Email sent: ' + info.response);
+            res.status(201);
+            res.json({
+                status: true,
+                number: number,
+            });
+        }
+    });
+});
+
+router.post('/oAuthRegister', async (req, res) => {
+    const { email, password, gender, name, age, addr, mobile } = req.body;
+    // 이메일,패스워드,성별,이름,나이,주소,핸드폰번호
+    try {
+        const userHash = email + password;
+        const hash = crypto.createHash('sha256').update(userHash).digest('base64');
+
+        const DATA = {
+            email: email,
+            password: password,
+            gender: gender,
+            name: name,
+            age: age,
+            addr: addr,
+            mobile: mobile,
+        };
+
+        const networkId = await web3.eth.net.getId();
+        const CA = DID.networks[networkId].address;
+        const abi = DID.abi;
+
+        const deployed = await new web3.eth.Contract(abi, CA);
+        await deployed.methods.registerUser(hash, DATA).send({
+            from: '0xBFe83B47aE843274d6DB08F8B3c89d59Cc26aFEE',
+            gas: 1000000,
+        });
+        const result = await deployed.methods.getUser(hash).call();
+        console.log(result);
+
+        const response = {
+            status: 'fail',
+            msg: '회원가입이 완료되지않았습니다',
+        };
+        res.json({
+            response: response,
+        });
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+router.post('/upDateRegister', async (req, res) => {
+    const { email, password, clientId, oldPassword } = req.body;
+
+    if (clientId == 'aaaa') {
+        try {
+            const userHash = email + oldPassword;
+
+            const hash = crypto.createHash('sha256').update(userHash).digest('base64');
+
+            const DATA = {
+                email: email,
+                password: password,
+            };
+
+            const networkId = await web3.eth.net.getId();
+            const CA = DID.networks[networkId].address;
+            const abi = DID.abi;
+
+            const deployed = await new web3.eth.Contract(abi, CA);
+            await deployed.methods.updateUser(hash, DATA).send({
+                from: '0xBFe83B47aE843274d6DB08F8B3c89d59Cc26aFEE',
+                gas: 1000000,
+            });
+
+            const result = await deployed.methods.getUser(hash).call();
+            console.log(result);
+        } catch (e) {
+            console.log(e.message);
+        }
+    } else {
+        const response = {
+            status: 'fail',
+            msg: '등록되지 않은 클라이언트 서버입니다. ',
+        };
+        res.json({
+            response: response,
+        });
+    }
+});
 
 router.post('/authorize', async (req, res) => {
     const { userId, userPw } = req.body;
@@ -86,62 +325,6 @@ router.post('/getToken', async (req, res) => {
         await axios.post('http://localhost:3500/oAuthGetToken', DATA);
     } catch (error) {
         console.log(error);
-    }
-});
-
-router.post('/register', async (req, res) => {
-    const { email, password, clientId } = req.body;
-    const uuid = v4();
-
-    if (clientId == 'aaaa' || clientId == 'bbbb' || clientId == 'cccc' || clientId == 'dddd') {
-        try {
-            const userHash = email + password;
-            const hash = crypto.createHash('sha256').update(userHash).digest('base64');
-
-            const DATA = {
-                email: email,
-                password: password,
-                uuid: uuid,
-                A: true,
-            };
-
-            const networkId = await web3.eth.net.getId();
-            const CA = DID.networks[networkId].address;
-            const abi = DID.abi;
-
-            const deployed = await new web3.eth.Contract(abi, CA);
-            await deployed.methods.registerUser(hash, DATA).send({
-                from: '0xBFe83B47aE843274d6DB08F8B3c89d59Cc26aFEE',
-                gas: 1000000,
-            });
-
-            const result = await deployed.methods.getUser(hash).call();
-            console.log(result);
-            const getuuid = result[2];
-            const getBlockId = result[0];
-            console.log(getBlockId);
-
-            const response = {
-                status: true,
-                email: getBlockId,
-                uuid: getuuid,
-            };
-
-            if (getuuid) {
-                console.log('uuid있음?');
-                await axios.post('http://localhost:4000/api/oauth/getuuid', response);
-            }
-        } catch (e) {
-            console.log(e.message);
-        }
-    } else {
-        const response = {
-            status: 'fail',
-            msg: '등록되지 않은 클라이언트 서버입니다. ',
-        };
-        res.json({
-            response: response,
-        });
     }
 });
 

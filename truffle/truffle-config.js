@@ -18,15 +18,12 @@
  *
  */
 
-const HDWalletProvider = require('@truffle/hdwallet-provider');
-require('dotenv').config()
+const HDWalletProvider = require("@truffle/hdwallet-provider");
+require("dotenv").config();
 
-      
-const optimismGoerliUrl =
-    process.env.ALCHEMY_API_KEY ?
-        `https://opt-goerli.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}` :
-        process.env.OPTIMISM_GOERLI_URL
-
+const optimismGoerliUrl = process.env.ALCHEMY_API_KEY
+  ? `https://opt-goerli.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`
+  : process.env.OPTIMISM_GOERLI_URL;
 
 module.exports = {
   /**
@@ -71,17 +68,16 @@ module.exports = {
     // skipDryRun: true     // Skip dry run before migrations? (default: false for public nets )
     // },
     "local-devnode": {
-       provider: () => new HDWalletProvider(mnemonic, `http://localhost:8545`),
-       network_id: '*',
-       networkCheckTimeout: 1000000000,
-       timeoutBlocks: 300
+      provider: () => new HDWalletProvider(mnemonic, `http://localhost:8545`),
+      network_id: "*",
+      networkCheckTimeout: 1000000000,
+      timeoutBlocks: 300,
     },
     "optimism-goerli": {
-      provider: () => new HDWalletProvider(
-         process.env.MNEMONIC,
-         optimismGoerliUrl),
-      network_id: 420
-   }
+      provider: () =>
+        new HDWalletProvider(process.env.MNEMONIC, optimismGoerliUrl),
+      network_id: 420,
+    },
     // Useful for private networks
     // private: {
     // provider: () => new HDWalletProvider(mnemonic, `https://network.io`),
@@ -98,7 +94,7 @@ module.exports = {
   // Configure your compilers
   compilers: {
     solc: {
-      version: "0.8.4",    // Fetch exact version from solc-bin (default: truffle's version)
+      version: "0.8.15", // Fetch exact version from solc-bin (default: truffle's version)
       // docker: true,        // Use "0.5.1" you've installed locally with docker (default: false)
       // settings: {          // See the solidity docs for advice about optimization and evmVersion
       //  optimizer: {
@@ -107,7 +103,7 @@ module.exports = {
       //  },
       //  evmVersion: "byzantium"
       // }
-    }
+    },
   },
 
   // Truffle DB is currently disabled by default; to enable it, change enabled:
@@ -117,17 +113,17 @@ module.exports = {
   // NOTE: It is not possible to migrate your contracts to truffle DB and you should
   // make a backup of your artifacts to a safe location before enabling this feature.
   //
-  // After you backed up your artifacts you can utilize db by running migrate as follows: 
+  // After you backed up your artifacts you can utilize db by running migrate as follows:
   // $ truffle migrate --reset --compile-all
   //
   // db: {
-    // enabled: false,
-    // host: "127.0.0.1",
-    // adapter: {
-    //   name: "sqlite",
-    //   settings: {
-    //     directory: ".db"
-    //   }
-    // }
+  // enabled: false,
+  // host: "127.0.0.1",
+  // adapter: {
+  //   name: "sqlite",
+  //   settings: {
+  //     directory: ".db"
+  //   }
+  // }
   // }
 };
