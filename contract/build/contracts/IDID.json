@@ -212,7 +212,7 @@
   "sourceMap": "",
   "deployedSourceMap": "",
   "source": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.15;\n\ninterface IDID {\n    struct User{\n        string gender;\n        string name;\n        uint8 age;\n        string addr;\n        string mobile;\n        string email;\n    }\n\n    function registerUser (string memory _hashedId ,User memory _data) external;\n    function updatePassword (string memory _hashedId,string memory _hashedId_new)external;\n    function updateUser (string memory _hashedId, User memory _data) external;\n    function deleteUser (string memory _hashedId) external;\n    function getUser (string memory _hashedId) view external returns(User memory);\n    function isRegistered(string memory _hashedId) view external returns(bool);\n}",
-  "sourcePath": "/Users/ivy/Documents/workspace/projects/did/Team_DAO/contract/contracts/IDID.sol",
+  "sourcePath": "/home/rayna1221/BP/Team_DAO/contract/contracts/IDID.sol",
   "ast": {
     "absolutePath": "project:/contracts/IDID.sol",
     "exportedSymbols": {
@@ -925,8 +925,8 @@
     "version": "0.8.15+commit.e14f2714.Emscripten.clang"
   },
   "networks": {},
-  "schemaVersion": "3.4.9",
-  "updatedAt": "2022-08-26T00:22:20.576Z",
+  "schemaVersion": "3.4.8",
+  "updatedAt": "2022-08-26T02:14:46.340Z",
   "devdoc": {
     "kind": "dev",
     "methods": {},
