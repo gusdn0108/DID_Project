@@ -1,6 +1,7 @@
 const express = require('express');
 const nodeMailer = require('nodemailer');
 const bcrypt = require('bcrypt');
+const axios = require('axios');
 const jwt = require('jsonwebtoken');
 const router = express.Router();
 const { Auth, sequelize } = require('../models');
@@ -345,7 +346,8 @@ router.post('/pointInquiry', async (req, res) => {
 });
 
 router.post('/updateUser', async (req, res) => {
-    const { email, password } = req.body;
+    const { email, password, oldPassword } = req.body;
+    const clientId = 'aaaa';
     try {
         const _user = await Auth.findOne({
             where: {
@@ -354,8 +356,11 @@ router.post('/updateUser', async (req, res) => {
                 },
             },
         });
-        if (_user) {
+        const Pwproof = bcrypt.compareSync(oldPassword, _user.dataValues.password);
+        if (Pwproof) {
+            const oldPw = _user.dataValues.password;
             const hash = await bcrypt.hash(password, 12);
+            await axios.post('http://localhost:8000/api/Oauth/upDateRegister', { email, oldPw, clientId, hash });
             await Auth.update({ password: hash }, { where: { email: email } });
 
             res.json({

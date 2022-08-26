@@ -17,8 +17,6 @@
  * phrase from a file you've .gitignored so it doesn't accidentally become public.
  *
  */
-
-// const HDWalletProvider = require('@truffle/hdwallet-provider');
 //
 // const fs = require('fs');
 // const mnemonic = fs.readFileSync(".secret").toString().trim();
@@ -38,13 +36,15 @@ module.exports = {
 	 */
 
 	networks: {
-		// "optimism-goerli": {
-		// 	provider: () =>
-		// 		new HDWalletProvider(
-		// 			process.env.MNEMONIC,
-		// 			process.env.OPTI_GOERLI_URL
-		// 		),
-		// },
+		"optimism-goerli": {
+			provider: () => {
+				return new HDWalletProvider(
+					YOUR_GOERLI_MNEMONIC_GOES_HERE,
+					"https://goerli.optimism.io"
+				);
+			},
+			network_id: "420",
+		},
 		// Useful for testing. The `development` name is special - truffle uses it by default
 		// if it's defined here and no other network is specified at the command line.
 		// You should run a client (like ganache, geth, or parity) in a separate terminal
