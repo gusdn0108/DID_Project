@@ -9,7 +9,7 @@ const router = express.Router();
 const DID = require('../contracts/DID.json');
 const { v4 } = require('uuid');
 const { deployed } = require('../web3.js');
-const { Auth, sequelize } = require('../models');
+const { AccessSite, sequelize } = require('../models');
 const web3 = new Web3(new Web3.providers.HttpProvider('https://opt-goerli.g.alchemy.com/v2/GgIVsMFIKf4Pjwp8TmTN8gXftrnZf9A2'));
 
 const generateRandom = (min, max) => {
@@ -169,14 +169,68 @@ router.post('/email', async (req, res) => {
 });
 
 router.post('/apiDistribution', async (req, res) => {
-    console.log(req.body)
+    const {appName} = req.body
+    const email = '619049@naver.com'
     //  프론트에서 보낸 쿠키를 쪼개서 맞는 email인지 확인 (db와 대조)
+    const randomNum = Math.floor(Math.random()*1000000)
+    const forRestAPI = appName+email+randomNum
+    const randomNum2 = Math.floor(Math.random()*1000000)+1000000
+    const forSecret = appName+email+randomNum2
+    const REST_API = crypto.createHmac('sha256', forRestAPI).digest('hex').substr(0,31)
+    const client_secret = crypto.createHmac('sha256', forSecret).digest('hex').substr(0,31)
+    
+    try {
+        const exAppName = await AccessSite.findOne({
+            where : {
+                appName: appName
+            }
+        })
 
-    const response = {
-        status: true,
-        msg: '발급 완료'
+        if(exAppName) {
+            const response = {
+                status : false,
+                msg : '이미 사용 중인 어플리케이션 이름입니다.',
+            }
+            res.json(response)
+            return;
+        }
+
+        await AccessSite.create({
+            email : email,
+            appName : appName,
+            restAPI : REST_API,
+            clientSecretKey : client_secret
+        })
+        const response = {
+            status: true,
+            msg: '성공적으로 등록되었습니다.',
+            REST_API:REST_API,
+            client_secret:client_secret
+        }
+        res.json(response)
     }
-    res.json(response)
+    catch(e) {
+        console.log(e.message)
+    }
+})
+
+router.use('/getMyApp', async (req, res) => {
+    const { email } = req.body
+    try {
+        const myAppName = await AccessSite.findAll({
+            where : {
+                email : email
+            }
+        })
+        console.log(myAppName)
+        const response = {
+            myapp: myAppName
+        }
+        res.json(response)
+    }
+    catch(e) {
+        console.log(e.message)
+    }
 })
 
 router.post('/oAuthRegister', async (req, res) => {
