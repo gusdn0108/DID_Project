@@ -11,17 +11,17 @@ import { backend, frontend } from '../utils/ip.js'
 // rest api를 발급받고 redirect uri를 발급받을 로컬 서버 관리자는
 // 로그인이 된 상태라고 가정
 
-const Mypage = () => {
-    const [ appList, setAppList ] = useState(undefined)
+const Mypage = ({appList}) => {
+    const [ myAppList, setmyAppList ] = useState(undefined)
     
     const createApp = () => {
         location.href=`${frontend}/appRegi`
     }
 
     const getMyApp = async () => {
-        const email = '619049@naver.com'
-        const response = await axios.post(`${backend}/api/oauth/getMyApp`, {email: email})
-        setAppList(response.data.myapp)
+        //const email = '619049@naver.com'
+        //const response = await axios.post(`${backend}/api/oauth/getMyApp`, {email: email})
+        setmyAppList(appList)
     }
 
     const showAppList = appList.map((v,k) => {
@@ -61,5 +61,13 @@ const Mypage = () => {
       </>
     )
 }
+
+export const getServerSideProps = async () => {
+    const email = '619049@naver.com'
+    const response = await axios.post(`${backend}/api/oauth/getMyApp`, {email: email})
+  
+    return { props: {appList : response.data.myapp} };
+  };
+
 
 export default Mypage;
