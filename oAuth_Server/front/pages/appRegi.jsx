@@ -1,8 +1,9 @@
 import { Box, Button, Flex, Text, Input, FormControl, Image,
-    FormLabel, FormErrorMessage, FormHelperText, Select, Radio, RadioGroup, Stack} from "@chakra-ui/react";
+    FormLabel, FormErrorMessage, FormHelperText, Select, Radio, RadioGroup, Stack } from "@chakra-ui/react";
 import axios from 'axios'
 import { useState, useEffect } from "react";
 import { backend, frontend } from '../utils/ip.js'
+import Link from 'next/link'
 
 
 // rest api를 발급받고 redirect uri를 발급받을 로컬 서버 관리자는
@@ -12,6 +13,8 @@ const ServerRegi = () => {
     const [ myRestApi, setMyRestApi ] = useState(false)
     const [confirmAppname, setConfirmAppname ] = useState(false)
     const [ appName, setAppName ] = useState(undefined)
+    const [restAPI, setRestAPI] = useState(undefined)
+    const [ secret, setSecret ] = useState(undefined)
 
     const getRestApi = async() => {
         if(!appName || confirmAppname == false) {
@@ -20,7 +23,9 @@ const ServerRegi = () => {
         }
         setMyRestApi(true)
         const response = await axios.post(`${backend}/api/oauth/apiDistribution`, {appName})
-        console.log(response.data.status)
+        console.log(response.data)
+        setRestAPI(response.data.REST_API)
+        setSecret(response.data.client_secret)
     }
 
     return (
@@ -50,8 +55,6 @@ const ServerRegi = () => {
                     </>
                     }
 
-                    
-
                     <Box> RestAPI 를 발급받으려면 버튼을 클릭해주세요 </Box>
                     {
                         myRestApi == false ?
@@ -59,8 +62,11 @@ const ServerRegi = () => {
                         :
                         <Flex>
                             <Box>
-                                <Text>rest api</Text>
-                                <Text>client secret</Text>
+                                <Text>rest api : {restAPI}</Text>
+                                <Text>client secret : {secret}</Text>
+                            </Box>
+                            <Box>
+                                <Button><Link href={`/`}> 홈으로 </Link></Button>
                             </Box>
                         </Flex>
                     }

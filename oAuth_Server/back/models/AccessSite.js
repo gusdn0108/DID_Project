@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
             },
             redirectURI: {
                 type: DataTypes.STRING,
-                allowNull: false,
+                allowNull: true,
             },
             restAPI: {
                 type: DataTypes.STRING,
