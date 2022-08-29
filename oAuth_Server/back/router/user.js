@@ -242,9 +242,27 @@ router.use('/appInfo', async(req,res) => {
             }
         })
 
+        const appInfo = thatApp.dataValues
+        const redirectURI = [
+            thatApp.dataValues.redirectURI1, 
+            thatApp.dataValues.redirectURI2,
+            thatApp.dataValues.redirectURI3,
+            thatApp.dataValues.redirectURI4,
+            thatApp.dataValues.redirectURI5
+        ]
+
+        const appInfor = {
+            id: appInfo.idx,
+            email : appInfo.email,
+            appName : appInfo.appName,
+            redirectURI: redirectURI,
+            restAPI : appInfo.restAPI,
+            clientSecretKey : appInfo.clientSecretKey
+        }
+
         const response = {
-            status:true,
-            appInfo : thatApp
+            status: true,
+            appInfo : appInfor
         }
         res.json(response)
     }
@@ -254,6 +272,28 @@ router.use('/appInfo', async(req,res) => {
             status: false,
             msg: '비정상적 접근이 감지되었습니다.'
         })
+    }
+})
+
+router.use('/updateRedirect', async (req,res) => {
+    const { uri, email, appName } = req.body
+    console.log(uri, email, appName)
+    try {
+        const update = await AccessSite.update({
+            
+            redirectURI1 : uri[0], 
+            redirectURI2 : uri[1], 
+            redirectURI3 : uri[2], 
+            redirectURI4 : uri[3], 
+            redirectURI5 : uri[4], },{
+            where : {
+                email,
+                appName
+            }
+        })
+    }
+    catch(e) {
+        console.log(e.message)
     }
 })
 

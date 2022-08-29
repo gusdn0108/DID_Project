@@ -22,7 +22,6 @@ const Mypage = ({appList}) => {
     }
 
     const getMyApp = async () => {
-        console.log('qweqe')
         const email = '619049@naver.com'
         const response = await axios.post(`${backend}/api/oauth/getMyApp`, {email: email})
         
@@ -31,9 +30,9 @@ const Mypage = ({appList}) => {
 
     const showAppList = myAppList.map((v,k) => {
         return(
-            <Box p='5%'>
+            <Box p='5%' key={k}>
                 <Flex justifyContent={'space-around'}>
-                    <Text px ='5%' key={k}><Link href={{pathname:`/appinfo`, query:{appName: v.appName}}}>{v.appName}</Link></Text>
+                    <Text px ='5%'><Link href={{pathname:`/appinfo`, query:{appName: v.appName}}}>{v.appName}</Link></Text>
                     <Text>{v.restAPI}</Text>
                 </Flex>
             </Box>

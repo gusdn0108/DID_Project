@@ -22,7 +22,8 @@ const ServerRegi = () => {
             return;
         }
         setMyRestApi(true)
-        const response = await axios.post(`${backend}/api/oauth/apiDistribution`, {appName})
+        const email = '619049@naver.com'
+        const response = await axios.post(`${backend}/api/oauth/apiDistribution`, {appName:appName, email:email})
 
         setRestAPI(response.data.REST_API)
         setSecret(response.data.client_secret)
