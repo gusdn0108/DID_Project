@@ -1,9 +1,8 @@
 import { Box, Button, Flex, useDisclosure, Image, Input, Text } from '@chakra-ui/react';
 import Link from 'next/link';
 import LoginModal from './LoginModal'
-import {useEffect, useState} from 'react'
 import { deleteCookie } from 'cookies-next';
-import { cookieDomain, frontend } from '../utils/ip';
+import { frontend } from '../utils/ip';
 import { Search2Icon } from '@chakra-ui/icons';
 
 

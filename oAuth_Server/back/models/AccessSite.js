@@ -10,7 +10,23 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
-            redirectURI: {
+            redirectURI1: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
+            redirectURI2: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
+            redirectURI3: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
+            redirectURI4: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
+            redirectURI5: {
                 type: DataTypes.STRING,
                 allowNull: true,
             },

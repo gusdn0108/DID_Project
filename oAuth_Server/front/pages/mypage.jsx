@@ -1,8 +1,10 @@
-import { Box, Button, Flex, Text, Input, FormControl, Image,
-    FormLabel, FormErrorMessage, FormHelperText, Select, Radio, RadioGroup, Stack} from "@chakra-ui/react";
+import { Box, Button, Flex, Text, useDisclosure} from "@chakra-ui/react";
 import axios from 'axios'
 import { useEffect, useState } from "react";
 import { backend, frontend } from '../utils/ip.js'
+
+import AppModal from "../components/appModal.jsx";
+import Link from "next/link.js";
 
 // 사용자는 마이 페이지에서 자신이 운영하는 서비스를 연동 등록 가능
 // 내가 연동한 어플리케이션을 보여주는 리스트도 만들자..
@@ -12,23 +14,26 @@ import { backend, frontend } from '../utils/ip.js'
 // 로그인이 된 상태라고 가정
 
 const Mypage = ({appList}) => {
-    const [ myAppList, setmyAppList ] = useState(undefined)
+    const {isOpen, onOpen, onClose} = useDisclosure();
+    const [ myAppList, setmyAppList ] = useState(appList)
     
     const createApp = () => {
         location.href=`${frontend}/appRegi`
     }
 
     const getMyApp = async () => {
-        //const email = '619049@naver.com'
-        //const response = await axios.post(`${backend}/api/oauth/getMyApp`, {email: email})
-        setmyAppList(appList)
+        console.log('qweqe')
+        const email = '619049@naver.com'
+        const response = await axios.post(`${backend}/api/oauth/getMyApp`, {email: email})
+        
+        setmyAppList(response.data.myapp)
     }
 
-    const showAppList = appList.map((v,k) => {
+    const showAppList = myAppList.map((v,k) => {
         return(
             <Box p='5%'>
                 <Flex justifyContent={'space-around'}>
-                    <Text px ='5%'>{v.appName}</Text>
+                    <Text px ='5%' key={k}><Link href={{pathname:`/appinfo`, query:{appName: v.appName}}}>{v.appName}</Link></Text>
                     <Text>{v.restAPI}</Text>
                 </Flex>
             </Box>
@@ -37,7 +42,7 @@ const Mypage = ({appList}) => {
 
     useEffect(()=> {
         getMyApp()
-    },[])
+    },[isOpen])
 
     return (
       <>
@@ -45,7 +50,8 @@ const Mypage = ({appList}) => {
             <Flex mx='auto' my='0' justifyContent={'center'} mb='10%'>
                 <Box w='40%' mx='auto' my='0'>
                     <Text>어플리케이션 등록</Text>
-                    <Button onClick={createApp}>어플리케이션 생성</Button>
+                    <Button onClick={onOpen}>어플리케이션 생성</Button>
+                    <AppModal isOpen={isOpen} onClose={onClose}/>
                 </Box>
             </Flex>
             <Flex>
@@ -67,7 +73,7 @@ export const getServerSideProps = async () => {
     const response = await axios.post(`${backend}/api/oauth/getMyApp`, {email: email})
   
     return { props: {appList : response.data.myapp} };
-  };
+};
 
 
 export default Mypage;

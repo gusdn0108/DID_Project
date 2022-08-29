@@ -222,7 +222,7 @@ router.use('/getMyApp', async (req, res) => {
                 email : email
             }
         })
-        console.log(myAppName)
+
         const response = {
             myapp: myAppName
         }
@@ -230,6 +230,30 @@ router.use('/getMyApp', async (req, res) => {
     }
     catch(e) {
         console.log(e.message)
+    }
+})
+
+router.use('/appInfo', async(req,res) => {
+    const { appName } = req.body
+    try {
+        const thatApp = await AccessSite.findOne({
+            where : {
+                appName : appName
+            }
+        })
+
+        const response = {
+            status:true,
+            appInfo : thatApp
+        }
+        res.json(response)
+    }
+    catch(e) {
+        console.log(e.message)
+        res.json({
+            status: false,
+            msg: '비정상적 접근이 감지되었습니다.'
+        })
     }
 })
 

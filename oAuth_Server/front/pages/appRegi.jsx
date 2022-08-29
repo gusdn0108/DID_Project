@@ -23,7 +23,7 @@ const ServerRegi = () => {
         }
         setMyRestApi(true)
         const response = await axios.post(`${backend}/api/oauth/apiDistribution`, {appName})
-        console.log(response.data)
+
         setRestAPI(response.data.REST_API)
         setSecret(response.data.client_secret)
     }
