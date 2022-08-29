@@ -7,8 +7,10 @@ const Web3 = require('web3');
 const nodeMailer = require('nodemailer');
 const router = express.Router();
 const DID = require('../contracts/DID.json');
-const { v4 } = require('uuid');
 const { deployed } = require('../web3.js');
+const { user, sequelize } = require('../models');
+const { Op } = require('sequelize');
+
 const web3 = new Web3(new Web3.providers.HttpProvider('https://opt-goerli.g.alchemy.com/v2/GgIVsMFIKf4Pjwp8TmTN8gXftrnZf9A2'));
 
 router.post('/email', async (req, res) => {
@@ -195,16 +197,21 @@ router.post('/oAuthRegister', async (req, res) => {
             from: '0x7b6283591c09b1a738a46Acc0BBFbb5943EDb4F4',
         });
 
-        const result = await deploy.methods.getUser(asdf).call();
+        const result = await deploy.methods.getUser(hash).call();
         console.log(result);
-
-        const response = {
-            status: 'fail',
-            msg: '회원가입이 완료되지않았습니다',
-        };
-        res.json({
-            response: response,
-        });
+        if (result) {
+            await user.create({
+                hashId: hash,
+            });
+        } else {
+            const response = {
+                status: 'fail',
+                msg: '회원가입이 완료되지않았습니다',
+            };
+            res.json({
+                response: response,
+            });
+        }
     } catch (error) {
         console.log(error);
     }
@@ -291,17 +298,17 @@ router.post('/deleteUser', async (req, res) => {
 });
 
 router.post('/authorize', async (req, res) => {
-    const { userId, userPw } = req.body;
+    const { email, password } = req.body;
+
+    const dbUser = await user.findOne({
+        where: {
+            hashId: {
+                [Op.eq]: dbUser,
+            },
+        },
+    });
     try {
         //블록체인 네트워크에 아이디 패스워드 가져와서 확인
-
-        if (user.userId === userId && user.userPw === userPw) {
-            const response = {
-                status: true,
-                code: 'asdfasfd',
-            };
-            await axios.post('http://localhost:3500/getCode', response);
-        }
     } catch (error) {
         console.log(error.message);
     }

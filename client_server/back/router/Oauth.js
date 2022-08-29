@@ -4,8 +4,6 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const router = express.Router();
-const { Auth, sequelize } = require('../models');
-const { Op } = require('sequelize');
 
 const baseUrl = 'http://localhost:8000/api/Oauth';
 
@@ -65,63 +63,6 @@ router.post('/oAuthGetToken', async (req, res) => {
      * 의문점 ? : ACCESS_TOKEN에도 USER값이들어가있는데 굳이 왜 ID_TOKEN을 만들어주는지 모르겠음 ...
      * 의문점 풀이 : access_token은 사실상 back oauth검증 / id _token은 백이랑 프론트 검증용? 이라고생각해보고있음..
      * */
-});
-
-router.post('/oAuthRegister', async (req, res) => {
-    const { email, password } = req.body;
-
-    try {
-        const _user = await Auth.findOne({
-            where: {
-                email: email,
-            },
-        });
-
-        const getEncodedHash = bcrypt.compareSync(password, _user.dataValues.password);
-        if (getEncodedHash === true) {
-            const userPwHash = _user.dataValues.password;
-            const toBlockData = {
-                email: email,
-                password: userPwHash,
-                clientId: Otp.clientId,
-            };
-            const hasUuid = _user.dataValues.uuid;
-            if (hasUuid !== null) {
-                res.json({
-                    status: false,
-                    msg: 2,
-                });
-            }
-            const response = await axios.post('http://localhost:8000/api/Oauth/register', toBlockData);
-            res.json({
-                status: true,
-                data: response.data.email,
-            });
-        } else {
-            res.json({
-                status: false,
-                msg: 1,
-            });
-        }
-    } catch (error) {
-        console.log(error.message);
-    }
-});
-
-router.post('/getuuid', async (req, res) => {
-    console.log('uuid옴???');
-    const { uuid, email } = req.body;
-    console.log(uuid, email);
-    const _user = await Auth.findOne({
-        where: {
-            email: {
-                [Op.eq]: email,
-            },
-        },
-    });
-    if (_user) {
-        await Auth.update({ uuid: uuid }, { where: { email: email } });
-    }
 });
 
 module.exports = router;
