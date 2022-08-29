@@ -2,12 +2,12 @@ const express = require('express');
 const cookiePaser = require('cookie-parser');
 const path = require('path');
 const dotenv = require('dotenv');
-const { sequelize } = require('../back/models');
+const { sequelize } = require('./models');
 const router = require('./router');
 const app = express();
 const cors = require('cors');
 
-const port = 4000;
+const port = 4001;
 
 app.use(
     cors({

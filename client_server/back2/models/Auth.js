@@ -1,24 +1,33 @@
 module.exports = (sequelize, DataTypes) => {
-    const AuserSite = sequelize.define(
-        'AuserSite',
+    const Auth = sequelize.define(
+        'Auth',
         {
-            name: {
+            email: {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
-            mobile: {
+            username: {
                 type: DataTypes.STRING,
                 allowNull: false,
+            },
+            password: {
+                type: DataTypes.STRING,
+                allowNull: false,
+            },
+            point: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                default: 0,
             },
         },
         {
             timestamps: false,
-            tableName: 'AuserSite',
+            tableName: 'Login',
             charset: 'utf8mb4',
             collate: 'utf8mb4_general_ci',
             freezeTableName: true,
         },
     );
 
-    return AuserSite;
+    return Auth;
 };

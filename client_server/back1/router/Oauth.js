@@ -7,12 +7,11 @@ const router = express.Router();
 
 const baseUrl = 'http://localhost:8000/api/Oauth';
 const Otp = {
-    clientId: '41f18d0fe5000fefe118140548e11dd',
-    redirectUri: 'http://localhost:4000',
+    clientId: '6c40ff3da3967f87090ee9174bdf49d', // back의 예명
+    redirectUri: 'http://localhost:4001',
 };
 
 router.get('/RedirectUrl', (req, res) => {
-    // clientId = restAPI
     const url = `http://localhost:8080?clientId=${Otp.clientId}&redirectUri=${Otp.redirectUri}&response_type=code`;
     res.redirect(url);
 });
@@ -39,6 +38,7 @@ router.post('/getCode', async (req, res) => {
     const Data = {
         clientId: RestAPI,
         grant_type: 'authorization_code',
+        code: userOTP.clientSecretKey,
         headers: {
             'Content-Type': 'application/json',
         },
