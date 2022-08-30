@@ -345,6 +345,18 @@ router.post('/pointInquiry', async (req, res) => {
     }
 });
 
+
+router.post('/updatePoint',async(req,res)=>{ 
+    const {email,usePoint} = req.body;
+    const havepoint = await auth.findOne({
+        where:{
+        email:email,
+    },
+ 
+})
+
+
+})
 router.post('/updateUser', async (req, res) => {
     const { email, password, oldPassword } = req.body;
     const clientId = 'aaaa';
