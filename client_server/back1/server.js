@@ -11,7 +11,7 @@ const port = 4001;
 
 app.use(
     cors({
-        origin: ['http://localhost:3000'],
+        origin: '*',
         credentials: true,
     }),
 );
@@ -32,5 +32,5 @@ sequelize
     });
 
 app.listen(port, () => {
-    console.log('Back Server Running Port 4000  🏃🏻');
+    console.log('Back Server Running Port 4001  🏃🏻');
 });

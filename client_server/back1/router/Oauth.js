@@ -5,46 +5,48 @@ const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const router = express.Router();
 
-const baseUrl = 'http://localhost:8000/api/Oauth';
-const Otp = {
+    const baseUrl = 'http://localhost:8000/api/Oauth';
+    const bsite = 'dltmdwns';
+    const code = crypto.createHash('sha256').update(bsite).digest('base64'); // * a사이트 인가코드
+    const Otp = {
     clientId: '6c40ff3da3967f87090ee9174bdf49d', // back의 예명
     redirectUri: 'http://localhost:4001',
-};
+    code:code
+    };
+
+
+
+
+
+
 
 router.get('/RedirectUrl', (req, res) => {
-    const url = `http://localhost:8080?clientId=${Otp.clientId}&redirectUri=${Otp.redirectUri}&response_type=code`;
-    res.redirect(url);
+const url = `http://localhost:8080?clientId=${Otp.clientId}&redirectUri=${Otp.redirectUri}&response_type=${code}`;
+res.redirect(url);
 });
 
 router.post('/getCode', async (req, res) => {
-    const { userInfo } = req.body;
-    console.log(userInfo);
+    const {code,RestAPI} = req.body
+    console.log('여긴옴??')
 
-    const userRestAPI = [];
-    const userSecretKey = [];
-
-    for (let i = 0; i < userInfo.length; i++) {
-        userRestAPI.push(userInfo[i].restAPI);
-        userSecretKey.push(userInfo[i].clientSecretKey);
-    }
-
-    const userOTP = {
-        clientId: userRestAPI,
-        clientSecretKey: userSecretKey,
-    };
-
-    const RestAPI = userOTP.clientId;
-
-    const Data = {
-        clientId: RestAPI,
-        grant_type: 'authorization_code',
-        code: userOTP.clientSecretKey,
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    };
     try {
-        await axios.post(`${baseUrl}/getToken`, Data);
+        if(code){
+            const Data = {
+                RestAPI: RestAPI,
+                grant_type: "authorization_code",
+                code: code,
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              };
+              await axios.post('http://localhost:8000/api/oauth/getToken',Data)
+        }else{
+            const response = {
+                status:false,
+                msg:'코드가없습니다 '
+            }
+            await axios.post('http://localhost:8000/api/oauth/getToken',response)
+        }
     } catch (error) {
         console.log(error);
     }

@@ -6,45 +6,38 @@ const crypto = require('crypto');
 const router = express.Router();
 
 const baseUrl = 'http://localhost:8000/api/Oauth';
+const asite = 'dkstnghks';
+const code = crypto.createHash('sha256').update(asite).digest('base64'); // * a사이트 인가코드
+
 const Otp = {
     clientId: '41f18d0fe5000fefe118140548e11dd',
     redirectUri: 'http://localhost:4000',
 };
 
-router.get('/RedirectUrl', (req, res) => {
+router.get('/RedirectUrl', async (req, res) => {
     // clientId = restAPI
-    const url = `http://localhost:8080?clientId=${Otp.clientId}&redirectUri=${Otp.redirectUri}&response_type=code`;
+    const url = `http://localhost:8080?clientId=${Otp.clientId}&redirectUri=${Otp.redirectUri}&response_type=${code}`;
     res.redirect(url);
 });
 
 router.post('/getCode', async (req, res) => {
-    const { userInfo } = req.body;
-    console.log(userInfo);
+    console.log('asdf???')
+    console.log(req.body)
 
-    const userRestAPI = [];
-    const userSecretKey = [];
 
-    for (let i = 0; i < userInfo.length; i++) {
-        userRestAPI.push(userInfo[i].restAPI);
-        userSecretKey.push(userInfo[i].clientSecretKey);
-    }
 
-    const userOTP = {
-        clientId: userRestAPI,
-        clientSecretKey: userSecretKey,
-    };
 
-    const RestAPI = userOTP.clientId;
+    // const RestAPI = userOTP.clientId;
 
-    const Data = {
-        clientId: RestAPI,
-        grant_type: 'authorization_code',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    };
+    // const Data = {
+    //     clientId: RestAPI,
+    //     grant_type: 'authorization_code',
+    //     headers: {
+    //         'Content-Type': 'application/json',
+    //     },
+    // };
     try {
-        await axios.post(`${baseUrl}/getToken`, Data);
+        // await axios.post(`${baseUrl}/getToken`, Data);
     } catch (error) {
         console.log(error);
     }
