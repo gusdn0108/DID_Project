@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 
 const AppModal = ({isOpen, onClose}) => {
     const [ appName, setAppName ] = useState(undefined)
+    const email = '619049@naver.com'
 
     const getRestApi = async() => {
         if(!appName) {
@@ -14,7 +15,7 @@ const AppModal = ({isOpen, onClose}) => {
         }
         
         try {
-            const response = await axios.post(`${backend}/api/oauth/apiDistribution`, {appName})
+            const response = await axios.post(`${backend}/api/oauth/apiDistribution`, {appName, email: email})
             if(response.data.status == true) {
                 alert(response.data.msg)
                 onClose()

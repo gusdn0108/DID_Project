@@ -1,6 +1,6 @@
 const express = require('express');
 const nodeMailer = require('nodemailer');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const axios = require('axios');
 const jwt = require('jsonwebtoken');
 const router = express.Router();
