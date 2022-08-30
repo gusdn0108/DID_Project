@@ -1,5 +1,4 @@
-import { Box, Button, Flex, Text, Input, FormControl, Image,
-    FormLabel, FormErrorMessage, FormHelperText, Select, Radio, RadioGroup, Stack } from "@chakra-ui/react";
+import { Box, Button, Flex, Text, Input, Table, Thead, Tbody, Th, Td, Tr, Divider } from "@chakra-ui/react";
 import axios from 'axios'
 import { useState, useEffect } from "react";
 import { backend } from '../utils/ip.js'
@@ -34,30 +33,46 @@ const AppInfo = () => {
     }
 
     const modifyRed = async () => {
+        if(isModifying !== null) {
+            alert(`uri 설정을 완료한 후 계속 진행해주세요.`)
+            return;
+        }
         const response = await axios.post(`${backend}/api/oauth/updateRedirect`, {uri, email:email, appName: appName})
         alert(response.data.msg)
     }
 
     const uris = uri?.map((v,k) => {
         return(
-            <Box key={k}>
+            <Box key={k} h='2rem' justifyContent={'center'}>
                 {
                     isModifying == k
                     ?
                     <Input placeholder="redirect url을 등록해주세요." 
+                    w='35%' mb='0.7%'
+                    size='sm' px='3%'
                     defaultValue={uri[k]}
                     onChange ={setUri(k)}
                     onKeyDown={confirmURI(k)}
+                    borderColor={'gray.400'}
                     />
                     :
                     (
-                        uri[k]== null 
+                        uri[k] == null
                         ?
-                        <Text onClick={() => setIsModifying(k)}>
+                        <Box onClick={() => setIsModifying(k)} mb='0.7%' textColor={'gray.500'}>
                             redirect uri를 등록해주세요
-                        </Text>
+                        </Box>
                         :
-                        <Text onClick={() => setIsModifying(k)}>{uri[k]}</Text>
+                        (
+                            uri[k] == ''
+                            ?
+                            <Box onClick={() => setIsModifying(k)} mb='0.7%' textColor={'gray.500'}>
+                                redirect uri를 등록해주세요
+                            </Box>
+                            :
+                            <Box onClick={() => setIsModifying(k)} mb='0.7%'>{uri[k]}</Box>
+                        )
+                       
                     )
                 }
             </Box>
@@ -66,38 +81,51 @@ const AppInfo = () => {
 
     return(
         <>
-            <Box justifyContent={'center'} pt='5%' w='80%' mx='auto' my='0'>
-                <Flex justifyContent={'center'}>
-                    {router.query.appName} 
+            <Box pt='5%' w='70%' mx='auto' my='0'>
+                
+                <Flex flexDirection={'column'} alignItems='center' mb='3%'>
+                    <Box fontSize={'175%'} mb='0.5%'>어플리케이션 관리 페이지</Box>
+                    <Box fontSize={'120%'}> Application : {router.query.appName} </Box>
                 </Flex>
 
-                <Flex display={'block'}>
+                <Flex flexDirection={'column'} alignItems={'center'}>
                     {
                         showInfo == false ?
                         <Button onClick={revealInfo}>Rest api, client_secret 보기</Button>
                         :
                         <>  
-                            <Box>
-                                <Text> Rest API : {appInfo.restAPI}</Text>
-                                <Text> Client Secret : { appInfo.clientSecretKey } </Text>
-                                <Text> 시크릿 키는 노출되지 않도록 주의해주세요.</Text>
+                            <Box mb='4%' w='100%' px='10%' borderColor='gray.400' border={'1px'}>
+                                <Table >
+                                    <Thead>
+                                        <Tr>
+                                            <Th textAlign={'center'}>Rest API</Th>
+                                            <Th textAlign={'center'}>Client Secret</Th>
+                                        </Tr>
+                                    </Thead>
+                                    <Tbody>
+                                        <Tr>
+                                            <Td textAlign={'center'}>{ appInfo.restAPI }</Td>
+                                            <Td textAlign={'center'}>{ appInfo.clientSecretKey }</Td>
+                                        </Tr>
+                                    </Tbody>
+                                </Table>
                             </Box>
 
-                            <Flex>
-                                <Flex>Redirect URI</Flex>
+                            <Divider orientation="horizontal" mb='3%'/>
+
+                            <Box textAlign={'center'} w='100%' mb='2%' borderColor='gray.400' border={'1px'}>
+                                <Box fontSize={'175%'} mb='0%'>Redirect URI 관리</Box>
+                                <Text mb='1.5%'>리다이렉트 url은 최대 5개까지  등록할 수 있습니다.</Text>
                                 
-                                <Text>리다이렉트 url은 최대 5개까지 등록할 수 있습니다.</Text>
                                 <Box>
                                     {uris}
                                 </Box>
-                            </Flex>
+                            </Box>
+
+                            <Box mb='1%'><Text>uri 수정 후, 수정 완료 버튼을 눌려주세요.</Text></Box>
                             <Button onClick={modifyRed}>수정 완료</Button>
                         </>
                     }    
-                </Flex>
-
-                <Flex>
-                    
                 </Flex>
             </Box>
         </>
