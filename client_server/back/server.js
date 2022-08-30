@@ -7,7 +7,7 @@ const router = require('./router');
 const app = express();
 const cors = require('cors');
 
-const port = 4000;
+const port = 4001;
 
 app.use(
     cors({
@@ -19,6 +19,11 @@ app.use(
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+app.get('/', (req, res) => {
+    res.send('hello');
+});
+
 app.use(cookiePaser());
 app.use('/api', router);
 dotenv.config();
@@ -32,5 +37,5 @@ sequelize
     });
 
 app.listen(port, () => {
-    console.log('Back Server Running Port 4000  🏃🏻');
+    console.log(`Back Server Running Port ${port}  🏃🏻`);
 });
