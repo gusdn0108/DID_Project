@@ -1,8 +1,8 @@
 {
     "development": {
-        "username": "ash991213",
-        "password": "ash991213",
-        "database": "Oauth",
+        "username": "root",
+        "password": "11",
+        "database": "OauthDB",
         "host": "127.0.0.1",
         "dialect": "mysql"
     },

@@ -261,20 +261,12 @@ router.use('/appInfo', async (req, res) => {
 
         const response = {
             status: true,
-<<<<<<< HEAD
-            appInfo: thatApp,
-        };
-        res.json(response);
-    } catch (e) {
-        console.log(e.message);
-=======
             appInfo : appInfor
         }
         res.json(response)
     }
     catch(e) {
         console.log(e.message)
->>>>>>> cdd56f0a45a6dcd97653b58603a02609417d52ac
         res.json({
             status: false,
             msg: '비정상적 접근이 감지되었습니다.',
@@ -284,7 +276,12 @@ router.use('/appInfo', async (req, res) => {
 
 router.use('/updateRedirect', async (req,res) => {
     const { uri, email, appName } = req.body
-    console.log(uri, email, appName)
+    
+    for(let i = 0; i < uri.length; i++) {
+        uri[i] = uri[i].trim()
+        console.log(uri[i])
+    }
+    
     try {
         const update = await AccessSite.update({
             
@@ -298,9 +295,19 @@ router.use('/updateRedirect', async (req,res) => {
                 appName
             }
         })
+
+        const response = {
+            status : true,
+            msg: '리다이렉트 uri 수정이 완료되었습니다.'
+        }
+        res.json(response)
     }
     catch(e) {
         console.log(e.message)
+        res.json({
+            status: false,
+            msg: '알수 없는 에러가 발생하였습니다. 나중에 다시 시도해주세요'
+        })
     }
 })
 
