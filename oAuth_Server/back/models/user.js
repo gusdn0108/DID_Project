@@ -8,23 +8,19 @@ module.exports = (sequelize, DataTypes) => {
             },
             A: {
                 type: DataTypes.BOOLEAN,
-                allowNull: false,
-                default: false,
+                allowNull: true,
             },
             B: {
                 type: DataTypes.BOOLEAN,
-                allowNull: false,
-                default: false,
+                allowNull: true,
             },
             C: {
                 type: DataTypes.BOOLEAN,
-                allowNull: false,
-                default: false,
+                allowNull: true,
             },
             D: {
                 type: DataTypes.BOOLEAN,
-                allowNull: false,
-                default: false,
+                allowNull: true,
             },
         },
         {

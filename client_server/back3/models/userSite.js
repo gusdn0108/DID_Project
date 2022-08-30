@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
-    const AuserSite = sequelize.define(
-        'AuserSite',
+    const DuserSite = sequelize.define(
+        'DuserSite',
         {
             name: {
                 type: DataTypes.STRING,
@@ -13,12 +13,12 @@ module.exports = (sequelize, DataTypes) => {
         },
         {
             timestamps: false,
-            tableName: 'AuserSite',
+            tableName: 'DuserSite',
             charset: 'utf8mb4',
             collate: 'utf8mb4_general_ci',
             freezeTableName: true,
         },
     );
 
-    return AuserSite;
+    return DuserSite;
 };
