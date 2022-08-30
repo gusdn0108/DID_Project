@@ -345,6 +345,43 @@ router.post('/pointInquiry', async (req, res) => {
     }
 });
 
+router.post('/updatePoint', async (req, res) => {
+    const { email, usePoint } = req.body;
+    const havepoint = await Auth.findOne({
+        where: {
+            email: email,
+        },
+    });
+    console.log(havepoint.point);
+    console.log('123');
+    try {
+        if (havepoint.point >= usePoint) {
+            // havepoint.point - point***
+            await Auth.update(
+                {
+                    point: havepoint.point - usePoint,
+                },
+                {
+                    where: {
+                        email: email,
+                    },
+                },
+            );
+            res.json({
+                status: 1,
+                point: havepoint.point - usePoint,
+            });
+        }
+    } catch (e) {
+        console.log(e);
+        res.json({
+            status: 0,
+            error: '으악',
+        });
+    }
+});
+
+
 router.post('/updateUser', async (req, res) => {
     const { email, password, oldPassword } = req.body;
     const clientId = 'aaaa';
