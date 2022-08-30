@@ -1,31 +1,33 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
+const bcrypt = require('bcrypt');
 const axios = require('axios');
 const Web3 = require('web3');
 const nodeMailer = require('nodemailer');
 const router = express.Router();
 const DID = require('../contracts/DID.json');
-const { v4 } = require('uuid');
+const { deployed } = require('../web3.js');
+const { user, sequelize } = require('../models');
+const { Op } = require('sequelize');
+const { AccessSite } = require('../models');
+
 const web3 = new Web3(new Web3.providers.HttpProvider('https://opt-goerli.g.alchemy.com/v2/GgIVsMFIKf4Pjwp8TmTN8gXftrnZf9A2'));
 
-router.post('/email', async (req, res) => {
-    const { email, nickName } = req.body;
+const generateRandom = (min, max) => {
+    const ranNum = (Math.floor(Math.random() * (max - min + 1)) + min).toString();
 
-    try {
-        const exEmail = await Auth.findOne({
-            where: {
-                email: email,
-            },
-        });
-
-        if (exEmail) {
-            return res.status(403).send('이미 사용중인 메일입니다 ');
-        }
-    } catch (e) {
-        console.log(e);
+    const array = [];
+    for (let i = 0; i < 6; i++) {
+        array.push(ranNum[i]);
     }
-    // 중복 체크하고
+
+    return array;
+};
+
+router.post('/email', async (req, res) => {
+    const { email } = req.body;
+
     const number = generateRandom(111111, 999999);
     const mailPoster = nodeMailer.createTransport({
         service: 'Naver',
@@ -168,16 +170,151 @@ router.post('/email', async (req, res) => {
     });
 });
 
+router.post('/apiDistribution', async (req, res) => {
+    const { appName, email } = req.body;
+
+    //  프론트에서 보낸 쿠키를 쪼개서 맞는 email인지 확인 (db와 대조)
+    const randomNum = Math.floor(Math.random() * 1000000);
+    const forRestAPI = appName + email + randomNum;
+    const randomNum2 = Math.floor(Math.random() * 1000000) + 1000000;
+    const forSecret = appName + email + randomNum2;
+    const REST_API = crypto.createHmac('sha256', forRestAPI).digest('hex').substr(0, 31);
+    const client_secret = crypto.createHmac('sha256', forSecret).digest('hex').substr(0, 31);
+
+    try {
+        const exAppName = await AccessSite.findOne({
+            where: {
+                appName: appName,
+            },
+        });
+
+        if (exAppName) {
+            const response = {
+                status: false,
+                msg: '이미 사용 중인 어플리케이션 이름입니다.',
+            };
+            res.json(response);
+            return;
+        }
+        await AccessSite.create({
+            email: email,
+            appName: appName,
+            restAPI: REST_API,
+            clientSecretKey: client_secret,
+        });
+        const response = {
+            status: true,
+            msg: '성공적으로 등록되었습니다.',
+            REST_API: REST_API,
+            client_secret: client_secret,
+        };
+        res.json(response);
+    } catch (e) {
+        console.log(e.message);
+    }
+});
+
+router.use('/getMyApp', async (req, res) => {
+    const { email } = req.body;
+    try {
+        const myAppName = await AccessSite.findAll({
+            where: {
+                email: email,
+            },
+        });
+
+        const response = {
+            myapp: myAppName,
+        };
+        res.json(response);
+    } catch (e) {
+        console.log(e.message);
+    }
+});
+
+router.use('/appInfo', async (req, res) => {
+    const { appName } = req.body;
+    try {
+        const thatApp = await AccessSite.findOne({
+            where: {
+                appName: appName,
+            },
+        });
+
+        const appInfo = thatApp.dataValues
+        const redirectURI = [
+            thatApp.dataValues.redirectURI1, 
+            thatApp.dataValues.redirectURI2,
+            thatApp.dataValues.redirectURI3,
+            thatApp.dataValues.redirectURI4,
+            thatApp.dataValues.redirectURI5
+        ]
+
+        const appInfor = {
+            id: appInfo.idx,
+            email : appInfo.email,
+            appName : appInfo.appName,
+            redirectURI: redirectURI,
+            restAPI : appInfo.restAPI,
+            clientSecretKey : appInfo.clientSecretKey
+        }
+
+        const response = {
+            status: true,
+<<<<<<< HEAD
+            appInfo: thatApp,
+        };
+        res.json(response);
+    } catch (e) {
+        console.log(e.message);
+=======
+            appInfo : appInfor
+        }
+        res.json(response)
+    }
+    catch(e) {
+        console.log(e.message)
+>>>>>>> cdd56f0a45a6dcd97653b58603a02609417d52ac
+        res.json({
+            status: false,
+            msg: '비정상적 접근이 감지되었습니다.',
+        });
+    }
+});
+
+router.use('/updateRedirect', async (req,res) => {
+    const { uri, email, appName } = req.body
+    console.log(uri, email, appName)
+    try {
+        const update = await AccessSite.update({
+            
+            redirectURI1 : uri[0], 
+            redirectURI2 : uri[1], 
+            redirectURI3 : uri[2], 
+            redirectURI4 : uri[3], 
+            redirectURI5 : uri[4], },{
+            where : {
+                email,
+                appName
+            }
+        })
+    }
+    catch(e) {
+        console.log(e.message)
+    }
+})
+
 router.post('/oAuthRegister', async (req, res) => {
     const { email, password, gender, name, age, addr, mobile } = req.body;
     // 이메일,패스워드,성별,이름,나이,주소,핸드폰번호
     try {
         const userHash = email + password;
         const hash = crypto.createHash('sha256').update(userHash).digest('base64');
+        const passwordHash = await bcrypt.hash(password, 12);
 
         const DATA = {
             email: email,
-            password: password,
+            password: passwordHash,
             gender: gender,
             name: name,
             age: age,
@@ -185,81 +322,162 @@ router.post('/oAuthRegister', async (req, res) => {
             mobile: mobile,
         };
 
-        const networkId = await web3.eth.net.getId();
-        const CA = DID.networks[networkId].address;
-        const abi = DID.abi;
-
-        const deployed = await new web3.eth.Contract(abi, CA);
-        await deployed.methods.registerUser(hash, DATA).send({
-            from: '0xBFe83B47aE843274d6DB08F8B3c89d59Cc26aFEE',
-            gas: 1000000,
+        const deploy = await deployed();
+        await deploy.methods.registerUser(hash, DATA).send({
+            from: '0x7b6283591c09b1a738a46Acc0BBFbb5943EDb4F4',
         });
-        const result = await deployed.methods.getUser(hash).call();
-        console.log(result);
 
-        const response = {
-            status: 'fail',
-            msg: '회원가입이 완료되지않았습니다',
-        };
-        res.json({
-            response: response,
-        });
+        const result = await deploy.methods.getUser(hash).call();
+
+        if (result) {
+            await user.create({
+                hashId: hash,
+            });
+            const response = {
+                status: true,
+                msg: '회원 가입이 완료되었습니다.',
+            };
+            res.json(response);
+        } else {
+            const response = {
+                status: false,
+                msg: '회원 가입에 실패했습니다.',
+            };
+            res.json(response);
+        }
     } catch (error) {
         console.log(error);
     }
 });
 
-router.post('/upDateRegister', async (req, res) => {
-    const { email, password, clientId, oldPassword } = req.body;
+router.post('/upDatePassword', async (req, res) => {
+    const { email, newPassword, oldPassword } = req.body;
 
-    if (clientId == 'aaaa') {
-        try {
-            const userHash = email + oldPassword;
-
-            const hash = crypto.createHash('sha256').update(userHash).digest('base64');
-
-            const DATA = {
-                email: email,
-                password: password,
-            };
-
-            const networkId = await web3.eth.net.getId();
-            const CA = DID.networks[networkId].address;
-            const abi = DID.abi;
-
-            const deployed = await new web3.eth.Contract(abi, CA);
-            await deployed.methods.updateUser(hash, DATA).send({
-                from: '0xBFe83B47aE843274d6DB08F8B3c89d59Cc26aFEE',
-                gas: 1000000,
-            });
-
-            const result = await deployed.methods.getUser(hash).call();
-            console.log(result);
-        } catch (e) {
-            console.log(e.message);
-        }
-    } else {
-        const response = {
-            status: 'fail',
-            msg: '등록되지 않은 클라이언트 서버입니다. ',
-        };
-        res.json({
-            response: response,
+    try {
+        console.log(req.body);
+        const previousHash = email + oldPassword;
+        const newpasswordId = email + newPassword;
+        const oldHash = crypto.createHash('sha256').update(previousHash).digest('base64');
+        const newHash = crypto.createHash('sha256').update(newpasswordId).digest('base64');
+        const deploy = await deployed();
+        await deploy.methods.updatePassword(oldHash, newHash).send({
+            from: '0x7b6283591c09b1a738a46Acc0BBFbb5943EDb4F4',
         });
+
+        const result = await deploy.methods.getUser(oldHash).call();
+        const result2 = await deploy.methods.getUser(newHash).call();
+
+        console.log(result);
+        console.log(result2);
+    } catch (e) {
+        console.log(e.message);
+    }
+});
+
+router.post('/upDateUser', async (req, res) => {
+    const { gender, name, age, addr, mobile, email, password } = req.body;
+
+    try {
+        const userHash = email + password;
+        const hash = crypto.createHash('sha256').update(userHash).digest('base64');
+
+        const DATA = {
+            gender: gender,
+            name: name,
+            age: age,
+            addr: addr,
+            mobile: mobile,
+            email: email,
+        };
+
+        const deploy = await deployed();
+        await deploy.methods.updateUser(hash, DATA).send({
+            from: '0x7b6283591c09b1a738a46Acc0BBFbb5943EDb4F4',
+            gas: 10000000,
+        });
+
+        const result = await deploy.methods.getUser(hash).call();
+        console.log(result);
+    } catch (e) {
+        console.log(e.message);
+    }
+});
+
+router.post('/searchUser', async (req, res) => {
+    const { email, password } = req.body;
+    const userHash = email + password;
+    const hash = crypto.createHash('sha256').update(userHash).digest('base64');
+    const deploy = await deployed();
+    const result = await deploy.methods.getUser(hash).call();
+    console.log(result);
+});
+
+router.post('/deleteUser', async (req, res) => {
+    const { email, password } = req.body;
+    try {
+        const userHash = email + password;
+        const hash = crypto.createHash('sha256').update(userHash).digest('base64');
+        const deploy = await deployed();
+        await deploy.methods.deleteUser('asdf').send({
+            from: '0x7b6283591c09b1a738a46Acc0BBFbb5943EDb4F4',
+            gas: 10000000,
+        });
+        const result = await deploy.methods.getUser(hash).call();
+        console.log(result);
+    } catch (error) {
+        console.log(error);
     }
 });
 
 router.post('/authorize', async (req, res) => {
-    const { userId, userPw } = req.body;
-    try {
-        //블록체인 네트워크에 아이디 패스워드 가져와서 확인
+    const { email, password } = req.body;
 
-        if (user.userId === userId && user.userPw === userPw) {
+    // * 블록체인 네트워크 아이디 패스워드
+    const userhash = email + password;
+    const hash = crypto.createHash('sha256').update(userhash).digest('base64');
+
+    // * 인가코드
+    const asite = 'dkstnghks';
+    const bsite = 'dltmdwns';
+    const csite = 'dlagusdn';
+    const dsite = 'rlawlgus';
+
+    const code = crypto.createHash('sha256').update(asite).digest('base64'); // * a사이트 인가코드
+    const code1 = crypto.createHash('sha256').update(bsite).digest('base64'); // * b사이트 인가코드
+    const code2 = crypto.createHash('sha256').update(csite).digest('base64'); // * c사이트 인가코드
+    const code3 = crypto.createHash('sha256').update(dsite).digest('base64'); // * d사이트 인가코드
+
+    const dbUser = await user.findOne({
+        where: {
+            hashId: {
+                [Op.eq]: hash,
+            },
+        },
+    });
+
+    try {
+        // * 블록체인 네트워크에 아이디 패스워드 가져와서 확인
+        if (dbUser) {
+            const getSiteInfo = await AccessSite.findAll({
+                where: {
+                    email: {
+                        [Op.eq]: email,
+                    },
+                },
+            });
+
+            const userInfo = [];
+            for (let i = 0; i < getSiteInfo.length; i++) {
+                userInfo.push(getSiteInfo[i].dataValues);
+            }
+
             const response = {
                 status: true,
-                code: 'asdfasfd',
+
+                userInfo: userInfo,
             };
-            await axios.post('http://localhost:3500/getCode', response);
+
+            await axios.post('http://localhost:4000/api/oauth/getCode', response);
         }
     } catch (error) {
         console.log(error.message);
@@ -289,25 +507,6 @@ router.post('/getToken', async (req, res) => {
         process.env.SECRET_KEY,
     );
 
-    /**
-     * 
-     * "token_type":"bearer",
-      "access_token":"${ACCESS_TOKEN}",
-      "expires_in":43199,
-      "refresh_token":"${REFRESH_TOKEN}",
-      "refresh_token_expires_in":25184000,
-      "scope":"account_email profile"
-     * 1. 유저의 토큰 ? 
-     * 2. 토큰 유지시간?
-     * 3. 재발급받은 토큰 ? 
-     * 4. 재발급 받은 토큰의 유지시간?
-     * 5. 고정값 ?
-     * 
-     * 찾아본 정보 :
-     * access_token은 발급 받은 후 12시간-24시간(정책에 따라 변동 가능)동안 유효합니다.
-     * refresh token은 두달간 유효하며, refresh token 만료가 1달 이내로 남은 시점에서 
-     * 사용자 토큰 갱신 요청을 하면 갱신된 access token과 갱신된 refresh token이 함께 반환됩니다.
-    */
     const TOKEN_TYPE = 'bearer';
     const REFRESH_TOKEN = TOKEN2.split('.')[1];
     const ACCESS_TOKEN = TOKEN.split('.')[1];
@@ -327,5 +526,25 @@ router.post('/getToken', async (req, res) => {
         console.log(error);
     }
 });
+
+/**
+     * 
+     * "token_type":"bearer",
+      "access_token":"${ACCESS_TOKEN}",
+      "expires_in":43199,
+      "refresh_token":"${REFRESH_TOKEN}",
+      "refresh_token_expires_in":25184000,
+      "scope":"account_email profile"
+     * 1. 유저의 토큰 ? 
+     * 2. 토큰 유지시간?
+     * 3. 재발급받은 토큰 ? 
+     * 4. 재발급 받은 토큰의 유지시간?
+     * 5. 고정값 ?
+     * 
+     * 찾아본 정보 :
+     * access_token은 발급 받은 후 12시간-24시간(정책에 따라 변동 가능)동안 유효합니다.
+     * refresh token은 두달간 유효하며, refresh token 만료가 1달 이내로 남은 시점에서 
+     * 사용자 토큰 갱신 요청을 하면 갱신된 access token과 갱신된 refresh token이 함께 반환됩니다.
+    */
 
 module.exports = router;

@@ -2,18 +2,17 @@
 pragma solidity ^0.8.15;
 
 interface IDID {
-    
     struct User{
+        string gender;
+        string name;
+        uint8 age;
+        string addr;
+        string mobile;
         string email;
-        string password;
-        string uuid;
-        bool A;
-        bool B;
-        bool C;
-        bool D;
     }
 
     function registerUser (string memory _hashedId ,User memory _data) external;
+    function updatePassword (string memory _hashedId,string memory _hashedId_new)external;
     function updateUser (string memory _hashedId, User memory _data) external;
     function deleteUser (string memory _hashedId) external;
     function getUser (string memory _hashedId) view external returns(User memory);

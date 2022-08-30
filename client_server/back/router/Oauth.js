@@ -4,34 +4,45 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const router = express.Router();
-const { Auth, sequelize } = require('../models');
-const { Op } = require('sequelize');
 
 const baseUrl = 'http://localhost:8000/api/Oauth';
-
 const Otp = {
-    clientId: 'aaaa',
+    clientId: '41f18d0fe5000fefe118140548e11dd',
     redirectUri: 'http://localhost:4000',
 };
 
-const RestAPI = Otp.clientId;
-
 router.get('/RedirectUrl', (req, res) => {
+    // clientId = restAPI
     const url = `http://localhost:8080?clientId=${Otp.clientId}&redirectUri=${Otp.redirectUri}&response_type=code`;
     res.redirect(url);
 });
 
 router.post('/getCode', async (req, res) => {
-    const RestAPI = Otp.clientId;
+    const { userInfo } = req.body;
+    console.log(userInfo);
+
+    const userRestAPI = [];
+    const userSecretKey = [];
+
+    for (let i = 0; i < userInfo.length; i++) {
+        userRestAPI.push(userInfo[i].restAPI);
+        userSecretKey.push(userInfo[i].clientSecretKey);
+    }
+
+    const userOTP = {
+        clientId: userRestAPI,
+        clientSecretKey: userSecretKey,
+    };
+
+    const RestAPI = userOTP.clientId;
+
     const Data = {
         clientId: RestAPI,
         grant_type: 'authorization_code',
-        code: req.body.code,
         headers: {
-            'Content-Type': 'routerlication/json',
+            'Content-Type': 'application/json',
         },
     };
-
     try {
         await axios.post(`${baseUrl}/getToken`, Data);
     } catch (error) {
@@ -67,6 +78,7 @@ router.post('/oAuthGetToken', async (req, res) => {
      * */
 });
 
+<<<<<<< HEAD
 router.post('/oAuthRegister', async (req, res) => {
     const { email, password } = req.body;
 
@@ -124,4 +136,6 @@ router.post('/getuuid', async (req, res) => {
     }
 });
 
+=======
+>>>>>>> cfbccdf0c281b3de026b413ed0a602da41c78728
 module.exports = router;

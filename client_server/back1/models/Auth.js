@@ -1,24 +1,33 @@
 module.exports = (sequelize, DataTypes) => {
-    const oAuth = sequelize.define(
-        'oAuth',
+    const Auth = sequelize.define(
+        'Auth',
         {
-            restAPI: {
+            email: {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
-            redirectURL: {
+            username: {
                 type: DataTypes.STRING,
                 allowNull: false,
+            },
+            password: {
+                type: DataTypes.STRING,
+                allowNull: false,
+            },
+            point: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                default: 0,
             },
         },
         {
             timestamps: false,
-            tableName: 'oAuth',
+            tableName: 'Login',
             charset: 'utf8mb4',
             collate: 'utf8mb4_general_ci',
             freezeTableName: true,
         },
     );
 
-    return oAuth;
+    return Auth;
 };

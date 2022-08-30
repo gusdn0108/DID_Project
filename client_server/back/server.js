@@ -2,7 +2,7 @@ const express = require('express');
 const cookiePaser = require('cookie-parser');
 const path = require('path');
 const dotenv = require('dotenv');
-const { sequelize } = require('./models');
+const { sequelize } = require('../back/models');
 const router = require('./router');
 const app = express();
 const cors = require('cors');
@@ -11,7 +11,7 @@ const port = 4001;
 
 app.use(
     cors({
-        origin: ['http://localhost:3001'],
+        origin: ['http://localhost:3000'],
         credentials: true,
     }),
 );
