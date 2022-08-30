@@ -353,6 +353,7 @@ router.post('/updatePoint', async (req, res) => {
         },
     });
     console.log(havepoint.point);
+    console.log('123');
     try {
         if (havepoint.point >= usePoint) {
             // havepoint.point - point***
