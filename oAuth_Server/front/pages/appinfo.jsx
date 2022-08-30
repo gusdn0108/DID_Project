@@ -35,7 +35,7 @@ const AppInfo = () => {
 
     const modifyRed = async () => {
         const response = await axios.post(`${backend}/api/oauth/updateRedirect`, {uri, email:email, appName: appName})
-        console.log(response.data)
+        alert(response.data.msg)
     }
 
     const uris = uri?.map((v,k) => {

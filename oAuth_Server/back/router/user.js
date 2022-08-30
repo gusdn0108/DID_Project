@@ -291,9 +291,19 @@ router.use('/updateRedirect', async (req,res) => {
                 appName
             }
         })
+
+        const response = {
+            status : true,
+            msg: '리다이렉트 uri 수정이 완료되었습니다.'
+        }
+        res.json(response)
     }
     catch(e) {
         console.log(e.message)
+        res.json({
+            status: false,
+            msg: '알수 없는 에러가 발생하였습니다. 나중에 다시 시도해주세요'
+        })
     }
 })
 
