@@ -25,7 +25,11 @@ const JoinModal = ({ joinIsOpen, joinOnClose }) => {
         } else {
           let id = e.target.value + domain;
 
-          const response = await axios.post('http://localhost:4000/api/auth/idCheck', { email: id });
+          console.log('이메일 변경');
+
+          const response = await axios.post('http://localhost:4001/api/auth/idCheck', { email: id });
+
+          console.log(response.data);
 
           if (response.data.status === 1) {
             setEmailCheck('true');
@@ -46,7 +50,11 @@ const JoinModal = ({ joinIsOpen, joinOnClose }) => {
         } else {
           let id = email + e.target.value;
 
-          const response = await axios.post('http://localhost:4000/api/auth/idCheck', { email: id });
+          console.log('도메인 변경');
+
+          const response = await axios.post('http://localhost:4001/api/auth/idCheck', { email: id });
+
+          console.log(response.data);
 
           if (response.data.status === 1) {
             setEmailCheck('true');
@@ -79,7 +87,7 @@ const JoinModal = ({ joinIsOpen, joinOnClose }) => {
   };
 
   const auth = async () => {
-    const response = await axios.post('http://localhost:4000/api/auth/email', { email: email + domain });
+    const response = await axios.post('http://localhost:4001/api/auth/email', { email: email + domain });
 
     if (response.data.status) {
       setEmailAuth(true);
@@ -130,7 +138,7 @@ const JoinModal = ({ joinIsOpen, joinOnClose }) => {
       nickName: nickname,
     };
 
-    const response = await axios.post('http://localhost:4000/api/auth/SignUp', body);
+    const response = await axios.post('http://localhost:4001/api/auth/SignUp', body);
 
     if (response.data.status === 1) {
       setEmail('');

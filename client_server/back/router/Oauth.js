@@ -1,7 +1,7 @@
 const express = require('express');
 const axios = require('axios');
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const router = express.Router();
 
@@ -71,4 +71,64 @@ router.post('/oAuthGetToken', async (req, res) => {
      * */
 });
 
+<<<<<<< HEAD
+router.post('/oAuthRegister', async (req, res) => {
+    const { email, password } = req.body;
+
+    try {
+        const _user = await Auth.findOne({
+            where: {
+                email: email,
+            },
+        });
+
+        const getEncodedHash = bcrypt.compareSync(password, _user.dataValues.password);
+        if (getEncodedHash === true) {
+            const userPwHash = _user.dataValues.password;
+            const toBlockData = {
+                email: email,
+                password: userPwHash,
+                clientId: Otp.clientId,
+            };
+            const hasUuid = _user.dataValues.uuid;
+            if (hasUuid !== null) {
+                res.json({
+                    status: false,
+                    msg: 2,
+                });
+            }
+            const response = await axios.post('http://localhost:8000/api/Oauth/register', toBlockData);
+            res.json({
+                status: true,
+                data: response.data.email,
+            });
+        } else {
+            res.json({
+                status: false,
+                msg: 1,
+            });
+        }
+    } catch (error) {
+        console.log(error.message);
+    }
+});
+
+router.post('/getuuid', async (req, res) => {
+    console.log('uuid옴???');
+    const { uuid, email } = req.body;
+    console.log(uuid, email);
+    const _user = await Auth.findOne({
+        where: {
+            email: {
+                [Op.eq]: email,
+            },
+        },
+    });
+    if (_user) {
+        await Auth.update({ uuid: uuid }, { where: { email: email } });
+    }
+});
+
+=======
+>>>>>>> cfbccdf0c281b3de026b413ed0a602da41c78728
 module.exports = router;

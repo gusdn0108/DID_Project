@@ -267,6 +267,42 @@ router.post('/login', async (req, res) => {
     }
 });
 
+
+router.post('/updatePoint', async (req, res) => {
+    const { email, usePoint } = req.body;
+    const havepoint = await Auth.findOne({
+        where: {
+            email: email,
+        },
+    });
+    console.log(havepoint.point);
+    try {
+        if (havepoint.point >= usePoint) {
+            // havepoint.point - point***
+            await Auth.update(
+                {
+                    point: havepoint.point - usePoint,
+                },
+                {
+                    where: {
+                        email: email,
+                    },
+                },
+            );
+            res.json({
+                status: 1,
+                point: havepoint.point - usePoint,
+            });
+        }
+    } catch (e) {
+        console.log(e);
+        res.json({
+            status: 0,
+            error: '으악',
+        });
+    }
+});
+
 router.post('/idCheck', async (req, res) => {
     const { email } = req.body;
 
