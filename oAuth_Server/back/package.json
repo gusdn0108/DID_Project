@@ -12,6 +12,7 @@
     "license": "ISC",
     "dependencies": {
         "@alch/alchemy-web3": "^1.4.6",
+        "@truffle/hdwallet-provider": "^2.0.14",
         "alchemy-sdk": "^2.0.3",
         "axios": "^0.27.2",
         "bcrypt": "^5.0.1",
