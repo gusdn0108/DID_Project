@@ -264,59 +264,16 @@ router.use(
         };
 
         res.json(response);
-    },
-    //     catch(e) {
-    //         console.log(e.message)
-
-    //         res.json({
-    //             status: false,
-    //             msg: '비정상적 접근이 감지되었습니다.',
-    //         });
-    //     }
-    // });
-);
-router.use('/updateRedirect', async (req, res) => {
-    const { uri, email, appName } = req.body;
-    console.log(uri, email, appName);
-    try {
-        const update = await AccessSite.update(
-            {
-                redirectURI1: uri[0],
-                redirectURI2: uri[1],
-                redirectURI3: uri[2],
-                redirectURI4: uri[3],
-                redirectURI5: uri[4],
-            },
-            {
-                where: {
-                    email,
-                    appName,
-                },
-            },
-        );
-    } catch (e) {
-        console.log(e.message);
-
     }
-});
+        catch(e) {
+            console.log(e.message)
 
-        const response = {
-            status: true,
-            appInfo : appInfor
+            res.json({
+                status: false,
+                msg: '비정상적 접근이 감지되었습니다.',
+            });
         }
-        res.json(response)
-    }
-    catch(e) {
-        console.log(e.message)
-
-        res.json({
-            status: false,
-            msg: '비정상적 접근이 감지되었습니다.',
-        });
-    }
-});
-
-
+    });
 
 router.use('/updateRedirect', async (req,res) => {
     const { uri, email, appName } = req.body
