@@ -35,20 +35,20 @@ const AppModal = ({isOpen, onClose}) => {
             <Modal isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />
                 <ModalContent>
-                    <ModalCloseButton px='8' py='8'/>
+                    <ModalCloseButton px='5%' py='7%'/>
         
-                    <ModalBody px='5rem' pt='4rem' pb='6'>
+                    <ModalBody px='8%' pt='10%' pb='2%'>
                         <FormControl>
-                            <FormLabel fontSize='2xl' mb='2.5'>어플리케이션 이름</FormLabel>
+                            <FormLabel fontSize='150%' mb='3%' textAlign={'center'}>어플리케이션 생성</FormLabel>
                             <Input type='text' 
                             placeholder='어플리케이션 이름을 입력해주세요' 
-                            size='md' id='Email' mb='5'
+                            size='md' id='Email' mb='1%'
                             onChange={(e) => setAppName(e.target.value) }
                             />
                         </FormControl>
                     </ModalBody>
         
-                    <ModalFooter mb='8' px='20' justifyContent='space-between'>
+                    <ModalFooter mb='8' px='20' justifyContent='center'>
                         <Button onClick={getRestApi}>어플리케이션 생성</Button>
                     </ModalFooter>
 
