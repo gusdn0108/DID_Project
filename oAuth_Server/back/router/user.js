@@ -332,7 +332,7 @@ router.post('/oAuthRegister', async (req, res) => {
         };
 
         const deploy = await deployed();
-        console.log(deploy.methods);
+
         await deploy.methods.registerUser(hash, DATA).send({
             from: '0x7b6283591c09b1a738a46Acc0BBFbb5943EDb4F4',
         });

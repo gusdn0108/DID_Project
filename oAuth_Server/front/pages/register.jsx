@@ -93,8 +93,6 @@ const register = () => {
 			try {
 				const regiEmail = email + domain;
 				const response = await axios.post(`${backend}/api/oauth/oauthregister`, { email: regiEmail, password, gender, name, age, addr: adr, mobile: phone });
-				console.log(response.data);
-				console.log('응답 옵니까');
 				if (response.data.status == 1) {
 					alert('회원가입이 완료되었습니다.');
 					location.href = `${frontend}`;
