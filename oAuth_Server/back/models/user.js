@@ -26,26 +26,6 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false,
                 defaultValue: false,
             },
-            gender: {
-                type: DataTypes.STRING,
-                allowNull: false,
-            },
-            name: {
-                type: DataTypes.STRING,
-                allowNull: false,
-            },
-            age: {
-                type: DataTypes.STRING,
-                allowNull: false,
-            },
-            addr: {
-                type: DataTypes.STRING,
-                allowNull: false,
-            },
-            mobile: {
-                type: DataTypes.INTEGER,
-                allowNull: false,
-            },
         },
         {
             timestamps: false,
