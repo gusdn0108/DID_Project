@@ -1,8 +1,10 @@
 {
     "development": {
-        "username": "ash991213",
-        "password": "ash991213",
-        "database": "client",
+
+
+        "username": "cjh5701",
+        "password": "a1234",
+        "database": "project",
         "host": "127.0.0.1",
         "dialect": "mysql"
     },

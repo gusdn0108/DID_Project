@@ -13,18 +13,21 @@ import {
 import axios from "axios";
 import { useState } from "react";
 import { backend } from "../utils/ip";
-
+import { setCookie } from 'cookies-next';
 export default function Home() {
   const [DIDid, setDIDid] = useState(undefined);
-  const [DIdPw, setDidPw] = useState(undefined);
+  const [DIDPw, setDIDPw] = useState(undefined);
+
+  //const [isLogin,setIsLogin] = useState(false)
 
   const getId = (e) => {
     setDIDid(e.target.value);
   };
 
   const getPw = (e) => {
-    setDidPw(e.target.value);
+    setDIDPw(e.target.value);
   };
+
 
   const didLoginHandler = async () => {
     console.log(DIDid, DIdPw);
@@ -42,6 +45,7 @@ export default function Home() {
       redirectURI:redirectURI
     });
   };
+
 
   return (
     <>
