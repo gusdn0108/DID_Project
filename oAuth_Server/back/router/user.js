@@ -10,8 +10,9 @@ const DID = require('../contracts/DID.json');
 const { deployed } = require('../web3.js');
 const { user, sequelize } = require('../models');
 const { Op } = require('sequelize');
-const { AccessSite } = require('../models');
+const { AccessSite, getInfo } = require('../models');
 const { addAbortSignal } = require('stream');
+
 require("dotenv").config
 
 const web3 = new Web3(new Web3.providers.HttpProvider('https://opt-goerli.g.alchemy.com/v2/GgIVsMFIKf4Pjwp8TmTN8gXftrnZf9A2'));
@@ -198,12 +199,25 @@ router.post('/apiDistribution', async (req, res) => {
             res.json(response);
             return;
         }
+
         await AccessSite.create({
             email: email,
             appName: appName,
             restAPI: REST_API,
             clientSecretKey: client_secret,
         });
+
+        await getInfo.create({
+            appName: appName,
+            owner: email,
+            email: false,
+            name: false,
+            gender:false,
+            age : false,
+            addr: false,
+            mobile: false
+        })
+
         const response = {
             status: true,
             msg: '성공적으로 등록되었습니다.',
@@ -235,16 +249,23 @@ router.use('/getMyApp', async (req, res) => {
 });
 
 router.use('/appInfo', async (req, res) => {
-    const { appName } = req.body;
+    const { appName, email } = req.body;
     try {
         const thatApp = await AccessSite.findOne({
             where: {
                 appName: appName,
+                email: email
             },
         });
 
         const appInfo = thatApp.dataValues;
         const redirectURI = [thatApp.dataValues.redirectURI1, thatApp.dataValues.redirectURI2, thatApp.dataValues.redirectURI3, thatApp.dataValues.redirectURI4, thatApp.dataValues.redirectURI5];
+
+        const infoReq = await getInfo.findOne({
+            where : {
+                appName: appName
+            }
+        })
 
         const appInfor = {
             id: appInfo.idx,
@@ -253,11 +274,18 @@ router.use('/appInfo', async (req, res) => {
             redirectURI: redirectURI,
             restAPI: appInfo.restAPI,
             clientSecretKey: appInfo.clientSecretKey,
+            getInfo : [
+                { att: 'name', get: infoReq.name},
+                { att: 'email', get: infoReq.email},
+                { att : 'gender', get: infoReq.gender},
+                { att : 'age', get: infoReq.age},
+                { att : 'address', get: infoReq.addr},
+                { att : 'mobile', get : infoReq.mobile}
+            ]
         };
 
         const response = {
             status: true,
-
             appInfo: appInfor,
         };
 
@@ -271,6 +299,54 @@ router.use('/appInfo', async (req, res) => {
         });
     }
 });
+
+router.use('/getInfoUpdate', async (req, res) => {
+    const { getUserInfo, email, appName } = req.body
+    const newGetInfo = []
+
+    for(let i = 0; i < getUserInfo.length; i++) {
+        if(getUserInfo[i].get == true) {
+            newGetInfo.push(1)
+        }
+        else {
+            newGetInfo.push(0)
+        }
+    }
+    console.log(newGetInfo)
+    try{
+        const update = await getInfo.update(
+            {
+                email : newGetInfo[1],
+                name : newGetInfo[0],
+                gender : newGetInfo[2],
+                age : newGetInfo[3],
+                addr : newGetInfo[4],
+                mobile : newGetInfo[5]
+            },
+            {
+                where : {
+                    appName: appName,
+                    owner: email
+                }
+            }
+        )
+
+        const response = {
+            status: true,
+            msg: '성공적으로 반영되었습니다.'
+        }
+
+        res.json(response)
+    }
+    catch(e) {
+        console.log(e.message)
+        const response = {
+            status: false,
+            msg : '서버 에러'
+        }
+        res.json(response)
+    }
+})
 
 router.use('/updateRedirect', async (req, res) => {
     const { uri, email, appName } = req.body;

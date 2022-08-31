@@ -15,12 +15,23 @@ const AppInfo = () => {
     const [ isModifying, setIsModifying ] = useState(null)
     const [ uri, seturi ] = useState(undefined)
 
+    const [ getemail, setGetemail ] = useState(false)
+    const [ getaddr, setGetaddr ] = useState(false)
+    const [ getage, setGetage ] = useState(false)
+    const [ getmobile, setGetMobile ] = useState(false)
+    const [ getGender, setGetgender ] = useState(false)
+    const [ getName, setGetname ] = useState(false)
+    const [ impact, setImpact ] = useState(false)
+
+    const [getUserInfo, setGetUserInfo ] = useState(undefined)
+
+
     const revealInfo = async () => {
         const response = await axios.post(`${backend}/api/oauth/appinfo`, 
         {appName: router.query.appName, email:email})
-        console.log(response.data.appInfo)
         setAppInfo(response.data.appInfo)
         seturi(response.data.appInfo.redirectURI)
+        setGetUserInfo(response.data.appInfo.getInfo)
         setShowInfo(true)
     }
 
@@ -39,6 +50,16 @@ const AppInfo = () => {
             return;
         }
         const response = await axios.post(`${backend}/api/oauth/updateRedirect`, {uri, email:email, appName: appName})
+        alert(response.data.msg)
+    }
+
+    const changeReq = async (k) =>{
+        setImpact(!impact)
+        getUserInfo[k].get = !getUserInfo[k].get
+        console.log(getUserInfo[k])
+        console.log(getUserInfo)
+
+        const response = await axios.post(`${backend}/api/oauth/getInfoUpdate`, {getUserInfo: getUserInfo, email: email, appName:router.query.appName})
         alert(response.data.msg)
     }
 
@@ -80,6 +101,38 @@ const AppInfo = () => {
         )
     })
 
+    const getUserInfos = getUserInfo?.map((v,k) => {
+        return(
+            <Tr key={k}>
+                <Td textAlign={'center'}>{v.att}</Td>
+                <Td textAlign={'center'}>
+                    {
+                    v.get.toString() == 'true' 
+                    ?
+                        <Text>요청</Text>
+                    :
+                        <Text>요청하지 않음</Text>
+                    }
+                </Td>
+                <Td textAlign={'center'}>
+                    <Button onClick={() => changeReq(k)} id={v.att}>
+                        {
+                            v.get.toString() == 'true'
+                            ?
+                            <Text>요청 받지 않기</Text>
+                            :
+                            <Text> 요청하기</Text>
+                        }
+                    </Button>
+                </Td>
+            </Tr>
+        )
+    })
+
+    useEffect(() => {
+
+    },[getUserInfo, impact])
+
     return(
         <>
             <Box pt='5%' w='70%' mx='auto' my='0'>
@@ -119,43 +172,21 @@ const AppInfo = () => {
                                 <Text mb='3%'>사용자에게 제공을 요청할 정보를 선택해주세요</Text>
 
 
-                                <Box mx='auto' mb='2%' w='40%'>
+                                <Box mx='auto' mb='2%' w='50%'>
                                     <Flex justifyContent={'space-around'}>
                                         <Table>
-                                            <TableCaption>사용자에게 제공받을 항목을 설정 후, 수정 버튼을 클릭해주세요.</TableCaption>
-                                            <Thead pl='10%'>
+                                            <Thead>
                                                 <Tr>
-                                                    <Th>항목</Th>
-                                                    <Th>상태</Th>
+                                                    <Th textAlign={'center'}> 항목 이름 </Th>
+                                                    <Th textAlign={'center'}> 상태 </Th>
+                                                    <Th textAlign={'center'}> 수정 </Th>
                                                 </Tr>
                                             </Thead>
                                             <Tbody>
-                                                <Tr>
-                                                    <Td>이름</Td>
-                                                    <Td>millimetres (mm)</Td>
-                                                </Tr>
-                                                <Tr>
-                                                    <Td>이메일</Td>
-                                                    <Td>centimetres (cm)</Td>
-                                                </Tr>
-                                                <Tr>
-                                                    <Td>성별</Td>
-                                                    <Td>metres (m)</Td>
-                                                </Tr>
-                                                <Tr>
-                                                    <Td>나이</Td>
-                                                    <Td>metres (m)</Td>
-                                                </Tr>
-                                                <Tr>
-                                                    <Td>주소</Td>
-                                                    <Td>metres (m)</Td>
-                                                </Tr>
-                                                <Tr>
-                                                    <Td>전화번호</Td>
-                                                    <Td>metres (m)</Td>
-                                                </Tr>
+                                                {getUserInfos}
                                             </Tbody>
                                         </Table>
+                                        
                                     </Flex>
                                 </Box>
                             </Box>
