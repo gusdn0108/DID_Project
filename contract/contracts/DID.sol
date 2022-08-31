@@ -7,10 +7,6 @@ contract DID is IDID {
     mapping(string => User) private user;
     mapping(string => bool) private registeredUser;
 
-    // constructor(string memory _hashedId){
-    //     user[_hashedId] = User('Female','ivy',10, unicode"서울시 광진구",'010-1111-1111','yellow_w@naver.com','1234');
-    // }
-
         string gender;
         string name;
         uint8 age;
@@ -34,7 +30,7 @@ contract DID is IDID {
         user[_hashedId] = _data;
     }
 
-    function updatePassword (string memory _hashedId,string memory _hashedId_new)external{
+    function updatePassword (string memory _hashedId, string memory _hashedId_new)external{
         require(isRegistered(_hashedId));
         user[_hashedId_new] = user[_hashedId];
         deleteUser(_hashedId);
@@ -43,7 +39,7 @@ contract DID is IDID {
     function updateUser (string memory _hashedId, User memory _data) external{
         require(registeredUser[_hashedId]);
         User memory userObj;
-     
+
         userObj.gender = _data.gender;
         userObj.name = _data.name;
         userObj.age = _data.age;
@@ -61,9 +57,37 @@ contract DID is IDID {
         registeredUser[_hashedId] = false;
     }
     
-    function getUser(string memory _hashedId) view external returns(User memory){
+    function getUser(string memory _hashedId) view override public returns(User memory){
         return user[_hashedId];        
     }
+
+    function getVP(string memory _identifier, NeededUser memory _shouldSend) view external returns(User memory){
+        User memory userObj;
+        User memory VP;
+        userObj = getUser(_identifier);
+
+        if(_shouldSend.addr){
+            VP.addr = userObj.addr;
+        } 
+        if(_shouldSend.gender){
+            VP.gender = userObj.gender;
+        } 
+        if(_shouldSend.name){
+            VP.name = userObj.name;
+        } 
+        if(_shouldSend.age){
+            VP.age = userObj.age ;
+        } 
+        if(_shouldSend.mobile){
+            userObj.mobile = VP.mobile;
+        } 
+        if(_shouldSend.email){
+            VP.email = userObj.email;
+        } 
+        return VP;
+    }
+
+
 
     function isRegistered(string memory _hashedId) view public returns(bool){
         return registeredUser[_hashedId];

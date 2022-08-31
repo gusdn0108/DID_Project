@@ -1,4 +1,5 @@
-import { Box, Button, Flex, Text, Input, Table, Thead, Tbody, Th, Td, Tr, Divider } from "@chakra-ui/react";
+import { Box, Button, Flex, Text, Input, Table, Thead, Tbody, Th, Td, Tr, Divider, Checkbox,
+CheckboxGroup, Stack, TableCaption, TableContainer } from "@chakra-ui/react";
 import axios from 'axios'
 import { useState, useEffect } from "react";
 import { backend } from '../utils/ip.js'
@@ -95,7 +96,7 @@ const AppInfo = () => {
                         :
                         <>  
                             <Box mb='4%' w='100%' px='10%' borderColor='gray.400' border={'1px'}>
-                                <Table >
+                                <Table>
                                     <Thead>
                                         <Tr>
                                             <Th textAlign={'center'}>Rest API</Th>
@@ -113,17 +114,67 @@ const AppInfo = () => {
 
                             <Divider orientation="horizontal" mb='3%'/>
 
-                            <Box textAlign={'center'} w='100%' mb='2%' borderColor='gray.400' border={'1px'}>
-                                <Box fontSize={'175%'} mb='0%'>Redirect URI 관리</Box>
-                                <Text mb='1.5%'>리다이렉트 url은 최대 5개까지  등록할 수 있습니다.</Text>
-                                
-                                <Box>
-                                    {uris}
+                            <Box textAlign={'center'} borderColor='gray.400' border={'1px'} w='100%'>
+                                <Box fontSize={'175%'} mt='2%'> 사용자 정보 요청 </Box>
+                                <Text mb='3%'>사용자에게 제공을 요청할 정보를 선택해주세요</Text>
+
+
+                                <Box mx='auto' mb='2%' w='40%'>
+                                    <Flex justifyContent={'space-around'}>
+                                        <Table>
+                                            <TableCaption>사용자에게 제공받을 항목을 설정 후, 수정 버튼을 클릭해주세요.</TableCaption>
+                                            <Thead pl='10%'>
+                                                <Tr>
+                                                    <Th>항목</Th>
+                                                    <Th>상태</Th>
+                                                </Tr>
+                                            </Thead>
+                                            <Tbody>
+                                                <Tr>
+                                                    <Td>이름</Td>
+                                                    <Td>millimetres (mm)</Td>
+                                                </Tr>
+                                                <Tr>
+                                                    <Td>이메일</Td>
+                                                    <Td>centimetres (cm)</Td>
+                                                </Tr>
+                                                <Tr>
+                                                    <Td>성별</Td>
+                                                    <Td>metres (m)</Td>
+                                                </Tr>
+                                                <Tr>
+                                                    <Td>나이</Td>
+                                                    <Td>metres (m)</Td>
+                                                </Tr>
+                                                <Tr>
+                                                    <Td>주소</Td>
+                                                    <Td>metres (m)</Td>
+                                                </Tr>
+                                                <Tr>
+                                                    <Td>전화번호</Td>
+                                                    <Td>metres (m)</Td>
+                                                </Tr>
+                                            </Tbody>
+                                        </Table>
+                                    </Flex>
                                 </Box>
                             </Box>
 
-                            <Box mb='1%'><Text>uri 수정 후, 수정 완료 버튼을 눌려주세요.</Text></Box>
-                            <Button onClick={modifyRed}>수정 완료</Button>
+                            <Divider orientation="horizontal" mb='3%'/>
+
+                            <Box textAlign={'center'} w='100%' mb='2%' borderColor='gray.400' border={'1px'}>
+                                <Box fontSize={'175%'}>Redirect URI 관리</Box>
+                                <Text mb='1.5%'>리다이렉트 url은 최대 5개까지  등록할 수 있습니다.</Text>
+                                
+                                <Box mb='2%'>
+                                    {uris}
+                                </Box>
+
+                                <Box mb='0.25%'><Text>uri 수정 후, 수정 완료 버튼을 눌려주세요.</Text></Box>
+                                <Button onClick={modifyRed} mb='0.25%'>수정 완료</Button>
+                            </Box>
+
+
                         </>
                     }    
                 </Flex>

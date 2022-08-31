@@ -17,19 +17,3 @@ const deployed = async () => {
 };
 
 module.exports = { deployed };
-
-// const deployed = async () => {
-//     const networkId = await web3.eth.net.getId();
-//     const abi = DID.abi;
-//     const CA = DID.networks[networkId].address;
-
-//     const deploy = new web3.eth.Contract(abi, CA);
-
-//     await deploy.methods.registerUser('test', DATA).send({ from: '0x7b6283591c09b1a738a46Acc0BBFbb5943EDb4F4' });
-
-//     const result = await deploy.methods.getUser('test').call();
-
-//     console.log(result);
-// };
-
-// deployed();

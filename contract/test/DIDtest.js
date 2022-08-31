@@ -42,4 +42,29 @@ describe("DID test", async () => {
 		const afterChanged = await getDeployed.getUser.call("111");
 		console.log(isRegistered, block, shouldBeNull, afterChanged);
 	});
+	it("getVP", async () => {
+		const getDeployed = await Deploy.deployed();
+		const _data = {
+			gender: "female",
+			name: "red",
+			age: 10,
+			addr: "서울시 광진구",
+			mobile: "010-1111-1111",
+			email: "red@gmail.com",
+		};
+		await getDeployed.registerUser("22222", _data);
+		const isRegistered = await getDeployed.isRegistered.call("22222");
+		console.log(isRegistered);
+		const _hashId = "22222";
+		const _neededData = {
+			gender: 1,
+			name: 0,
+			age: 1,
+			addr: 1,
+			mobile: 0,
+			email: 0,
+		};
+		const VP = await getDeployed.getVP(_hashId, _neededData);
+		console.log(VP);
+	});
 });
