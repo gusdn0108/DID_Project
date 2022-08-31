@@ -16,7 +16,7 @@ const Otp = {
 
 router.get('/RedirectUrl', async (req, res) => {
     // clientId = restAPI
-    const url = `http://localhost:8080?clientId=${Otp.clientId}&redirectUri=${Otp.redirectUri}&response_type=${code}`;
+    const url = `http://localhost:8080/login?clientId=${Otp.clientId}&redirectUri=${Otp.redirectUri}&response_type=${code}`;
     res.redirect(url);
 });
 

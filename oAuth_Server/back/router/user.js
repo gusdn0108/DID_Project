@@ -12,6 +12,7 @@ const { user, sequelize } = require('../models');
 const { Op } = require('sequelize');
 const { AccessSite } = require('../models');
 const { addAbortSignal } = require('stream');
+require("dotenv").config
 
 const web3 = new Web3(new Web3.providers.HttpProvider('https://opt-goerli.g.alchemy.com/v2/GgIVsMFIKf4Pjwp8TmTN8gXftrnZf9A2'));
 
@@ -561,6 +562,39 @@ router.post('/authorize', async (req, res) => {
         }
     } catch (error) {
         console.log(error.message);
+    }
+});
+
+router.post('/localAuthorize', async (req, res) => {
+    const { email, password } = req.body;
+    const userhash = email + password;
+    const hash = crypto.createHash('sha256').update(userhash).digest('base64');
+
+    const dbUser = await user.findOne({
+        where: {
+            hashId: {
+                [Op.eq]: hash,
+            }
+        }
+    })
+
+    if (dbUser) {
+        let token = jwt.sign({
+            email: email,
+            hashId: hash,
+        },
+            process.env.SECRET_KEY
+        );
+        res.cookie('user', token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 })
+        res.json({
+            status: true,
+            token: token,
+        });
+    } else {
+        res.json({
+            status: false,
+            msg: '일치하는 아이디가 없습니다',
+        })
     }
 });
 
