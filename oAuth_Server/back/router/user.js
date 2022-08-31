@@ -208,6 +208,7 @@ router.post('/apiDistribution', async (req, res) => {
 
         await getInfo.create({
             appName: appName,
+            owner: email,
             email: false,
             name: false,
             gender:false,
@@ -273,12 +274,12 @@ router.use('/appInfo', async (req, res) => {
             restAPI: appInfo.restAPI,
             clientSecretKey: appInfo.clientSecretKey,
             getInfo : [
-                {name : infoReq.name},
-                {email : infoReq.email},
-                {gender : infoReq.gender},
-                {age : infoReq.age},
-                {addr : infoReq.addr},
-                {mobile : infoReq.mobile}
+                { att: 'name', get: infoReq.name},
+                { att: 'email', get: infoReq.email},
+                { att : 'gender', get: infoReq.gender},
+                { att : 'age', get: infoReq.age},
+                { att : 'address', get: infoReq.addr},
+                { att : 'mobile', get : infoReq.mobile}
             ]
         };
 
@@ -297,6 +298,54 @@ router.use('/appInfo', async (req, res) => {
         });
     }
 });
+
+router.use('/getInfoUpdate', async (req, res) => {
+    const { getUserInfo, email, appName } = req.body
+    const newGetInfo = []
+
+    for(let i = 0; i < getUserInfo.length; i++) {
+        if(getUserInfo[i].get == true) {
+            newGetInfo.push(1)
+        }
+        else {
+            newGetInfo.push(0)
+        }
+    }
+    console.log(newGetInfo)
+    try{
+        const update = await getInfo.update(
+            {
+                email : newGetInfo[1],
+                name : newGetInfo[0],
+                gender : newGetInfo[2],
+                age : newGetInfo[3],
+                addr : newGetInfo[4],
+                mobile : newGetInfo[5]
+            },
+            {
+                where : {
+                    appName: appName,
+                    owner: email
+                }
+            }
+        )
+
+        const response = {
+            status: true,
+            msg: '성공적으로 반영되었습니다.'
+        }
+
+        res.json(response)
+    }
+    catch(e) {
+        console.log(e.message)
+        const response = {
+            status: false,
+            msg : '서버 에러'
+        }
+        res.json(response)
+    }
+})
 
 router.use('/updateRedirect', async (req, res) => {
     const { uri, email, appName } = req.body;
