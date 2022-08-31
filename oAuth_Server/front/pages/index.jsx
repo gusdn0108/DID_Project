@@ -28,23 +28,24 @@ export default function Home() {
     setDIDPw(e.target.value);
   };
 
-   const didLoginHandler = async (req,res) => {
-     
-    const response = await axios.post('http://localhost:8000/api/Oauth/localAuthorize',{email:DIDid,password : DIDPw,})
 
-    // console.log(response)
+  const didLoginHandler = async () => {
+    console.log(DIDid, DIdPw);
+  
+    const codeUrl = location.href
+    const code = codeUrl.split('response_type=')[1]
+    const restAPI = codeUrl.split('clientId=')[1].split('&')[0]
+    const redirectURI = codeUrl.split('redirectUri')[1].split('=')[1].split('&')[0]
+    console.log(redirectURI)
+    const response = await axios.post(`${backend}/api/oauth/authorize`, {
+      email: DIDid,
+      password: DIdPw,
+      code:code,
+      restAPI:restAPI,
+      redirectURI:redirectURI
+    });
+  };
 
-     if (response.data.status == true) {
-       const payload = response.data.token.split('.')[1];
-       setCookie('user', payload, { req, res, maxAge: 60 * 60 * 24 * 1000 });
-       location.href = 'http://localhost:8080/mypage'
-     }
-     else {
-
-       alert(response.data.msg)
-     }
-   };
-   
 
   return (
     <>

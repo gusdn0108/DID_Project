@@ -6,48 +6,63 @@ const crypto = require('crypto');
 const router = express.Router();
 
     const baseUrl = 'http://localhost:8000/api/Oauth';
-    const bsite = 'dltmdwns';
-    const code = crypto.createHash('sha256').update(bsite).digest('base64'); // * a사이트 인가코드
+    
+
     const Otp = {
-    clientId: '6c40ff3da3967f87090ee9174bdf49d', // back의 예명
+    clientId: '460716d6dfc9d3e95765694659384cd',
     redirectUri: 'http://localhost:4001',
-    code:code
     };
+    
 
 
 
 
 
-
-
-router.get('/RedirectUrl', (req, res) => {
-const url = `http://localhost:8080?clientId=${Otp.clientId}&redirectUri=${Otp.redirectUri}&response_type=${code}`;
+router.get('/RedirectUrl', async(req, res) => {
+const url = `http://localhost:8080/login?clientId=${Otp.clientId}&redirectUri=${Otp.redirectUri}&response_type=code`;
 res.redirect(url);
 });
 
 router.post('/getCode', async (req, res) => {
-    const {code,RestAPI} = req.body
-    console.log('여긴옴??')
+    console.log('여기까지오니??')
+    const {restAPI,redirectURI,name,gender,mobile,hash} = req.body
+
+     // * 인가코드
+     const asite = 'dkstnghks';
+     const bsite = 'dltmdwns';
+     const csite = 'dlagusdn';
+     const dsite = 'rlawlgus';
+ 
+     const code0 = crypto.createHash('sha256').update(asite).digest('base64'); // * a사이트 인가코드
+     console.log('히히코드0',code0);
+     const code1 = crypto.createHash('sha256').update(bsite).digest('base64'); // * b사이트 인가코드
+     console.log(code1);
+     const code2 = crypto.createHash('sha256').update(csite).digest('base64'); // * c사이트 인가코드
+     console.log('히히코드2',code2);
+     const code3 = crypto.createHash('sha256').update(dsite).digest('base64'); // * d사이트 인가코드
+     console.log('히히코드3',code3);
 
     try {
-        if(code){
-            const Data = {
-                RestAPI: RestAPI,
-                grant_type: "authorization_code",
-                code: code,
-                headers: {
-                  "Content-Type": "application/json",
-                },
-              };
-              await axios.post('http://localhost:8000/api/oauth/getToken',Data)
-        }else{
-            const response = {
-                status:false,
-                msg:'코드가없습니다 '
+       
+            if(restAPI){
+                const Data = {
+                    restAPI:restAPI,
+                    redirectURI:redirectURI,
+                    name:name,
+                    gender:gender,
+                    mobile:mobile,
+                    hash:hash,
+                    code:code0,
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                  };
+                  await axios.post('http://localhost:8000/api/oauth/getToken',Data)
+            }else{
+                return res.status(403).send('RestAPI가 없습니다 ');
             }
-            await axios.post('http://localhost:8000/api/oauth/getToken',response)
-        }
-    } catch (error) {
+            
+        } catch (error) {
         console.log(error);
     }
 });
