@@ -39,7 +39,7 @@ contract DID is IDID {
     function updateUser (string memory _hashedId, User memory _data) external{
         require(registeredUser[_hashedId]);
         User memory userObj;
-     
+
         userObj.gender = _data.gender;
         userObj.name = _data.name;
         userObj.age = _data.age;
