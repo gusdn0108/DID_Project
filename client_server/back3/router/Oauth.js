@@ -18,37 +18,37 @@ router.get('/RedirectUrl', (req, res) => {
 });
 
 router.post('/getCode', async (req, res) => {
-    const { userInfo } = req.body;
-    console.log(userInfo);
+    // const { userInfo } = req.body;
+    // console.log(userInfo);
 
-    const userRestAPI = [];
-    const userSecretKey = [];
+    // const userRestAPI = [];
+    // const userSecretKey = [];
 
-    for (let i = 0; i < userInfo.length; i++) {
-        userRestAPI.push(userInfo[i].restAPI);
-        userSecretKey.push(userInfo[i].clientSecretKey);
-    }
+    // for (let i = 0; i < userInfo.length; i++) {
+    //     userRestAPI.push(userInfo[i].restAPI);
+    //     userSecretKey.push(userInfo[i].clientSecretKey);
+    // }
 
-    const userOTP = {
-        clientId: userRestAPI,
-        clientSecretKey: userSecretKey,
-    };
+    // const userOTP = {
+    //     clientId: userRestAPI,
+    //     clientSecretKey: userSecretKey,
+    // };
 
-    const RestAPI = userOTP.clientId;
+    // const RestAPI = userOTP.clientId;
 
-    const Data = {
-        clientId: RestAPI,
-        grant_type: 'authorization_code',
-        code: userOTP.clientSecretKey,
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    };
-    try {
-        await axios.post(`${baseUrl}/getToken`, Data);
-    } catch (error) {
-        console.log(error);
-    }
+    // const Data = {
+    //     clientId: RestAPI,
+    //     grant_type: 'authorization_code',
+    //     code: userOTP.clientSecretKey,
+    //     headers: {
+    //         'Content-Type': 'application/json',
+    //     },
+    // };
+    // try {
+    //     await axios.post(`${baseUrl}/getToken`, Data);
+    // } catch (error) {
+    //     console.log(error);
+    // }
 });
 
 router.post('/oAuthGetToken', async (req, res) => {
