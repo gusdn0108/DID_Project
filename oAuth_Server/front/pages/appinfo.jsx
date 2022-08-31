@@ -15,12 +15,24 @@ const AppInfo = () => {
     const [ isModifying, setIsModifying ] = useState(null)
     const [ uri, seturi ] = useState(undefined)
 
+    const [ getemail, setGetemail ] = useState(false)
+    const [ getaddr, setGetaddr ] = useState(false)
+    const [ getage, setGetage ] = useState(false)
+    const [ getmobile, setGetMobile ] = useState(false)
+    const [ getGender, setGetgender ] = useState(false)
+    const [ getName, setGetname ] = useState(false)
+
+    const [getUserInfo, setGetUserInfo ] = useState(undefined)
+
+
     const revealInfo = async () => {
         const response = await axios.post(`${backend}/api/oauth/appinfo`, 
         {appName: router.query.appName, email:email})
-        console.log(response.data.appInfo)
+        console.log(response.data.appInfo.getInfo)
         setAppInfo(response.data.appInfo)
         seturi(response.data.appInfo.redirectURI)
+        setGetUserInfo(response.data.appInfo.getInfo)
+
         setShowInfo(true)
     }
 
@@ -80,6 +92,14 @@ const AppInfo = () => {
         )
     })
 
+    const getUserInfos = getUserInfo?.map((v,k) => {
+        return(
+            <Box>
+                {v.toString()}
+            </Box>
+        )
+    })
+
     return(
         <>
             <Box pt='5%' w='70%' mx='auto' my='0'>
@@ -121,41 +141,7 @@ const AppInfo = () => {
 
                                 <Box mx='auto' mb='2%' w='40%'>
                                     <Flex justifyContent={'space-around'}>
-                                        <Table>
-                                            <TableCaption>사용자에게 제공받을 항목을 설정 후, 수정 버튼을 클릭해주세요.</TableCaption>
-                                            <Thead pl='10%'>
-                                                <Tr>
-                                                    <Th>항목</Th>
-                                                    <Th>상태</Th>
-                                                </Tr>
-                                            </Thead>
-                                            <Tbody>
-                                                <Tr>
-                                                    <Td>이름</Td>
-                                                    <Td>millimetres (mm)</Td>
-                                                </Tr>
-                                                <Tr>
-                                                    <Td>이메일</Td>
-                                                    <Td>centimetres (cm)</Td>
-                                                </Tr>
-                                                <Tr>
-                                                    <Td>성별</Td>
-                                                    <Td>metres (m)</Td>
-                                                </Tr>
-                                                <Tr>
-                                                    <Td>나이</Td>
-                                                    <Td>metres (m)</Td>
-                                                </Tr>
-                                                <Tr>
-                                                    <Td>주소</Td>
-                                                    <Td>metres (m)</Td>
-                                                </Tr>
-                                                <Tr>
-                                                    <Td>전화번호</Td>
-                                                    <Td>metres (m)</Td>
-                                                </Tr>
-                                            </Tbody>
-                                        </Table>
+                                        {getUserInfos}
                                     </Flex>
                                 </Box>
                             </Box>

@@ -10,8 +10,9 @@ const DID = require('../contracts/DID.json');
 const { deployed } = require('../web3.js');
 const { user, sequelize } = require('../models');
 const { Op } = require('sequelize');
-const { AccessSite } = require('../models');
+const { AccessSite, getInfo } = require('../models');
 const { addAbortSignal } = require('stream');
+const { userInfo } = require('os');
 
 const web3 = new Web3(new Web3.providers.HttpProvider('https://opt-goerli.g.alchemy.com/v2/GgIVsMFIKf4Pjwp8TmTN8gXftrnZf9A2'));
 
@@ -197,12 +198,24 @@ router.post('/apiDistribution', async (req, res) => {
             res.json(response);
             return;
         }
+
         await AccessSite.create({
             email: email,
             appName: appName,
             restAPI: REST_API,
             clientSecretKey: client_secret,
         });
+
+        await getInfo.create({
+            appName: appName,
+            email: false,
+            name: false,
+            gender:false,
+            age : false,
+            addr: false,
+            mobile: false
+        })
+
         const response = {
             status: true,
             msg: '성공적으로 등록되었습니다.',
@@ -234,16 +247,23 @@ router.use('/getMyApp', async (req, res) => {
 });
 
 router.use('/appInfo', async (req, res) => {
-    const { appName } = req.body;
+    const { appName, email } = req.body;
     try {
         const thatApp = await AccessSite.findOne({
             where: {
                 appName: appName,
+                email: email
             },
         });
 
         const appInfo = thatApp.dataValues;
         const redirectURI = [thatApp.dataValues.redirectURI1, thatApp.dataValues.redirectURI2, thatApp.dataValues.redirectURI3, thatApp.dataValues.redirectURI4, thatApp.dataValues.redirectURI5];
+
+        const infoReq = await getInfo.findOne({
+            where : {
+                appName: appName
+            }
+        })
 
         const appInfor = {
             id: appInfo.idx,
@@ -252,11 +272,18 @@ router.use('/appInfo', async (req, res) => {
             redirectURI: redirectURI,
             restAPI: appInfo.restAPI,
             clientSecretKey: appInfo.clientSecretKey,
+            getInfo : [
+                {name : infoReq.name},
+                {email : infoReq.email},
+                {gender : infoReq.gender},
+                {age : infoReq.age},
+                {addr : infoReq.addr},
+                {mobile : infoReq.mobile}
+            ]
         };
 
         const response = {
             status: true,
-
             appInfo: appInfor,
         };
 
