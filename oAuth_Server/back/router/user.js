@@ -322,10 +322,12 @@ router.use('/updateRedirect', async (req,res) => {
     const { uri, email, appName } = req.body
     
     for(let i = 0; i < uri.length; i++) {
-        uri[i] = uri[i].trim()
-        console.log(uri[i])
+        if( uri[i] !== null ) {
+            uri[i] = uri[i].trim()
+            console.log(uri[i])
+        }
     }
-    
+
     try {
         const update = await AccessSite.update({
             
@@ -375,6 +377,7 @@ router.post('/oAuthRegister', async (req, res) => {
         };
 
         const deploy = await deployed();
+        console.log('qweq')
         await deploy.methods.registerUser(hash, DATA).send({
             from: '0x7b6283591c09b1a738a46Acc0BBFbb5943EDb4F4',
         });

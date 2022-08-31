@@ -7,6 +7,7 @@ const sequelize = new Sequelize(config.database, config.username, config.passwor
 
 const user = require('./user')(sequelize, DataTypes);
 const AccessSite = require('./AccessSite')(sequelize, DataTypes);
+const getInfo = require('./getInfo')(sequelize, DataTypes)
 
 const db = {};
 db.sequelize = sequelize;
@@ -14,5 +15,6 @@ db.Sequelize = Sequelize;
 
 db.user = user;
 db.AccessSite = AccessSite;
+db.getInfo = getInfo;
 
 module.exports = db;
