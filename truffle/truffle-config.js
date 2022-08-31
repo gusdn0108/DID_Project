@@ -77,7 +77,7 @@ module.exports = {
 			provider: () => {
 				return new Provider(process.env.MNEMONIC, optimismGoerliUrl);
 			},
-			network_id: "420",
+			network_id: 420,
 		},
 		// Useful for private networks
 		// private: {
