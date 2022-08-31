@@ -12,7 +12,8 @@ const { user, sequelize } = require('../models');
 const { Op } = require('sequelize');
 const { AccessSite, getInfo } = require('../models');
 const { addAbortSignal } = require('stream');
-const { userInfo } = require('os');
+
+require("dotenv").config
 
 const web3 = new Web3(new Web3.providers.HttpProvider('https://opt-goerli.g.alchemy.com/v2/GgIVsMFIKf4Pjwp8TmTN8gXftrnZf9A2'));
 
@@ -522,8 +523,11 @@ router.post('/deleteUser', async (req, res) => {
     }
 });
 
+
+
 router.post('/authorize', async (req, res) => {
-    const { email, password, code, restAPI } = req.body;
+    const { email, password, restAPI,redirectURI } = req.body;
+    console.log('req.body',restAPI)
     // * 블록체인 네트워크 아이디 패스워드
     const userhash = email + password;
     const hash = crypto.createHash('sha256').update(userhash).digest('base64');
@@ -538,20 +542,7 @@ router.post('/authorize', async (req, res) => {
     const userEmail = result[5];
 
     console.log(result);
-    // * 인가코드
-    const asite = 'dkstnghks';
-    const bsite = 'dltmdwns';
-    const csite = 'dlagusdn';
-    const dsite = 'rlawlgus';
-
-    const code0 = crypto.createHash('sha256').update(asite).digest('base64'); // * a사이트 인가코드
-    console.log(code0);
-    const code1 = crypto.createHash('sha256').update(bsite).digest('base64'); // * b사이트 인가코드
-    console.log(code1);
-    const code2 = crypto.createHash('sha256').update(csite).digest('base64'); // * c사이트 인가코드
-    console.log(code2);
-    const code3 = crypto.createHash('sha256').update(dsite).digest('base64'); // * d사이트 인가코드
-    console.log(code3);
+   
 
     const dbUser = await user.findOne({
         where: {
@@ -565,86 +556,124 @@ router.post('/authorize', async (req, res) => {
     try {
         // * 블록체인 네트워크에 아이디 패스워드 가져와서 확인
         if (dbUser) {
-            console.log('여기 잘들어옴??');
-            const getSiteInfo = await AccessSite.findAll({
+            const getSiteInfo = await AccessSite.findOne({
                 where: {
-                    email: {
-                        [Op.eq]: email,
+                    restAPI: {
+                        [Op.eq]: restAPI,
                     },
                 },
             });
 
+            console.log(getSiteInfo.dataValues.restAPI)
+       
+
             // restAPI 일치 / code 일치
-            const getRestAPI = [];
-            for (let i = 0; i < getSiteInfo.length; i++) {
-                getRestAPI.push(getSiteInfo[i].dataValues.restAPI);
-            }
+            // const getRestAPI = [];
+            // for (let i = 0; i < getSiteInfo; i++) {
+            //     getRestAPI.push(getSiteInfo[i].dataValues.restAPI);
+            // }
 
-            console.log(code);
-            console.log(code0);
-            console.log(getRestAPI[0]);
-            console.log(restAPI);
+         
 
-            console.log('여기는??');
-
-            if (code0 === code && getRestAPI[0] === restAPI) {
+            if (getSiteInfo.dataValues.restAPI === restAPI) {
                 console.log('여기는오?');
                 const response = {
                     status: true,
-                    code: code,
                     name: name,
                     mobile: mobile,
+                    restAPI:restAPI
                 };
 
                 await axios.post('http://localhost:4000/api/oauth/getCode', response);
-            } else if (code1 === code && getRestAPI[1] === restAPI) {
-                console.log('여긴옴????');
+            } else if ( getSiteInfo.dataValues.restAPI === restAPI) {
+                console.log('여기와야해 친구들????');
                 const response = {
                     status: true,
-                    code: code,
+                    hash:hash,
                     restAPI: restAPI,
-                    // name:name,
-                    // gender:gender,
-                    // mobile:mobile
+                    redirectURI:redirectURI,
+                    name:name,
+                    gender:gender,
+                    mobile:mobile
                 };
 
                 await axios.post('http://localhost:4001/api/oauth/getCode', response);
-            } else if (code2 === code && getRestAPI[2] === restAPI) {
+            } else if ( getSiteInfo.dataValues.restAPI === restAPI) {
                 const response = {
                     status: true,
-                    code: code,
                     restAPI: restAPI,
-                    // mobile:mobile,
-                    // userEmail:userEmail
+                    mobile:mobile,
+                    userEmail:userEmail
                 };
                 await axios.post('http://localhost:4002/api/oauth/getCode', response);
-            } else if (code3 === code && getRestAPI[3] === restAPI) {
+            } else if (getSiteInfo.dataValues.restAPI === restAPI) {
                 const response = {
                     status: true,
-                    code: code,
                     name: name,
                     age: age,
                     address: address,
+                      restAPI:restAPI
                 };
                 await axios.post('http://localhost:4003/api/oauth/getCode', response);
-            } else {
-                const response = {
-                    status: false,
-                    msg: '코드 또는 restAPI가 일치하지않습니다',
-                };
-                await axios.post('http://localhost:4003/api/oauth/getCode', response);
-            }
+            } 
         }
     } catch (error) {
         console.log(error.message);
     }
 });
 
+router.post('/localAuthorize', async (req, res) => {
+    const { email, password } = req.body;
+    const userhash = email + password;
+    const hash = crypto.createHash('sha256').update(userhash).digest('base64');
+
+    const dbUser = await user.findOne({
+        where: {
+            hashId: {
+                [Op.eq]: hash,
+            }
+        }
+    })
+
+    if (dbUser) {
+        let token = jwt.sign({
+            email: email,
+            hashId: hash,
+        },
+            process.env.SECRET_KEY
+        );
+        res.cookie('user', token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 })
+        res.json({
+            status: true,
+            token: token,
+        });
+    } else {
+        res.json({
+            status: false,
+            msg: '일치하는 아이디가 없습니다',
+        })
+    }
+});
+
 router.post('/getToken', async (req, res) => {
-    console.log(req.body);
+    const {name,gender,mobile,hash} = req.body
 
     const EXPIRES_IN = 43199;
     const REFRESH_TOKEN_EXPIRES_IN = 25184000;
+    const TOKEN_TYPE = 'bearer';
+  
+
+    const TOKEN = jwt.sign(
+        
+        {
+            name,
+            gender,
+            mobile,
+            hash,
+            exp:EXPIRES_IN
+        },
+        process.env.SECRET_KEY,
+    )
 
     // const gender = result[0]
     // const name = result[1]

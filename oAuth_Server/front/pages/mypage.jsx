@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Text, useDisclosure} from "@chakra-ui/react";
+import { Box, Button, Flex, Text, useDisclosure,Center ,FormLabel, FormControl,FormHelperText,Radio,Stack,Input,Select,RadioGroup} from "@chakra-ui/react";
 import axios from 'axios'
 import { useEffect, useState } from "react";
 import { backend, frontend } from '../utils/ip.js'
@@ -44,26 +44,83 @@ const Mypage = ({appList}) => {
     },[isOpen])
 
     return (
-      <>
-        <Box px='5%' py='5%' w='70%' mx='auto' my='0'>
-            <Flex mx='auto' my='0' justifyContent={'center'} mb='10%'>
-                <Box w='40%' mx='auto' my='0'>
-                    <Text>어플리케이션 등록</Text>
-                    <Button onClick={onOpen}>어플리케이션 생성</Button>
-                    <AppModal isOpen={isOpen} onClose={onClose}/>
-                </Box>
-            </Flex>
-            <Flex>
-                <Box mx='auto' my='0' justifyContent={'center'}>
-                    <Text>내 어플리케이션</Text>
-                    
-                    <Box>
-                        {showAppList}
+      
+        <Center w='100%'>
+            <Box  w='40%' m='0 5%' h='20rem' mx='auto'  bg='red' pt='5rem'>
+                <Flex mx='auto' my='0' justifyContent={'center'} mb='10%'>
+                    <Box w='40%' mx='auto' my='0'>
+                        <Text>어플리케이션 등록</Text>
+                        <Button onClick={onOpen}>어플리케이션 생성</Button>
+                        <AppModal isOpen={isOpen} onClose={onClose} />
                     </Box>
-                </Box>
-            </Flex>
-        </Box>
-      </>
+                </Flex>
+                <Flex>
+                    <Box mx='auto' my='0' justifyContent={'center'}>
+                        <Text>내 어플리케이션</Text>
+
+                        <Box>
+                            {showAppList}
+                        </Box>
+                    </Box>
+                </Flex>
+            </Box>
+            <Box w='40%' m='0 5%'  h='20rem' pt='5rem'>
+            <FormControl mt='3'>
+
+                <FormLabel fontSize={'140%'} px='2%' mb='3%'>
+                    이메일
+                </FormLabel>
+                <Flex justifyContent={'center'}>
+                    <Input type='text' placeholder='email을 입력해주세요' id='userEmail' size='md' mb='5%' />
+
+                    <Select placeholder='Select Domain' size='md' id='domainSelector' >
+                        <option value='@kakao.com'>@kakao.com</option>
+                        <option value='@naver.com'>@naver.com</option>
+                        <option value='@gmail.com'>@gmail.com</option>
+                    </Select>
+                </Flex>
+
+                <FormLabel fontSize={'140%'} px='2%'>
+                    이름
+                </FormLabel>
+                <Input type='text'  placeholder='이름을 입력해주세요' size='md' mb='5%' />
+
+                <FormLabel fontSize={'140%'} px='2%' mb='2%'>
+                    성별
+                </FormLabel>
+                <RadioGroup  fontSize={'140%'} mb='5%' px='3%'>
+                    <Stack direction='row'>
+                        <Radio value='m' mr='2%'>
+                            남자
+                        </Radio>
+                        <Radio value='f'>여자</Radio>
+                    </Stack>
+                </RadioGroup>
+
+                <FormLabel fontSize={'140%'} px='2%'>
+                    나이
+                </FormLabel>
+                <Input placeholder='나이를 입력해주세요' mb='5%' size='md' />
+
+                <FormLabel fontSize={'140%'} px='2%'>
+                    주소
+                </FormLabel>
+                <Input mb='5%' size='md' placeholder='주소를 입력해주세요' />
+
+                <FormLabel fontSize={'140%'} px='2%'>
+                    전화번호
+                </FormLabel>
+                <Input mb='5%' size='md' placeholder='전화번호를 입력해주세요' />
+
+                <FormLabel fontSize={'140%'} px='2%'>
+                    비밀번호
+                </FormLabel>
+                <Input type='password' placeholder='패스워드를 입력해주세요' id='password' size='md' />
+                <FormHelperText mb='7%' px='2%'></FormHelperText>
+                </FormControl>
+            </Box>
+        </Center>
+      
     )
 }
 

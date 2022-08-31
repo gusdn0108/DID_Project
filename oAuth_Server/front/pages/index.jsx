@@ -13,18 +13,21 @@ import {
 import axios from "axios";
 import { useState } from "react";
 import { backend } from "../utils/ip";
-
+import { setCookie } from 'cookies-next';
 export default function Home() {
   const [DIDid, setDIDid] = useState(undefined);
-  const [DIdPw, setDidPw] = useState(undefined);
+  const [DIDPw, setDIDPw] = useState(undefined);
+
+  //const [isLogin,setIsLogin] = useState(false)
 
   const getId = (e) => {
     setDIDid(e.target.value);
   };
 
   const getPw = (e) => {
-    setDidPw(e.target.value);
+    setDIDPw(e.target.value);
   };
+
 
   const didLoginHandler = async () => {
     console.log(DIDid, DIdPw);
@@ -32,14 +35,17 @@ export default function Home() {
     const codeUrl = location.href
     const code = codeUrl.split('response_type=')[1]
     const restAPI = codeUrl.split('clientId=')[1].split('&')[0]
-    console.log(restAPI)
+    const redirectURI = codeUrl.split('redirectUri')[1].split('=')[1].split('&')[0]
+    console.log(redirectURI)
     const response = await axios.post(`${backend}/api/oauth/authorize`, {
       email: DIDid,
       password: DIdPw,
       code:code,
-      restAPI:restAPI
+      restAPI:restAPI,
+      redirectURI:redirectURI
     });
   };
+
 
   return (
     <>
