@@ -32,12 +32,14 @@ export default function Home() {
     const codeUrl = location.href
     const code = codeUrl.split('response_type=')[1]
     const restAPI = codeUrl.split('clientId=')[1].split('&')[0]
-    console.log(restAPI)
+    const redirectURI = codeUrl.split('redirectUri')[1].split('=')[1].split('&')[0]
+    console.log(redirectURI)
     const response = await axios.post(`${backend}/api/oauth/authorize`, {
       email: DIDid,
       password: DIdPw,
       code:code,
-      restAPI:restAPI
+      restAPI:restAPI,
+      redirectURI:redirectURI
     });
   };
 
