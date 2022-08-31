@@ -78,7 +78,6 @@ router.post('/oAuthGetToken', async (req, res) => {
      * */
 });
 
-<<<<<<< HEAD
 router.post('/oAuthRegister', async (req, res) => {
     const { email, password } = req.body;
 
@@ -136,6 +135,4 @@ router.post('/getuuid', async (req, res) => {
     }
 });
 
-=======
->>>>>>> cfbccdf0c281b3de026b413ed0a602da41c78728
 module.exports = router;
