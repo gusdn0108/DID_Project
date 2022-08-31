@@ -73,7 +73,7 @@ module.exports = {
         // },
         'optimism-goerli': {
             provider: () => new Provider(process.env.MNEMONIC, optimismGoerliUrl),
-            network_id: 420,
+            network_id: '*',
         },
         // Useful for private networks
         // private: {
