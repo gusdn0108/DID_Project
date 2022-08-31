@@ -262,9 +262,8 @@ router.use('/appInfo', async (req, res) => {
         };
 
         res.json(response);
-    }
-    catch (e) {
-        console.log(e.message)
+    } catch (e) {
+        console.log(e.message);
 
         res.json({
             status: false,
@@ -274,45 +273,45 @@ router.use('/appInfo', async (req, res) => {
 });
 
 router.use('/updateRedirect', async (req, res) => {
-    const { uri, email, appName } = req.body
+    const { uri, email, appName } = req.body;
 
     for (let i = 0; i < uri.length; i++) {
         if (uri[i] !== null) {
-            uri[i] = uri[i].trim()
-            console.log(uri[i])
+            uri[i] = uri[i].trim();
+            console.log(uri[i]);
         }
     }
 
     try {
-        const update = await AccessSite.update({
-
-            redirectURI1: uri[0],
-            redirectURI2: uri[1],
-            redirectURI3: uri[2],
-            redirectURI4: uri[3],
-            redirectURI5: uri[4],
-        }, {
-            where: {
-                email,
-                appName
-            }
-        })
+        const update = await AccessSite.update(
+            {
+                redirectURI1: uri[0],
+                redirectURI2: uri[1],
+                redirectURI3: uri[2],
+                redirectURI4: uri[3],
+                redirectURI5: uri[4],
+            },
+            {
+                where: {
+                    email,
+                    appName,
+                },
+            },
+        );
 
         const response = {
             status: true,
-            msg: '리다이렉트 uri 수정이 완료되었습니다.'
-        }
-        res.json(response)
-    }
-    catch (e) {
-        console.log(e.message)
+            msg: '리다이렉트 uri 수정이 완료되었습니다.',
+        };
+        res.json(response);
+    } catch (e) {
+        console.log(e.message);
         res.json({
             status: false,
-            msg: '알수 없는 에러가 발생하였습니다. 나중에 다시 시도해주세요'
-        })
+            msg: '알수 없는 에러가 발생하였습니다. 나중에 다시 시도해주세요',
+        });
     }
 });
-
 
 router.post('/oAuthRegister', async (req, res) => {
     const { email, password, gender, name, age, addr, mobile } = req.body;
