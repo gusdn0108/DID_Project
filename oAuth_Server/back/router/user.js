@@ -233,17 +233,14 @@ router.use('/getMyApp', async (req, res) => {
     }
 });
 
-router.use(
-    '/appInfo',
-    async (req, res) => {
-        const { appName } = req.body;
-        try {
-            const thatApp = await AccessSite.findOne({
-                where: {
-                    appName: appName,
-                },
-            });
-
+router.use('/appInfo', async (req, res) => {
+    const { appName } = req.body;
+    try {
+        const thatApp = await AccessSite.findOne({
+            where: {
+                appName: appName,
+            },
+        });
 
         const appInfo = thatApp.dataValues;
         const redirectURI = [thatApp.dataValues.redirectURI1, thatApp.dataValues.redirectURI2, thatApp.dataValues.redirectURI3, thatApp.dataValues.redirectURI4, thatApp.dataValues.redirectURI5];
@@ -317,6 +314,8 @@ router.use('/updateRedirect', async (req,res) => {
 
 router.post('/oAuthRegister', async (req, res) => {
     const { email, password, gender, name, age, addr, mobile } = req.body;
+
+    console.log(email, password, gender, name, age, addr, mobile);
     // 이메일,패스워드,성별,이름,나이,주소,핸드폰번호
     try {
         const userHash = email + password;
@@ -334,7 +333,6 @@ router.post('/oAuthRegister', async (req, res) => {
         };
 
         const deploy = await deployed();
-        console.log('qweq')
         await deploy.methods.registerUser(hash, DATA).send({
             from: '0x7b6283591c09b1a738a46Acc0BBFbb5943EDb4F4',
         });
@@ -344,6 +342,11 @@ router.post('/oAuthRegister', async (req, res) => {
         if (result) {
             await user.create({
                 hashId: hash,
+                gender: gender,
+                name: name,
+                age: age,
+                addr: addr,
+                mobile: mobile,
             });
             const response = {
                 status: true,
@@ -426,8 +429,8 @@ router.post('/searchUser', async (req, res) => {
 
 router.post('/deleteUser', async (req, res) => {
     const { email, password } = req.body;
-    // 에러수정 
-    
+    // 에러수정
+
     try {
         const userHash = email + password;
         const hash = crypto.createHash('sha256').update(userHash).digest('base64');
@@ -444,22 +447,21 @@ router.post('/deleteUser', async (req, res) => {
 });
 
 router.post('/authorize', async (req, res) => {
-    const {email,password,code,restAPI} = req.body
+    const { email, password, code, restAPI } = req.body;
     // * 블록체인 네트워크 아이디 패스워드
     const userhash = email + password;
     const hash = crypto.createHash('sha256').update(userhash).digest('base64');
     const deploy = await deployed();
     const result = await deploy.methods.getUser(hash).call();
 
-    const gender = result[0]
-    const name = result[1]
-    const age = result[2]
-    const address = result[3]
-    const mobile = result[4]
-    const userEmail = result[5]
-    
+    const gender = result[0];
+    const name = result[1];
+    const age = result[2];
+    const address = result[3];
+    const mobile = result[4];
+    const userEmail = result[5];
 
-    console.log(result)
+    console.log(result);
     // * 인가코드
     const asite = 'dkstnghks';
     const bsite = 'dltmdwns';
@@ -467,14 +469,13 @@ router.post('/authorize', async (req, res) => {
     const dsite = 'rlawlgus';
 
     const code0 = crypto.createHash('sha256').update(asite).digest('base64'); // * a사이트 인가코드
-    console.log(code0)
+    console.log(code0);
     const code1 = crypto.createHash('sha256').update(bsite).digest('base64'); // * b사이트 인가코드
-    console.log(code1)
+    console.log(code1);
     const code2 = crypto.createHash('sha256').update(csite).digest('base64'); // * c사이트 인가코드
-    console.log(code2)
+    console.log(code2);
     const code3 = crypto.createHash('sha256').update(dsite).digest('base64'); // * d사이트 인가코드
-    console.log(code3)
-
+    console.log(code3);
 
     const dbUser = await user.findOne({
         where: {
@@ -484,13 +485,12 @@ router.post('/authorize', async (req, res) => {
         },
     });
 
-    console.log('db유저체크??')
+    console.log('db유저체크??');
     try {
         // * 블록체인 네트워크에 아이디 패스워드 가져와서 확인
         if (dbUser) {
-
-            console.log('여기 잘들어옴??')
-              const getSiteInfo = await AccessSite.findAll({
+            console.log('여기 잘들어옴??');
+            const getSiteInfo = await AccessSite.findAll({
                 where: {
                     email: {
                         [Op.eq]: email,
@@ -499,78 +499,73 @@ router.post('/authorize', async (req, res) => {
             });
 
             // restAPI 일치 / code 일치
-            const getRestAPI = []
-            for(let i = 0; i<getSiteInfo.length; i++){
-                getRestAPI.push(getSiteInfo[i].dataValues.restAPI)
+            const getRestAPI = [];
+            for (let i = 0; i < getSiteInfo.length; i++) {
+                getRestAPI.push(getSiteInfo[i].dataValues.restAPI);
             }
 
-            console.log(code)
-            console.log(code0)
-            console.log(getRestAPI[0])
-            console.log(restAPI)
+            console.log(code);
+            console.log(code0);
+            console.log(getRestAPI[0]);
+            console.log(restAPI);
 
-            console.log('여기는??')
+            console.log('여기는??');
 
-           if(code0 === code && getRestAPI[0]=== restAPI){
+            if (code0 === code && getRestAPI[0] === restAPI) {
+                console.log('여기는오?');
+                const response = {
+                    status: true,
+                    code: code,
+                    name: name,
+                    mobile: mobile,
+                };
 
-            console.log('여기는오?')
-            const response = {
-                status:true,
-                code:code,
-                name:name,
-                mobile:mobile
+                await axios.post('http://localhost:4000/api/oauth/getCode', response);
+            } else if (code1 === code && getRestAPI[1] === restAPI) {
+                console.log('여긴옴????');
+                const response = {
+                    status: true,
+                    code: code,
+                    restAPI: restAPI,
+                    // name:name,
+                    // gender:gender,
+                    // mobile:mobile
+                };
+
+                await axios.post('http://localhost:4001/api/oauth/getCode', response);
+            } else if (code2 === code && getRestAPI[2] === restAPI) {
+                const response = {
+                    status: true,
+                    code: code,
+                    restAPI: restAPI,
+                    // mobile:mobile,
+                    // userEmail:userEmail
+                };
+                await axios.post('http://localhost:4002/api/oauth/getCode', response);
+            } else if (code3 === code && getRestAPI[3] === restAPI) {
+                const response = {
+                    status: true,
+                    code: code,
+                    name: name,
+                    age: age,
+                    address: address,
+                };
+                await axios.post('http://localhost:4003/api/oauth/getCode', response);
+            } else {
+                const response = {
+                    status: false,
+                    msg: '코드 또는 restAPI가 일치하지않습니다',
+                };
+                await axios.post('http://localhost:4003/api/oauth/getCode', response);
             }
-
-            await axios.post('http://localhost:4000/api/oauth/getCode',response)
-           }else if (code1===code && getRestAPI[1]=== restAPI){
-
-            console.log('여긴옴????')
-            const response = {
-                status:true,
-                code:code,
-                restAPI:restAPI,
-                // name:name,
-                // gender:gender,
-                // mobile:mobile
-            }
-            
-            await axios.post('http://localhost:4001/api/oauth/getCode',response)
-           }else if(code2===code && getRestAPI[2]=== restAPI){
-            const response = {
-                status:true,
-                code:code,
-                restAPI:restAPI,
-                // mobile:mobile,
-                // userEmail:userEmail
-            }
-            await axios.post('http://localhost:4002/api/oauth/getCode',response)
-           }else if(code3===code && getRestAPI[3]=== restAPI){
-            const response = {
-                status:true,
-                code:code,
-                name:name,
-                age:age,
-                address:address
-            }
-            await axios.post('http://localhost:4003/api/oauth/getCode',response)
-           }else{
-            const response = {
-                status:false,
-                msg:'코드 또는 restAPI가 일치하지않습니다'
-            }
-            await axios.post('http://localhost:4003/api/oauth/getCode',response)
-     }
-
-    
-          
-    }        
+        }
     } catch (error) {
         console.log(error.message);
     }
 });
 
 router.post('/getToken', async (req, res) => {
-    console.log(req.body)
+    console.log(req.body);
 
     const EXPIRES_IN = 43199;
     const REFRESH_TOKEN_EXPIRES_IN = 25184000;
@@ -582,17 +577,7 @@ router.post('/getToken', async (req, res) => {
     // const mobile = result[4]
     // const userEmail = result[5]
 
-
-    // 만약 코드가 있고 그안에서 restAPI가 = b에서 맞으면 b에대한 정보 가져와줌 
-
-    
-
-
-
-
-
-
-    
+    // 만약 코드가 있고 그안에서 restAPI가 = b에서 맞으면 b에대한 정보 가져와줌
 
     // const MAKE_ACCESS_TOKEN = req.body;
     // const EXPIRES_IN = 43199;
@@ -628,7 +613,7 @@ router.post('/getToken', async (req, res) => {
     // };
 
     try {
-       // await axios.post('http://localhost:3500/oAuthGetToken', DATA);
+        // await axios.post('http://localhost:3500/oAuthGetToken', DATA);
     } catch (error) {
         console.log(error);
     }
