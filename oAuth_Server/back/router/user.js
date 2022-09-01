@@ -523,8 +523,6 @@ router.post('/deleteUser', async (req, res) => {
     }
 });
 
-
-
 router.post('/authorize', async (req, res) => {
     const { email, password, restAPI,redirectURI } = req.body;
     console.log('req.body',restAPI)
