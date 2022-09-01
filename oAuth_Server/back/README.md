@@ -10,12 +10,11 @@
 
 # Done list
 
-1. back/router/app 디렉토리
+1. back/router/app/app.ts
    디렉토리 내부의 모든 라우터에 대한 postman 테스트 완료
 
-2. back/router/user/user 디렉토리
+2. back/router/user/user.ts
    (1) updatePassword 응답 객체 작성 및 테스트 완료
    (2) searchUser
-3. back/router/user/login 디렉토리
-   전체적으로 다시 봐야 함
+3. back/router/user/login.ts
    // import { Op } from 'sequelize/types';

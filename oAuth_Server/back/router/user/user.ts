@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt';
 // const bcrypt = require('bcrypt/bcrypt')
 import Web3 from 'web3';
 import deployed from '../../web3';
-import VerifyId from '../../models/verifyId.model';
+import VerifyId from '../../models/user/verifyId.model';
 
 import addAbortSignal from 'stream';
 

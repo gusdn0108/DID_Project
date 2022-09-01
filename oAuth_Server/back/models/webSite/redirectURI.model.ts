@@ -1,5 +1,5 @@
-import { AllowNull, Column, DataType, ForeignKey, Model, Table } from "sequelize-typescript";
-import app from "./app.model";
+import { AllowNull, BelongsTo, Column, DataType, ForeignKey, Model, Table } from "sequelize-typescript";
+import App from "./app.model";
 
 
 @Table({
@@ -10,8 +10,7 @@ import app from "./app.model";
     collate:'utf8mb4_general_ci'
 })
 export default class RedirectURI extends Model{
-
-    @ForeignKey(()=>{return app})
+    @ForeignKey(()=>App)
     @AllowNull(false)
     @Column({
         type:DataType.STRING

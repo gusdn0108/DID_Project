@@ -1,4 +1,6 @@
-import {Column, Model, Table, DataType, PrimaryKey, AllowNull} from 'sequelize-typescript'
+import {Column, Model, Table, DataType, PrimaryKey, AllowNull, HasMany} from 'sequelize-typescript'
+import DataNeeded from './dataNeeded.model';
+import RedirectURI from './redirectURI.model';
 
 @Table({
     modelName:'app',

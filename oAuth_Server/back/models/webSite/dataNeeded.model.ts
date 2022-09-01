@@ -1,4 +1,5 @@
-import {Model, Column, Table, PrimaryKey, DataType, AllowNull} from 'sequelize-typescript';
+import {Model, Column, Table, PrimaryKey, DataType, AllowNull, ForeignKey, HasMany, BelongsTo} from 'sequelize-typescript';
+import App from './app.model';
 
 
 @Table({
@@ -10,7 +11,7 @@ import {Model, Column, Table, PrimaryKey, DataType, AllowNull} from 'sequelize-t
 })
 
 export default class DataNeeded extends Model {
-    @PrimaryKey
+    @ForeignKey(()=>App)
     @AllowNull(false)
     @Column({
         type:DataType.STRING

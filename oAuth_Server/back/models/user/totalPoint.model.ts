@@ -1,4 +1,5 @@
-import { Model,Column, Table, AllowNull, DataType } from "sequelize-typescript";
+import { Model,Column, Table, AllowNull, DataType, ForeignKey } from "sequelize-typescript";
+import App from "../webSite/app.model";
 
 @Table({
     modelName:'point_total',
@@ -9,6 +10,7 @@ import { Model,Column, Table, AllowNull, DataType } from "sequelize-typescript";
 })
 
 export default class TotalPoint extends Model {
+    @ForeignKey(()=>App)
     @AllowNull(false)
     @Column({
         type:DataType.STRING

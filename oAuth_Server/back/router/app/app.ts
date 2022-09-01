@@ -3,9 +3,9 @@ import crypto from 'crypto';
 
 const router = express.Router();
 
-import App from '../../models/app.model';
-import DataNeeded from '../../models/dataNeeded.model';
-import RedirectURI from '../../models/redirectURI.model';
+import App from '../../models/webSite/app.model';
+import DataNeeded from '../../models/webSite/dataNeeded.model';
+import RedirectURI from '../../models/webSite/redirectURI.model';
 
 
 router.post('/apiDistribution', async (req: Request, res: Response) => {
@@ -17,7 +17,7 @@ router.post('/apiDistribution', async (req: Request, res: Response) => {
     const randomNum2 = Math.floor(Math.random() * 1000000) + 1000000;
     const forSecret = appName + email + randomNum2;
     const REST_API = crypto.createHmac('sha256', forRestAPI).digest('hex').substr(0, 31);
-    const client_secret = crypto.createHmac('sha256', forSecret).digest('hex').substr(0, 31);
+    // const client_secret = crypto.createHmac('sha256', forSecret).digest('hex').substr(0, 31);
 
     try {
         const exAppName = await App.findOne({
@@ -56,7 +56,7 @@ router.post('/apiDistribution', async (req: Request, res: Response) => {
             status: true,
             msg: '성공적으로 등록되었습니다.',
             REST_API: REST_API,
-            client_secret: client_secret,
+            // client_secret: client_secret,
         };
         res.json(response);
     }catch(e){
@@ -84,6 +84,8 @@ router.post('/getMyApp', async (req: Request, res: Response) => {
 
 router.use('/appInfo', async (req: Request, res: Response) => {
     const { restAPI } = req.body;
+
+
     try {
         const urlInfo = await RedirectURI.findAll({
             where: {

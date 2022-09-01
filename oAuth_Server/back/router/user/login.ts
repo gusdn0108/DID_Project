@@ -4,8 +4,8 @@ import jwt from 'jsonwebtoken';
 import axios from 'axios';
 import crypto from 'crypto';
 import deployed from '../../web3';
-import VerifyId from '../../models/verifyId.model';
-import DataNeeded from '../../models/dataNeeded.model';
+import VerifyId from '../../models/user/verifyId.model';
+import DataNeeded from '../../models/webSite/dataNeeded.model';
 
 const router = express.Router();
 

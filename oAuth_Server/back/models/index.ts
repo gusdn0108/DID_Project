@@ -7,8 +7,7 @@ const config = options[mode]
 
 const sequelize = new Sequelize({
     ...config,
-    models: [__dirname+"/*.model.ts"]
+    models: [__dirname+"/**/*.model.ts"]
 });
-// sequelize.addModels[]
 
 export default sequelize;
