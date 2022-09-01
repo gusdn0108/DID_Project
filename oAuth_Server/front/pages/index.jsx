@@ -28,12 +28,10 @@ export default function Home() {
     setDIDPw(e.target.value);
   };
 
+
    const didLoginHandler = async (req,res) => {
      //앞에 상태변수를 요청
     const response = await axios.post('http://localhost:8000/api/Oauth/localAuthorize',{email:DIDid,password : DIDPw,})
-
-    // console.log(response)
-
     //보내온 데이터의 status 가 true면,
     //payload 라는변수에 split으로 잘라넣고
     //setCookie(쿠키생성)
@@ -47,7 +45,6 @@ export default function Home() {
        alert(response.data.msg)
      }
    };
-   
 
   return (
     <>
