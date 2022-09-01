@@ -10,8 +10,11 @@ const DID = require('../contracts/DID.json');
 const { deployed } = require('../web3.js');
 const { user, sequelize } = require('../models');
 const { Op } = require('sequelize');
-const { AccessSite } = require('../models');
+const { AccessSite, getInfo } = require('../models');
 const { addAbortSignal } = require('stream');
+const { Z_ASCII } = require('zlib');
+const { REPL_MODE_SLOPPY } = require('repl');
+
 require("dotenv").config
 
 const web3 = new Web3(new Web3.providers.HttpProvider('https://opt-goerli.g.alchemy.com/v2/GgIVsMFIKf4Pjwp8TmTN8gXftrnZf9A2'));
@@ -30,8 +33,8 @@ const generateRandom = (min, max) => {
 router.post('/email', async (req, res) => {
     const { email } = req.body;
 
-    const number = generateRandom(111111, 999999);
-    const mailPoster = nodeMailer.createTransport({
+    const number = generateRandom(111111, 999999)
+    const mailPoster = ({
         service: 'Naver',
         host: 'smtp.naver.com',
         port: 587,
@@ -198,12 +201,25 @@ router.post('/apiDistribution', async (req, res) => {
             res.json(response);
             return;
         }
+
         await AccessSite.create({
             email: email,
             appName: appName,
             restAPI: REST_API,
             clientSecretKey: client_secret,
         });
+
+        await getInfo.create({
+            appName: appName,
+            owner: email,
+            email: false,
+            name: false,
+            gender:false,
+            age : false,
+            addr: false,
+            mobile: false
+        })
+
         const response = {
             status: true,
             msg: '성공적으로 등록되었습니다.',
@@ -235,16 +251,23 @@ router.use('/getMyApp', async (req, res) => {
 });
 
 router.use('/appInfo', async (req, res) => {
-    const { appName } = req.body;
+    const { appName, email } = req.body;
     try {
         const thatApp = await AccessSite.findOne({
             where: {
                 appName: appName,
+                email: email
             },
         });
 
         const appInfo = thatApp.dataValues;
         const redirectURI = [thatApp.dataValues.redirectURI1, thatApp.dataValues.redirectURI2, thatApp.dataValues.redirectURI3, thatApp.dataValues.redirectURI4, thatApp.dataValues.redirectURI5];
+
+        const infoReq = await getInfo.findOne({
+            where : {
+                appName: appName
+            }
+        })
 
         const appInfor = {
             id: appInfo.idx,
@@ -253,11 +276,18 @@ router.use('/appInfo', async (req, res) => {
             redirectURI: redirectURI,
             restAPI: appInfo.restAPI,
             clientSecretKey: appInfo.clientSecretKey,
+            getInfo : [
+                { att: 'name', get: infoReq.name},
+                { att: 'email', get: infoReq.email},
+                { att : 'gender', get: infoReq.gender},
+                { att : 'age', get: infoReq.age},
+                { att : 'address', get: infoReq.addr},
+                { att : 'mobile', get : infoReq.mobile}
+            ]
         };
 
         const response = {
             status: true,
-
             appInfo: appInfor,
         };
 
@@ -271,6 +301,54 @@ router.use('/appInfo', async (req, res) => {
         });
     }
 });
+
+router.use('/getInfoUpdate', async (req, res) => {
+    const { getUserInfo, email, appName } = req.body
+    const newGetInfo = []
+
+    for(let i = 0; i < getUserInfo.length; i++) {
+        if(getUserInfo[i].get == true) {
+            newGetInfo.push(1)
+        }
+        else {
+            newGetInfo.push(0)
+        }
+    }
+    console.log(newGetInfo)
+    try{
+        const update = await getInfo.update(
+            {
+                email : newGetInfo[1],
+                name : newGetInfo[0],
+                gender : newGetInfo[2],
+                age : newGetInfo[3],
+                addr : newGetInfo[4],
+                mobile : newGetInfo[5]
+            },
+            {
+                where : {
+                    appName: appName,
+                    owner: email
+                }
+            }
+        )
+
+        const response = {
+            status: true,
+            msg: '성공적으로 반영되었습니다.'
+        }
+
+        res.json(response)
+    }
+    catch(e) {
+        console.log(e.message)
+        const response = {
+            status: false,
+            msg : '서버 에러'
+        }
+        res.json(response)
+    }
+})
 
 router.use('/updateRedirect', async (req, res) => {
     const { uri, email, appName } = req.body;
@@ -301,10 +379,11 @@ router.use('/updateRedirect', async (req, res) => {
 
         const response = {
             status: true,
-            msg: '리다이렉트 uri 수정이 완료되었습니다.',
-        };
-        res.json(response);
-    } catch (e) {
+            msg: '리다이렉트 uri 수정이 완료되었습니다..'
+        }
+        res.json(response)
+    }
+    catch (e) {
         console.log(e.message);
         res.json({
             status: false,
@@ -391,64 +470,111 @@ router.post('/upDatePassword', async (req, res) => {
 });
 
 router.post('/upDateUser', async (req, res) => {
-    const { gender, name, age, addr, mobile, email, password } = req.body;
+    const { gender, name, age, addr, mobile, email, hashId } = req.body;
+
+
+    const DATA = {
+        gender: gender,
+        name: name,
+        age: age,
+        addr: addr,
+        mobile: mobile,
+        email: email,
+    };
+
+
 
     try {
-        const userHash = email + password;
-        const hash = crypto.createHash('sha256').update(userHash).digest('base64');
-
-        const DATA = {
-            gender: gender,
-            name: name,
-            age: age,
-            addr: addr,
-            mobile: mobile,
-            email: email,
-        };
-
+        //저장하는 코드?
         const deploy = await deployed();
-        await deploy.methods.updateUser(hash, DATA).send({
+
+        await deploy.methods.updateUser(hashId, DATA).send({
             from: '0x7b6283591c09b1a738a46Acc0BBFbb5943EDb4F4',
-            gas: 10000000,
+            gas: 100000
         });
 
-        const result = await deploy.methods.getUser(hash).call();
+        const result = await deploy.methods.getUser(hashId).call();
         console.log(result);
+
+        // 블록체인 내에서 저장된 상태변수를 보내줄것임
+        res.json({
+            status: true,
+
+            name: result[1],
+            age: result[2],
+            gender: result[0],
+            addr: result[3],
+            mobile: result[4],
+            email: result[5]
+        })
     } catch (e) {
         console.log(e.message);
+
+        res.json({
+            status: false,
+            msg: '유저 업데이트 에러'
+        })
     }
 });
 
 router.post('/searchUser', async (req, res) => {
-    const { email, password } = req.body;
-    const userHash = email + password;
-    const hash = crypto.createHash('sha256').update(userHash).digest('base64');
-    const deploy = await deployed();
-    const result = await deploy.methods.getUser(hash).call();
-    console.log(result);
+    const { hashId } = req.body;
+    try {
+        const deploy = await deployed();
+        const result = await deploy.methods.getUser(hashId).call();
+
+        res.json({
+            status: true,
+            name: result[1],
+            age: result[2],
+            gender: result[0],
+            addr: result[3],
+            mobile: result[4],
+            email: result[5]
+        })
+
+    } catch (e) {
+        console.log(e.message)
+        res.json({
+            status: false,
+            meg: '이슈 발생'
+        })
+    }
 });
 
 router.post('/deleteUser', async (req, res) => {
-    const { email, password } = req.body;
-    // 에러수정
-
+    const { hashId } = req.body;
     try {
-        const userHash = email + password;
-        const hash = crypto.createHash('sha256').update(userHash).digest('base64');
+        await user.destroy({where:{ hashId:hashId}});
+      
+        // 실패하면 다시 DB원상복구
         const deploy = await deployed();
-        await deploy.methods.deleteUser('asdf').send({
+        await deploy.methods.deleteUser(hashId).send({
             from: '0x7b6283591c09b1a738a46Acc0BBFbb5943EDb4F4',
             gas: 10000000,
         });
-        const result = await deploy.methods.getUser(hash).call();
+        
+        const result = await deploy.methods.getUser(hashId).call();
         console.log(result);
+         // 실패를 하면 위에꺼도 원상복구 
+        //순서
+ 
+        res.json({
+            status: true,
+            msg: '회원탈퇴 완료되었습니다'
+        })
     } catch (error) {
         console.log(error);
+        res.json({
+            status: false,
+            msg: '에러발생'
+        })
     }
 });
 
 router.post('/authorize', async (req, res) => {
-    const { email, password, code, restAPI } = req.body;
+    const { email, password, restAPI,redirectURI } = req.body;
+    console.log('req.body',restAPI)
     // * 블록체인 네트워크 아이디 패스워드
     const userhash = email + password;
     const hash = crypto.createHash('sha256').update(userhash).digest('base64');
@@ -463,20 +589,7 @@ router.post('/authorize', async (req, res) => {
     const userEmail = result[5];
 
     console.log(result);
-    // * 인가코드
-    const asite = 'dkstnghks';
-    const bsite = 'dltmdwns';
-    const csite = 'dlagusdn';
-    const dsite = 'rlawlgus';
-
-    const code0 = crypto.createHash('sha256').update(asite).digest('base64'); // * a사이트 인가코드
-    console.log(code0);
-    const code1 = crypto.createHash('sha256').update(bsite).digest('base64'); // * b사이트 인가코드
-    console.log(code1);
-    const code2 = crypto.createHash('sha256').update(csite).digest('base64'); // * c사이트 인가코드
-    console.log(code2);
-    const code3 = crypto.createHash('sha256').update(dsite).digest('base64'); // * d사이트 인가코드
-    console.log(code3);
+   
 
     const dbUser = await user.findOne({
         where: {
@@ -490,75 +603,66 @@ router.post('/authorize', async (req, res) => {
     try {
         // * 블록체인 네트워크에 아이디 패스워드 가져와서 확인
         if (dbUser) {
-            console.log('여기 잘들어옴??');
-            const getSiteInfo = await AccessSite.findAll({
+            const getSiteInfo = await AccessSite.findOne({
                 where: {
-                    email: {
-                        [Op.eq]: email,
+                    restAPI: {
+                        [Op.eq]: restAPI,
                     },
                 },
             });
 
+            console.log(getSiteInfo.dataValues.restAPI)
+       
+
             // restAPI 일치 / code 일치
-            const getRestAPI = [];
-            for (let i = 0; i < getSiteInfo.length; i++) {
-                getRestAPI.push(getSiteInfo[i].dataValues.restAPI);
-            }
+            // const getRestAPI = [];
+            // for (let i = 0; i < getSiteInfo; i++) {
+            //     getRestAPI.push(getSiteInfo[i].dataValues.restAPI);
+            // }
 
-            console.log(code);
-            console.log(code0);
-            console.log(getRestAPI[0]);
-            console.log(restAPI);
+         
 
-            console.log('여기는??');
-
-            if (code0 === code && getRestAPI[0] === restAPI) {
+            if (getSiteInfo.dataValues.restAPI === restAPI) {
                 console.log('여기는오?');
                 const response = {
                     status: true,
-                    code: code,
                     name: name,
                     mobile: mobile,
+                    restAPI:restAPI
                 };
 
                 await axios.post('http://localhost:4000/api/oauth/getCode', response);
-            } else if (code1 === code && getRestAPI[1] === restAPI) {
-                console.log('여긴옴????');
+            } else if ( getSiteInfo.dataValues.restAPI === restAPI) {
+                console.log('여기와야해 친구들????');
                 const response = {
                     status: true,
-                    code: code,
+                    hash:hash,
                     restAPI: restAPI,
-                    // name:name,
-                    // gender:gender,
-                    // mobile:mobile
+                    redirectURI:redirectURI,
+                    name:name,
+                    gender:gender,
+                    mobile:mobile
                 };
 
                 await axios.post('http://localhost:4001/api/oauth/getCode', response);
-            } else if (code2 === code && getRestAPI[2] === restAPI) {
+            } else if ( getSiteInfo.dataValues.restAPI === restAPI) {
                 const response = {
                     status: true,
-                    code: code,
                     restAPI: restAPI,
-                    // mobile:mobile,
-                    // userEmail:userEmail
+                    mobile:mobile,
+                    userEmail:userEmail
                 };
                 await axios.post('http://localhost:4002/api/oauth/getCode', response);
-            } else if (code3 === code && getRestAPI[3] === restAPI) {
+            } else if (getSiteInfo.dataValues.restAPI === restAPI) {
                 const response = {
                     status: true,
-                    code: code,
                     name: name,
                     age: age,
                     address: address,
+                      restAPI:restAPI
                 };
                 await axios.post('http://localhost:4003/api/oauth/getCode', response);
-            } else {
-                const response = {
-                    status: false,
-                    msg: '코드 또는 restAPI가 일치하지않습니다',
-                };
-                await axios.post('http://localhost:4003/api/oauth/getCode', response);
-            }
+            } 
         }
     } catch (error) {
         console.log(error.message);
@@ -599,10 +703,24 @@ router.post('/localAuthorize', async (req, res) => {
 });
 
 router.post('/getToken', async (req, res) => {
-    console.log(req.body);
+    const {name,gender,mobile,hash} = req.body
 
     const EXPIRES_IN = 43199;
     const REFRESH_TOKEN_EXPIRES_IN = 25184000;
+    const TOKEN_TYPE = 'bearer';
+  
+
+    const TOKEN = jwt.sign(
+        
+        {
+            name,
+            gender,
+            mobile,
+            hash,
+            exp:EXPIRES_IN
+        },
+        process.env.SECRET_KEY,
+    )
 
     // const gender = result[0]
     // const name = result[1]
@@ -672,5 +790,7 @@ router.post('/getToken', async (req, res) => {
      * refresh token은 두달간 유효하며, refresh token 만료가 1달 이내로 남은 시점에서 
      * 사용자 토큰 갱신 요청을 하면 갱신된 access token과 갱신된 refresh token이 함께 반환됩니다.
     */
+
+
 
 module.exports = router;

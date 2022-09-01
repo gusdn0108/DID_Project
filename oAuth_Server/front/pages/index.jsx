@@ -28,23 +28,23 @@ export default function Home() {
     setDIDPw(e.target.value);
   };
 
+
    const didLoginHandler = async (req,res) => {
-     
+     //앞에 상태변수를 요청
     const response = await axios.post('http://localhost:8000/api/Oauth/localAuthorize',{email:DIDid,password : DIDPw,})
-
-    // console.log(response)
-
+    //보내온 데이터의 status 가 true면,
+    //payload 라는변수에 split으로 잘라넣고
+    //setCookie(쿠키생성)
      if (response.data.status == true) {
        const payload = response.data.token.split('.')[1];
        setCookie('user', payload, { req, res, maxAge: 60 * 60 * 24 * 1000 });
        location.href = 'http://localhost:8080/mypage'
-     }
+     //다했ㄷ으니 마이페이지로 쿠키와함께 화면전환
+      }
      else {
-
        alert(response.data.msg)
      }
    };
-   
 
   return (
     <>
@@ -104,6 +104,8 @@ export default function Home() {
           <Button onClick={didLoginHandler} bg="yellow.300" w="100%">
             로그인
           </Button>
+          <Button onClick={()=>{window.location.replace('/register')}} colorScheme="yellow" variant='outline' w="100%" mt="2rem">
+            회원가입 </Button>
         </Box>
       </Flex>
     </>
