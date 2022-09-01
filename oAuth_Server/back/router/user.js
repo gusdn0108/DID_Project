@@ -12,6 +12,8 @@ const { user, sequelize } = require('../models');
 const { Op } = require('sequelize');
 const { AccessSite, getInfo } = require('../models');
 const { addAbortSignal } = require('stream');
+const { Z_ASCII } = require('zlib');
+const { REPL_MODE_SLOPPY } = require('repl');
 
 require("dotenv").config
 
@@ -31,8 +33,8 @@ const generateRandom = (min, max) => {
 router.post('/email', async (req, res) => {
     const { email } = req.body;
 
-    const number = generateRandom(111111, 999999);
-    const mailPoster = nodeMailer.createTransport({
+    const number = generateRandom(111111, 999999)
+    const mailPoster = ({
         service: 'Naver',
         host: 'smtp.naver.com',
         port: 587,
@@ -377,10 +379,11 @@ router.use('/updateRedirect', async (req, res) => {
 
         const response = {
             status: true,
-            msg: '리다이렉트 uri 수정이 완료되었습니다.',
-        };
-        res.json(response);
-    } catch (e) {
+            msg: '리다이렉트 uri 수정이 완료되었습니다..'
+        }
+        res.json(response)
+    }
+    catch (e) {
         console.log(e.message);
         res.json({
             status: false,
@@ -467,59 +470,105 @@ router.post('/upDatePassword', async (req, res) => {
 });
 
 router.post('/upDateUser', async (req, res) => {
-    const { gender, name, age, addr, mobile, email, password } = req.body;
+    const { gender, name, age, addr, mobile, email, hashId } = req.body;
+
+
+    const DATA = {
+        gender: gender,
+        name: name,
+        age: age,
+        addr: addr,
+        mobile: mobile,
+        email: email,
+    };
+
+
 
     try {
-        const userHash = email + password;
-        const hash = crypto.createHash('sha256').update(userHash).digest('base64');
-
-        const DATA = {
-            gender: gender,
-            name: name,
-            age: age,
-            addr: addr,
-            mobile: mobile,
-            email: email,
-        };
-
+        //저장하는 코드?
         const deploy = await deployed();
-        await deploy.methods.updateUser(hash, DATA).send({
+
+        await deploy.methods.updateUser(hashId, DATA).send({
             from: '0x7b6283591c09b1a738a46Acc0BBFbb5943EDb4F4',
-            gas: 10000000,
+            gas: 100000
         });
 
-        const result = await deploy.methods.getUser(hash).call();
+        const result = await deploy.methods.getUser(hashId).call();
         console.log(result);
+
+        // 블록체인 내에서 저장된 상태변수를 보내줄것임
+        res.json({
+            status: true,
+
+            name: result[1],
+            age: result[2],
+            gender: result[0],
+            addr: result[3],
+            mobile: result[4],
+            email: result[5]
+        })
     } catch (e) {
         console.log(e.message);
+
+        res.json({
+            status: false,
+            msg: '유저 업데이트 에러'
+        })
     }
 });
 
 router.post('/searchUser', async (req, res) => {
-    const { email, password } = req.body;
-    const userHash = email + password;
-    const hash = crypto.createHash('sha256').update(userHash).digest('base64');
-    const deploy = await deployed();
-    const result = await deploy.methods.getUser(hash).call();
-    console.log(result);
+    const { hashId } = req.body;
+    try {
+        const deploy = await deployed();
+        const result = await deploy.methods.getUser(hashId).call();
+
+        res.json({
+            status: true,
+            name: result[1],
+            age: result[2],
+            gender: result[0],
+            addr: result[3],
+            mobile: result[4],
+            email: result[5]
+        })
+
+    } catch (e) {
+        console.log(e.message)
+        res.json({
+            status: false,
+            meg: '이슈 발생'
+        })
+    }
 });
 
 router.post('/deleteUser', async (req, res) => {
-    const { email, password } = req.body;
-    // 에러수정
-
+    const { hashId } = req.body;
     try {
-        const userHash = email + password;
-        const hash = crypto.createHash('sha256').update(userHash).digest('base64');
+        await user.destroy({where:{ hashId:hashId}});
+      
+        // 실패하면 다시 DB원상복구
         const deploy = await deployed();
-        await deploy.methods.deleteUser('asdf').send({
+        await deploy.methods.deleteUser(hashId).send({
             from: '0x7b6283591c09b1a738a46Acc0BBFbb5943EDb4F4',
             gas: 10000000,
         });
-        const result = await deploy.methods.getUser(hash).call();
+        
+        const result = await deploy.methods.getUser(hashId).call();
         console.log(result);
+         // 실패를 하면 위에꺼도 원상복구 
+        //순서
+ 
+        res.json({
+            status: true,
+            msg: '회원탈퇴 완료되었습니다'
+        })
     } catch (error) {
         console.log(error);
+        res.json({
+            status: false,
+            msg: '에러발생'
+        })
     }
 });
 
@@ -741,5 +790,7 @@ router.post('/getToken', async (req, res) => {
      * refresh token은 두달간 유효하며, refresh token 만료가 1달 이내로 남은 시점에서 
      * 사용자 토큰 갱신 요청을 하면 갱신된 access token과 갱신된 refresh token이 함께 반환됩니다.
     */
+
+
 
 module.exports = router;
