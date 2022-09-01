@@ -8,7 +8,7 @@ import {Column, Model, Table, DataType, PrimaryKey, AllowNull} from 'sequelize-t
     collate:'utf8mb4_general_ci'
 })
 
-export default class app extends Model {
+export default class App extends Model {
     @AllowNull(false)
     @Column({
         type:DataType.STRING

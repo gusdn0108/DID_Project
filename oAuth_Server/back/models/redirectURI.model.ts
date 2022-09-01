@@ -9,7 +9,7 @@ import app from "./app.model";
     charset:'utf8mb4',
     collate:'utf8mb4_general_ci'
 })
-export default class redirectURI extends Model{
+export default class RedirectURI extends Model{
 
     @ForeignKey(()=>{return app})
     @AllowNull(false)
@@ -17,10 +17,34 @@ export default class redirectURI extends Model{
         type:DataType.STRING
     })
     public restAPI?: string;
-    
+
     @AllowNull(false)
     @Column({
         type:DataType.STRING
     })
-    public redirectURI?: string;
+    public redirectURI1?: string;
+
+    @AllowNull(false)
+    @Column({
+        type:DataType.STRING
+    })
+    public redirectURI2?: string;
+
+    @AllowNull(false)
+    @Column({
+        type:DataType.STRING
+    })
+    public redirectURI3?: string;
+
+    @AllowNull(false)
+    @Column({
+        type:DataType.STRING
+    })
+    public redirectURI4?: string;
+
+    @AllowNull(false)
+    @Column({
+        type:DataType.STRING
+    })
+    public redirectURI5?: string;
 }

@@ -8,7 +8,7 @@ import { Model,Column, Table, AllowNull, DataType } from "sequelize-typescript";
     collate:'utf8mb4_general_ci'
 })
 
-export default class totalPoint extends Model {
+export default class TotalPoint extends Model {
     @AllowNull(false)
     @Column({
         type:DataType.STRING

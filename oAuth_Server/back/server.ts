@@ -1,5 +1,5 @@
 import express from 'express';
-// import router from './router';
+import router from './router'
 import dotenv from 'dotenv';
 import sequelize from './models';
 import cors from 'cors';
@@ -15,15 +15,16 @@ app.use(
     }),
 );
 
-// app.use('/api', router);
+app.use('/Oauth', router);
+
 
 app.listen(8000, async() => {
     try{
-    await sequelize.sync({force:false})
-    console.log('db connected')
+    await sequelize.sync({force:false});
+    console.log('db connected!!')
     }
     catch (e){
-        if (e instanceof Error) console.log(e.message);
+        if (e instanceof Error) console.log(e);
     }
     console.log('oauth server start 8000');
 });

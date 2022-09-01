@@ -16,4 +16,5 @@ const deployed = async () => {
     return deploy;
 };
 
-module.exports = { deployed };
+
+export default deployed;

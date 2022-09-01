@@ -9,7 +9,7 @@ import {Model, Column, Table, PrimaryKey, DataType, AllowNull} from 'sequelize-t
     collate:'utf8mb4_general_ci'
 })
 
-export default class dataNeeded extends Model {
+export default class DataNeeded extends Model {
     @PrimaryKey
     @AllowNull(false)
     @Column({
