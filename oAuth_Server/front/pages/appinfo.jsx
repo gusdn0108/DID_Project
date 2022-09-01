@@ -15,12 +15,6 @@ const AppInfo = () => {
     const [ isModifying, setIsModifying ] = useState(null)
     const [ uri, seturi ] = useState(undefined)
 
-    const [ getemail, setGetemail ] = useState(false)
-    const [ getaddr, setGetaddr ] = useState(false)
-    const [ getage, setGetage ] = useState(false)
-    const [ getmobile, setGetMobile ] = useState(false)
-    const [ getGender, setGetgender ] = useState(false)
-    const [ getName, setGetname ] = useState(false)
     const [ impact, setImpact ] = useState(false)
 
     const [getUserInfo, setGetUserInfo ] = useState(undefined)
@@ -76,23 +70,24 @@ const AppInfo = () => {
                     onChange ={setUri(k)}
                     onKeyDown={confirmURI(k)}
                     borderColor={'gray.400'}
+                    id='redirect'
                     />
                     :
                     (
                         uri[k] == null
                         ?
-                        <Box onClick={() => setIsModifying(k)} mb='0.7%' textColor={'gray.500'}>
+                        <Box onClick={() => setIsModifying(k)} mb='0.7%' textColor={'gray.500'} id='redirect1'>
                             redirect uri를 등록해주세요
                         </Box>
                         :
                         (
                             uri[k] == ''
                             ?
-                            <Box onClick={() => setIsModifying(k)} mb='0.7%' textColor={'gray.500'}>
+                            <Box onClick={() => setIsModifying(k)} mb='0.7%' textColor={'gray.500'} id='redirect2'>
                                 redirect uri를 등록해주세요
                             </Box>
                             :
-                            <Box onClick={() => setIsModifying(k)} mb='0.7%'>{uri[k]}</Box>
+                            <Box onClick={() => setIsModifying(k)} mb='0.7%' id='redirect3'>{uri[k]}</Box>
                         )
                        
                     )
@@ -100,6 +95,13 @@ const AppInfo = () => {
             </Box>
         )
     })
+
+    const urireset = (e) => {
+        console.log(e.target.id)
+        if(e.target.id !== 'redirect' && e.target.id !=='redirect1' && e.target.id !== 'redirect2' && e.target.id !== 'redirect3') {
+            setIsModifying(null)
+        }
+    }
 
     const getUserInfos = getUserInfo?.map((v,k) => {
         return(
@@ -135,7 +137,7 @@ const AppInfo = () => {
 
     return(
         <>
-            <Box pt='5%' w='70%' mx='auto' my='0'>
+            <Box pt='5%' w='70%' mx='auto' my='0' onClick={urireset}>
                 
                 <Flex flexDirection={'column'} alignItems='center' mb='3%'>
                     <Box fontSize={'175%'} mb='0.5%'>어플리케이션 관리 페이지</Box>
