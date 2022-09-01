@@ -15,7 +15,7 @@ const { addAbortSignal } = require('stream');
 const { Z_ASCII } = require('zlib');
 const { REPL_MODE_SLOPPY } = require('repl');
 
-require("dotenv").config
+require('dotenv').config;
 
 const web3 = new Web3(new Web3.providers.HttpProvider('https://opt-goerli.g.alchemy.com/v2/GgIVsMFIKf4Pjwp8TmTN8gXftrnZf9A2'));
 
@@ -33,8 +33,8 @@ const generateRandom = (min, max) => {
 router.post('/email', async (req, res) => {
     const { email } = req.body;
 
-    const number = generateRandom(111111, 999999)
-    const mailPoster = ({
+    const number = generateRandom(111111, 999999);
+    const mailPoster = nodeMailer.createTransport({
         service: 'Naver',
         host: 'smtp.naver.com',
         port: 587,
@@ -214,11 +214,11 @@ router.post('/apiDistribution', async (req, res) => {
             owner: email,
             email: false,
             name: false,
-            gender:false,
-            age : false,
+            gender: false,
+            age: false,
             addr: false,
-            mobile: false
-        })
+            mobile: false,
+        });
 
         const response = {
             status: true,
@@ -256,7 +256,7 @@ router.use('/appInfo', async (req, res) => {
         const thatApp = await AccessSite.findOne({
             where: {
                 appName: appName,
-                email: email
+                email: email,
             },
         });
 
@@ -264,10 +264,10 @@ router.use('/appInfo', async (req, res) => {
         const redirectURI = [thatApp.dataValues.redirectURI1, thatApp.dataValues.redirectURI2, thatApp.dataValues.redirectURI3, thatApp.dataValues.redirectURI4, thatApp.dataValues.redirectURI5];
 
         const infoReq = await getInfo.findOne({
-            where : {
-                appName: appName
-            }
-        })
+            where: {
+                appName: appName,
+            },
+        });
 
         const appInfor = {
             id: appInfo.idx,
@@ -276,14 +276,14 @@ router.use('/appInfo', async (req, res) => {
             redirectURI: redirectURI,
             restAPI: appInfo.restAPI,
             clientSecretKey: appInfo.clientSecretKey,
-            getInfo : [
-                { att: 'name', get: infoReq.name},
-                { att: 'email', get: infoReq.email},
-                { att : 'gender', get: infoReq.gender},
-                { att : 'age', get: infoReq.age},
-                { att : 'address', get: infoReq.addr},
-                { att : 'mobile', get : infoReq.mobile}
-            ]
+            getInfo: [
+                { att: 'name', get: infoReq.name },
+                { att: 'email', get: infoReq.email },
+                { att: 'gender', get: infoReq.gender },
+                { att: 'age', get: infoReq.age },
+                { att: 'address', get: infoReq.addr },
+                { att: 'mobile', get: infoReq.mobile },
+            ],
         };
 
         const response = {
@@ -303,52 +303,50 @@ router.use('/appInfo', async (req, res) => {
 });
 
 router.use('/getInfoUpdate', async (req, res) => {
-    const { getUserInfo, email, appName } = req.body
-    const newGetInfo = []
+    const { getUserInfo, email, appName } = req.body;
+    const newGetInfo = [];
 
-    for(let i = 0; i < getUserInfo.length; i++) {
-        if(getUserInfo[i].get == true) {
-            newGetInfo.push(1)
-        }
-        else {
-            newGetInfo.push(0)
+    for (let i = 0; i < getUserInfo.length; i++) {
+        if (getUserInfo[i].get == true) {
+            newGetInfo.push(1);
+        } else {
+            newGetInfo.push(0);
         }
     }
-    console.log(newGetInfo)
-    try{
+    console.log(newGetInfo);
+    try {
         const update = await getInfo.update(
             {
-                email : newGetInfo[1],
-                name : newGetInfo[0],
-                gender : newGetInfo[2],
-                age : newGetInfo[3],
-                addr : newGetInfo[4],
-                mobile : newGetInfo[5]
+                email: newGetInfo[1],
+                name: newGetInfo[0],
+                gender: newGetInfo[2],
+                age: newGetInfo[3],
+                addr: newGetInfo[4],
+                mobile: newGetInfo[5],
             },
             {
-                where : {
+                where: {
                     appName: appName,
-                    owner: email
-                }
-            }
-        )
+                    owner: email,
+                },
+            },
+        );
 
         const response = {
             status: true,
-            msg: '성공적으로 반영되었습니다.'
-        }
+            msg: '성공적으로 반영되었습니다.',
+        };
 
-        res.json(response)
-    }
-    catch(e) {
-        console.log(e.message)
+        res.json(response);
+    } catch (e) {
+        console.log(e.message);
         const response = {
             status: false,
-            msg : '서버 에러'
-        }
-        res.json(response)
+            msg: '서버 에러',
+        };
+        res.json(response);
     }
-})
+});
 
 router.use('/updateRedirect', async (req, res) => {
     const { uri, email, appName } = req.body;
@@ -379,11 +377,10 @@ router.use('/updateRedirect', async (req, res) => {
 
         const response = {
             status: true,
-            msg: '리다이렉트 uri 수정이 완료되었습니다..'
-        }
-        res.json(response)
-    }
-    catch (e) {
+            msg: '리다이렉트 uri 수정이 완료되었습니다..',
+        };
+        res.json(response);
+    } catch (e) {
         console.log(e.message);
         res.json({
             status: false,
@@ -472,7 +469,6 @@ router.post('/upDatePassword', async (req, res) => {
 router.post('/upDateUser', async (req, res) => {
     const { gender, name, age, addr, mobile, email, hashId } = req.body;
 
-
     const DATA = {
         gender: gender,
         name: name,
@@ -482,15 +478,13 @@ router.post('/upDateUser', async (req, res) => {
         email: email,
     };
 
-
-
     try {
         //저장하는 코드?
         const deploy = await deployed();
 
         await deploy.methods.updateUser(hashId, DATA).send({
             from: '0x7b6283591c09b1a738a46Acc0BBFbb5943EDb4F4',
-            gas: 100000
+            gas: 100000,
         });
 
         const result = await deploy.methods.getUser(hashId).call();
@@ -505,15 +499,15 @@ router.post('/upDateUser', async (req, res) => {
             gender: result[0],
             addr: result[3],
             mobile: result[4],
-            email: result[5]
-        })
+            email: result[5],
+        });
     } catch (e) {
         console.log(e.message);
 
         res.json({
             status: false,
-            msg: '유저 업데이트 에러'
-        })
+            msg: '유저 업데이트 에러',
+        });
     }
 });
 
@@ -530,51 +524,50 @@ router.post('/searchUser', async (req, res) => {
             gender: result[0],
             addr: result[3],
             mobile: result[4],
-            email: result[5]
-        })
-
+            email: result[5],
+        });
     } catch (e) {
-        console.log(e.message)
+        console.log(e.message);
         res.json({
             status: false,
-            meg: '이슈 발생'
-        })
+            meg: '이슈 발생',
+        });
     }
 });
 
 router.post('/deleteUser', async (req, res) => {
     const { hashId } = req.body;
     try {
-        await user.destroy({where:{ hashId:hashId}});
-      
+        await user.destroy({ where: { hashId: hashId } });
+
         // 실패하면 다시 DB원상복구
         const deploy = await deployed();
         await deploy.methods.deleteUser(hashId).send({
             from: '0x7b6283591c09b1a738a46Acc0BBFbb5943EDb4F4',
             gas: 10000000,
         });
-        
+
         const result = await deploy.methods.getUser(hashId).call();
         console.log(result);
-         // 실패를 하면 위에꺼도 원상복구 
+        // 실패를 하면 위에꺼도 원상복구
         //순서
- 
+
         res.json({
             status: true,
-            msg: '회원탈퇴 완료되었습니다'
-        })
+            msg: '회원탈퇴 완료되었습니다',
+        });
     } catch (error) {
         console.log(error);
         res.json({
             status: false,
-            msg: '에러발생'
-        })
+            msg: '에러발생',
+        });
     }
 });
 
 router.post('/authorize', async (req, res) => {
-    const { email, password, restAPI,redirectURI } = req.body;
-    console.log('req.body',restAPI)
+    const { email, password, restAPI, redirectURI } = req.body;
+    console.log('req.body', restAPI);
     // * 블록체인 네트워크 아이디 패스워드
     const userhash = email + password;
     const hash = crypto.createHash('sha256').update(userhash).digest('base64');
@@ -589,7 +582,6 @@ router.post('/authorize', async (req, res) => {
     const userEmail = result[5];
 
     console.log(result);
-   
 
     const dbUser = await user.findOne({
         where: {
@@ -611,8 +603,7 @@ router.post('/authorize', async (req, res) => {
                 },
             });
 
-            console.log(getSiteInfo.dataValues.restAPI)
-       
+            console.log(getSiteInfo.dataValues.restAPI);
 
             // restAPI 일치 / code 일치
             // const getRestAPI = [];
@@ -620,37 +611,35 @@ router.post('/authorize', async (req, res) => {
             //     getRestAPI.push(getSiteInfo[i].dataValues.restAPI);
             // }
 
-         
-
             if (getSiteInfo.dataValues.restAPI === restAPI) {
                 console.log('여기는오?');
                 const response = {
                     status: true,
                     name: name,
                     mobile: mobile,
-                    restAPI:restAPI
+                    restAPI: restAPI,
                 };
 
                 await axios.post('http://localhost:4000/api/oauth/getCode', response);
-            } else if ( getSiteInfo.dataValues.restAPI === restAPI) {
+            } else if (getSiteInfo.dataValues.restAPI === restAPI) {
                 console.log('여기와야해 친구들????');
                 const response = {
                     status: true,
-                    hash:hash,
+                    hash: hash,
                     restAPI: restAPI,
-                    redirectURI:redirectURI,
-                    name:name,
-                    gender:gender,
-                    mobile:mobile
+                    redirectURI: redirectURI,
+                    name: name,
+                    gender: gender,
+                    mobile: mobile,
                 };
 
                 await axios.post('http://localhost:4001/api/oauth/getCode', response);
-            } else if ( getSiteInfo.dataValues.restAPI === restAPI) {
+            } else if (getSiteInfo.dataValues.restAPI === restAPI) {
                 const response = {
                     status: true,
                     restAPI: restAPI,
-                    mobile:mobile,
-                    userEmail:userEmail
+                    mobile: mobile,
+                    userEmail: userEmail,
                 };
                 await axios.post('http://localhost:4002/api/oauth/getCode', response);
             } else if (getSiteInfo.dataValues.restAPI === restAPI) {
@@ -659,10 +648,10 @@ router.post('/authorize', async (req, res) => {
                     name: name,
                     age: age,
                     address: address,
-                      restAPI:restAPI
+                    restAPI: restAPI,
                 };
                 await axios.post('http://localhost:4003/api/oauth/getCode', response);
-            } 
+            }
         }
     } catch (error) {
         console.log(error.message);
@@ -678,18 +667,19 @@ router.post('/localAuthorize', async (req, res) => {
         where: {
             hashId: {
                 [Op.eq]: hash,
-            }
-        }
-    })
+            },
+        },
+    });
 
     if (dbUser) {
-        let token = jwt.sign({
-            email: email,
-            hashId: hash,
-        },
-            process.env.SECRET_KEY
+        let token = jwt.sign(
+            {
+                email: email,
+                hashId: hash,
+            },
+            process.env.SECRET_KEY,
         );
-        res.cookie('user', token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 })
+        res.cookie('user', token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
         res.json({
             status: true,
             token: token,
@@ -698,29 +688,27 @@ router.post('/localAuthorize', async (req, res) => {
         res.json({
             status: false,
             msg: '일치하는 아이디가 없습니다',
-        })
+        });
     }
 });
 
 router.post('/getToken', async (req, res) => {
-    const {name,gender,mobile,hash} = req.body
+    const { name, gender, mobile, hash } = req.body;
 
     const EXPIRES_IN = 43199;
     const REFRESH_TOKEN_EXPIRES_IN = 25184000;
     const TOKEN_TYPE = 'bearer';
-  
 
     const TOKEN = jwt.sign(
-        
         {
             name,
             gender,
             mobile,
             hash,
-            exp:EXPIRES_IN
+            exp: EXPIRES_IN,
         },
         process.env.SECRET_KEY,
-    )
+    );
 
     // const gender = result[0]
     // const name = result[1]
@@ -790,7 +778,5 @@ router.post('/getToken', async (req, res) => {
      * refresh token은 두달간 유효하며, refresh token 만료가 1달 이내로 남은 시점에서 
      * 사용자 토큰 갱신 요청을 하면 갱신된 access token과 갱신된 refresh token이 함께 반환됩니다.
     */
-
-
 
 module.exports = router;
