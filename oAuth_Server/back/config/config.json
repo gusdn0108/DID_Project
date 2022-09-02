@@ -1,7 +1,12 @@
 {
     "development": {
+<<<<<<< HEAD
         "username": "ivy",
         "password": "GOODDAY",
+=======
+        "username": "ash991213",
+        "password": "ash991213",
+>>>>>>> a1b2962d69af42853de24e9553d7079165e8821a
         "database": "oAuthDB",
         "host": "127.0.0.1",
         "dialect": "mysql"
