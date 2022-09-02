@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
-// import { Op } from 'sequelize/types';    이부분 에러
+import { Op } from 'sequelize';
 import axios from 'axios';
 import crypto from 'crypto';
 import deployed from '../../web3';
@@ -89,6 +89,7 @@ router.post('/localAuthorize', async (req: Request, res: Response) => {
     const { email, password } = req.body;
     const userhash = email + password;
     const hash = crypto.createHash('sha256').update(userhash).digest('base64');
+    console.log(hash);
 
     const dbUser = await VerifyId.findOne({
         where: {
