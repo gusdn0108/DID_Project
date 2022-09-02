@@ -5,34 +5,25 @@ import { backend, frontend } from '../utils/ip.js';
 import { getCookie } from 'cookies-next';
 import crypto from 'crypto';
 import AppModal from '../components/appModal.jsx';
-import Link from 'next/link.js';
 import { deleteCookie } from 'cookies-next';
-
-// 사용자는 마이 페이지에서 자신이 운영하는 서비스를 연동 등록 가능
-// 내가 연동한 어플리케이션을 보여주는 리스트도 만들자..
-// 발급 받기 > 연동할 어플리케이션 이름을 입력하면 rest api, secret등을 준다.
-
-// rest api를 발급받고 redirect uri를 발급받을 로컬 서버 관리자는
-// 로그인이 된 상태라고 가정
 
 const Mypage = ({ appList }) => {
 	const { isOpen, onOpen, onClose } = useDisclosure();
-	const [myAppList, setmyAppList] = useState(appList);
-	const [name, setName] = useState(' ');
-	const [gender, setGender] = useState(' ');
-	const [age, setAge] = useState(' ');
-	const [address, setAddress] = useState(' ');
-	const [mobile, setMobile] = useState(' ');
-	const [password, setPassword] = useState(' ');
+	// const [myAppList, setmyAppList] = useState(appList);
+	const [name, setName] = useState('');
+	const [gender, setGender] = useState('');
+	const [age, setAge] = useState('');
+	const [addr, setAddr] = useState('');
+	const [mobile, setMobile] = useState('');
+	const [password, setPassword] = useState('');
 	const [pwCheck, setPwCheck] = useState(false); //뒤에 비밀번호 수정
-
 	const [pwdCheck, setPwdCheck] = useState(''); //첫번째 비밀번호입력란
 
-	const [email, setEmail] = useState(' ');
-	const [hashId, setHashId] = useState(' ');
+	const [email, setEmail] = useState('');
+	const [hashId, setHashId] = useState('');
 
 	const getAddress = (e) => {
-		setAddress(e.target.value);
+		setAddr(e.target.value);
 	};
 	const getName = (e) => {
 		setName(e.target.value);
@@ -43,13 +34,10 @@ const Mypage = ({ appList }) => {
 	const getAge = (e) => {
 		setAge(e.target.value);
 	};
-	const getGender = (e) => {
-		setAddress(e.target.value);
-	};
 
-	const createApp = () => {
-		location.href = `${frontend}/appRegi`;
-	};
+	// const createApp = () => {
+	// 	location.href = `${frontend}/appRegi`;
+	// };
 
 	// const getMyApp = async () => {
 	//     const email = '619049@naver.com'
@@ -69,33 +57,36 @@ const Mypage = ({ appList }) => {
 	//     );
 	// });
 
-	const getUser = async () => {
+	// const getUser = async () => {
+	// 	let userInfo;
+	// 	const Cookie = getCookie('user');
+
+	// 	if (Cookie) {
+	// 		userInfo = JSON.parse(Buffer.from(Cookie, 'base64').toString('utf-8'));
+	// 	}
+
+	// 	setEmail(userInfo.email);
+	// 	setHashId(userInfo.hashId);
+	// };
+
+	const getUserInfo = async () => {
 		let userInfo;
+
 		const Cookie = getCookie('user');
-		//user?
 
 		if (Cookie) {
-			//cookier가있으면
 			userInfo = JSON.parse(Buffer.from(Cookie, 'base64').toString('utf-8'));
 		}
 
-		//userInfo.email 이거 물어보기 or console찍어보기
-		setEmail(userInfo.email);
-		setHashId(userInfo.hashId);
-	};
-
-	const getUserInfo = async () => {
-		//hashId값으로 요청
-		const response = await axios.post('http://localhost:8000/Oauth/user/searchUser', { hashId: hashId });
+		const response = await axios.post('http://localhost:8000/Oauth/user/searchUser', { hashId: userInfo.hashId });
 
 		setName(response.data.name);
-		setAddress(response.data.addr);
+		setAddr(response.data.addr);
 		setAge(response.data.age);
 		setMobile(response.data.mobile);
 		setGender(response.data.gender);
-		setEmail(response.data.email);
-
-		//response 객체안에 data
+		setEmail(userInfo.email);
+		setHashId(userInfo.hashId);
 	};
 
 	const setPwdCheckfunction = (e) => {
@@ -104,8 +95,6 @@ const Mypage = ({ appList }) => {
 
 	//버튼눌렀을떄 업데이트해주려고
 	const checkPwdfunction = () => {
-		console.log(email);
-		console.log(hashId);
 		const userHash = email + pwdCheck;
 
 		const Hash = crypto.createHash('sha256').update(userHash).digest('base64');
@@ -119,44 +108,32 @@ const Mypage = ({ appList }) => {
 	};
 
 	const updateUser = async () => {
-		const hashId = email + pwdCheck;
-
-		const Hash = crypto.createHash('sha256').update(hashId).digest('base64');
-
 		const body = {
-			gender: gender,
-			name: name,
-			age: age,
-			addr: address,
-			mobile: mobile,
-			email: email,
-			hashId: Hash,
+			gender,
+			name,
+			age,
+			addr,
+			mobile,
+			email,
+			hashId,
 		};
 
 		const response = await axios.post('http://localhost:8000/Oauth/user/upDateUser', body);
 
-		console.log(response.data);
-
 		if (response.data.status == true) {
 			setName(response.data.name);
-			setAddress(response.data.addr);
 			setAge(response.data.age);
-			setMobile(response.data.mobile);
 			setGender(response.data.gender);
-			setEmail(response.data.email);
-
-			// getUserInfo()
+			setAddr(response.data.addr);
+			setMobile(response.data.mobile);
+			alert(response.data.msg);
 		} else {
 			alert(response.data.msg);
 		}
 	};
 
-	const deleteUser = async () => {
-		const hashId = email + pwdCheck;
-
-		const Hash = crypto.createHash('sha256').update(hashId).digest('base64');
-
-		const response = await axios.post('http://localhost:8000/api/oauth/deleteUser', { hashId: Hash });
+	const deleteUser = async (req, res) => {
+		const response = await axios.post('http://localhost:8000/oauth/user/deleteUser', { hashId });
 
 		if (response.data.status) {
 			deleteCookie('user', { req, res, maxAge: 60 * 60 * 24 * 1000 });
@@ -168,24 +145,11 @@ const Mypage = ({ appList }) => {
 		}
 	};
 
-	//해야되는거 입력받게하기 O
-	//변경하기 누르면 변경되는 함수 만들기 o
-	//백에는 바꾸기 완료
-
-	//+ 새 홈페이지에 바꾼거 보여주기
-	//gerUserInfo()하면 될줄알았는데 백정보를 못가져온다 왜?
-
-	//delete 함수랑 버튼 만들기
-
-	//back에서 db에서 저장?
-	//front에서 다시 출력?
 	useEffect(() => {
-		//렌더될떄 추가개념공부필요
 		// getMyApp()
-		getUser();
+		getUserInfo();
 	}, [isOpen]);
 
-	//3항연산자랑 <>
 	return (
 		<Center w='100%'>
 			<Box w='40%' m='0 5%' h='20rem' mx='auto' bg='red' pt='5rem'>
@@ -251,7 +215,17 @@ const Mypage = ({ appList }) => {
 							<FormLabel fontSize={'140%'} px='2%' mb='2%'>
 								성별
 							</FormLabel>
-							<RadioGroup fontSize={'140%'} mb='5%' px='3%' defaultValue={gender === 'm' ? 'm' : 'f'}>
+							<RadioGroup
+								fontSize={'140%'}
+								mb='5%'
+								px='3%'
+								onClick={(e) => {
+									if (e.target.value) {
+										setGender(e.target.value);
+									}
+								}}
+								defaultValue={gender === 'm' ? 'm' : 'f'}
+							>
 								<Stack direction='row'>
 									<Radio value='m' mr='2%'>
 										남자
@@ -268,7 +242,7 @@ const Mypage = ({ appList }) => {
 							<FormLabel fontSize={'140%'} px='2%'>
 								주소
 							</FormLabel>
-							<Input type='text' mb='5%' size='md' placeholder='주소를 입력해주세요' value={address} onChange={getAddress} />
+							<Input type='text' mb='5%' size='md' placeholder='주소를 입력해주세요' value={addr} onChange={getAddress} />
 
 							<FormLabel fontSize={'140%'} px='2%'>
 								전화번호

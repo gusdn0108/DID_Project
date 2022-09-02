@@ -88,8 +88,6 @@ contract DID is IDID {
         return VP;
     }
 
-
-
     function isRegistered(string memory _hashedId) view public returns(bool){
         return registeredUser[_hashedId];
     }

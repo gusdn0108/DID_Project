@@ -20,16 +20,15 @@ router.post('/oAuthRegister', async (req: Request, res: Response) => {
             mobile,
         };
 
-        console.log('gwrgewgew', hash);
-
         const deploy = await deployed();
         await deploy.methods.registerUser(hash, DATA).send({
             from: '0x7b6283591c09b1a738a46Acc0BBFbb5943EDb4F4',
         });
 
-        const result = await deploy.methods.getUser(hash).call();
+        const result = await deploy.methods.isRegistered(hash).call();
 
         const restAPI = '1';
+
         if (result) {
             await VerifyId.create({
                 hashId: hash,
@@ -40,14 +39,14 @@ router.post('/oAuthRegister', async (req: Request, res: Response) => {
                 status: true,
                 msg: '회원 가입이 완료되었습니다.',
             });
-        } else {
-            res.json({
-                status: false,
-                msg: '회원 가입에 실패했습니다.',
-            });
         }
     } catch (e) {
         if (e instanceof Error) console.log(e.message);
+
+        res.json({
+            status: false,
+            msg: '회원 가입에 실패했습니다.',
+        });
     }
 });
 
@@ -87,7 +86,7 @@ router.post('/upDatePassword', async (req: Request, res: Response) => {
 });
 
 router.post('/upDateUser', async (req: Request, res: Response) => {
-    const { gender, name, age, addr, mobile, hashId } = req.body;
+    const { gender, name, age, addr, mobile, email, hashId } = req.body;
 
     try {
         const DATA = {
@@ -96,6 +95,7 @@ router.post('/upDateUser', async (req: Request, res: Response) => {
             age,
             addr,
             mobile,
+            email,
         };
 
         const deploy = await deployed();
@@ -111,7 +111,11 @@ router.post('/upDateUser', async (req: Request, res: Response) => {
 
             res.json({
                 status: true,
-                user: result,
+                name: result[1],
+                age: result[2],
+                gender: result[0],
+                addr: result[3],
+                mobile: result[4],
                 msg: '회원정보가 변경되었습니다.',
             });
         }
@@ -133,7 +137,11 @@ router.post('/searchUser', async (req: Request, res: Response) => {
 
         res.json({
             status: true,
-            user: result,
+            name: result[1],
+            age: result[2],
+            gender: result[0],
+            addr: result[3],
+            mobile: result[4],
         });
     } catch (e) {
         if (e instanceof Error) console.log(e.message);
@@ -146,7 +154,10 @@ router.post('/searchUser', async (req: Request, res: Response) => {
 
 router.post('/deleteUser', async (req: Request, res: Response) => {
     const { hashId } = req.body;
+
     try {
+        await VerifyId.destroy({ where: { hashId: hashId } });
+
         const deploy = await deployed();
 
         await deploy.methods.deleteUser(hashId).send({
@@ -154,7 +165,9 @@ router.post('/deleteUser', async (req: Request, res: Response) => {
             gas: 10000000,
         });
 
-        await deploy.methods.isRegistered(hashId).call();
+        const checkUser = await deploy.methods.isRegistered(hashId).call();
+
+        if (checkUser) throw new Error('회원 탈퇴 처리 실패');
 
         res.json({
             status: true,
