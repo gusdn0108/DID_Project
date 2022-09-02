@@ -10,7 +10,7 @@ const MypageDrawer = ({ MypageIsOpen, MypageOnClose, user }) => {
 
   useEffect(() => {
     (async function () {
-      const response = await axios.post('http://localhost:4000/api/auth/pointInquiry', { email });
+      const response = await axios.post('http://localhost:4002/api/auth/pointInquiry', { email });
       if (response.data.status) {
         setPoint(response.data.point);
       }
