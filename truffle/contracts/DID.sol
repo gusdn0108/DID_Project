@@ -15,7 +15,7 @@ contract DID is IDID {
         string email;
 
     function registerUser (string memory _hashedId, User memory _data) external{
-        require(!registeredUser[_hashedId]);
+        require(!isRegistered(_hashedId));
         
         User memory userObj;
      
@@ -37,7 +37,7 @@ contract DID is IDID {
     }
 
     function updateUser (string memory _hashedId, User memory _data) external{
-        require(registeredUser[_hashedId]);
+        require(isRegistered(_hashedId));
         User memory userObj;
 
         userObj.gender = _data.gender;
@@ -51,7 +51,7 @@ contract DID is IDID {
     }
 
     function deleteUser (string memory _hashedId) public{
-        require(registeredUser[_hashedId]);
+        require(isRegistered(_hashedId));
 
         delete user[_hashedId];
         registeredUser[_hashedId] = false;
@@ -62,6 +62,7 @@ contract DID is IDID {
     }
 
     function getVP(string memory _identifier, NeededUser memory _shouldSend) view external returns(User memory){
+        require(isRegistered(_identifier));
         User memory userObj;
         User memory VP;
         userObj = getUser(_identifier);
