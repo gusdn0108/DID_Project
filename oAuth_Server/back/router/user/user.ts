@@ -20,6 +20,8 @@ router.post('/oAuthRegister', async (req: Request, res: Response) => {
             mobile,
         };
 
+        console.log('gwrgewgew', hash);
+
         const deploy = await deployed();
         await deploy.methods.registerUser(hash, DATA).send({
             from: '0x7b6283591c09b1a738a46Acc0BBFbb5943EDb4F4',
