@@ -8,7 +8,7 @@ const LoginModal = ({ loginIsOpen, loginOnClose }) => {
   const [password, setPassword] = useState('');
 
   const onClick = async (req, res) => {
-    const response = await axios.post('http://localhost:4001/api/auth/login', {
+    const response = await axios.post('http://localhost:4000/api/auth/login', {
       userEmail: email,
       userPw: password,
     });

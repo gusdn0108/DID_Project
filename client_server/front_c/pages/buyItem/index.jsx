@@ -14,7 +14,7 @@ const BuyItem = ({ user }) => {
   const [point, setPoint] = useState(0);
 
   const buyItem = async () => {
-    const response = await axios.post('http://localhost:4000/api/auth/usePoint', { email, price: formattedPrice });
+    const response = await axios.post('http://localhost:4002/api/auth/usePoint', { email, price: formattedPrice });
     if (response.data.status) {
       getPoint();
       alert('구매 완료되었습니다');
@@ -22,7 +22,7 @@ const BuyItem = ({ user }) => {
   };
 
   const getPoint = async () => {
-    const response = await axios.post('http://localhost:4000/api/auth/pointInquiry', { email });
+    const response = await axios.post('http://localhost:4002/api/auth/pointInquiry', { email });
     if (response.data.status) {
       setPoint(response.data.point);
     }

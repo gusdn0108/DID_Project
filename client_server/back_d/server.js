@@ -11,7 +11,7 @@ const port = 4003;
 
 app.use(
     cors({
-        origin: ['http://localhost:3000'],
+        origin: ['http://localhost:3003'],
         credentials: true,
     }),
 );
