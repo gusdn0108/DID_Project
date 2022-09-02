@@ -89,7 +89,6 @@ router.post('/localAuthorize', async (req: Request, res: Response) => {
     const { email, password } = req.body;
     const userhash = email + password;
     const hash = crypto.createHash('sha256').update(userhash).digest('base64');
-    console.log(hash);
 
     const dbUser = await VerifyId.findOne({
         where: {

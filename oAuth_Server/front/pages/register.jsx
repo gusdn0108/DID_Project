@@ -44,10 +44,6 @@ const register = () => {
 		setAge(e.target.value);
 	};
 
-	const getBirth = (e) => {
-		setBirth(e.target.value);
-	};
-
 	const selectGender = (e) => {
 		setGender(e);
 	};
