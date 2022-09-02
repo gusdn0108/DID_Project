@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Text, Input, FormControl, FormLabel, FormErrorMessage, FormHelperText, Select, Radio, RadioGroup, Stack } from '@chakra-ui/react';
+import { Box, Flex, Text, Input, FormControl, FormLabel, FormHelperText, Select, Radio, RadioGroup, Stack } from '@chakra-ui/react';
 import axios from 'axios';
 import { useState } from 'react';
 import { backend, frontend } from '../utils/ip.js';
@@ -14,7 +14,7 @@ const register = () => {
 	const [email, setEmail] = useState(undefined);
 	const [domain, setDomain] = useState(undefined);
 	const [name, setName] = useState(undefined);
-	const [gender, setGender] = useState('f');
+	const [gender, setGender] = useState(undefined);
 	const [age, setAge] = useState(undefined);
 	const [adr, setAdr] = useState(undefined);
 	const [phone, setPhone] = useState(undefined);
@@ -68,7 +68,7 @@ const register = () => {
 		const regiEmail = email + domain;
 
 		try {
-			const response = await axios.post(`${backend}/api/oauth/email`, {
+			const response = await axios.post(`${backend}/Oauth/verifyEmail/email`, {
 				email: regiEmail,
 			});
 			setSentEmail(true);
@@ -92,7 +92,7 @@ const register = () => {
 		if (verifier == verifyNum) {
 			try {
 				const regiEmail = email + domain;
-				const response = await axios.post(`${backend}/api/oauth/oauthregister`, { email: regiEmail, password, gender, name, age, addr: adr, mobile: phone });
+				const response = await axios.post(`${backend}/Oauth/user/oauthregister`, { email: regiEmail, password, gender, name, age, addr: adr, mobile: phone });
 				if (response.data.status == 1) {
 					alert('회원가입이 완료되었습니다.');
 					location.href = `${frontend}`;
@@ -136,7 +136,7 @@ const register = () => {
 							<FormLabel fontSize={'140%'} px='2%' mb='2%'>
 								성별
 							</FormLabel>
-							<RadioGroup onChange={selectGender} value={gender} fontSize={'140%'} mb='5%' px='3%'>
+							<RadioGroup onChange={selectGender} fontSize={'140%'} mb='5%' px='3%'>
 								<Stack direction='row'>
 									<Radio value='m' mr='2%'>
 										남자

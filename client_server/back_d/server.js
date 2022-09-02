@@ -2,12 +2,12 @@ const express = require('express');
 const cookiePaser = require('cookie-parser');
 const path = require('path');
 const dotenv = require('dotenv');
-const { sequelize } = require('../back/models');
+const { sequelize } = require('./models');
 const router = require('./router');
 const app = express();
 const cors = require('cors');
 
-const port = 4001;
+const port = 4003;
 
 app.use(
     cors({
@@ -19,11 +19,6 @@ app.use(
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-
-app.get('/', (req, res) => {
-    res.send('hello');
-});
-
 app.use(cookiePaser());
 app.use('/api', router);
 dotenv.config();

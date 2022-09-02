@@ -1,4 +1,4 @@
-import express,{Request, Response} from 'express';
+import express, { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 // import { Op } from 'sequelize/types';    이부분 에러
 import axios from 'axios';
@@ -10,14 +10,11 @@ import DataNeeded from '../../models/webSite/dataNeeded.model';
 const router = express.Router();
 
 router.post('/authorize', async (req: Request, res: Response) => {
-    const { email, password, restAPI,redirectURI } = req.body;
-    console.log('req.body',restAPI)
-    // * 블록체인 네트워크 아이디 패스워드
+    const { email, password, restAPI, redirectURI } = req.body;
     const userhash = email + password;
     const hash = crypto.createHash('sha256').update(userhash).digest('base64');
     const deploy = await deployed();
     const result = await deploy.methods.getUser(hash).call();
-    console.log(result);
 
     const gender = result[0];
     const name = result[1];
@@ -25,8 +22,6 @@ router.post('/authorize', async (req: Request, res: Response) => {
     const address = result[3];
     const mobile = result[4];
     const userEmail = result[5];
-
-    // console.log(result);
 
     const dbUser = await VerifyId.findOne({
         where: {
@@ -36,9 +31,7 @@ router.post('/authorize', async (req: Request, res: Response) => {
         },
     });
 
-    console.log('db유저체크??');
     try {
-        // * 블록체인 네트워크에 아이디 패스워드 가져와서 확인
         if (dbUser) {
             const getSiteInfo = await DataNeeded.findOne({
                 where: {
@@ -48,43 +41,32 @@ router.post('/authorize', async (req: Request, res: Response) => {
                 },
             });
 
-            console.log(DataNeeded)
-
-            // restAPI 일치 / code 일치
-            const getRestAPI = [];
-            // for (let i = 0; i < getSiteInfo; i++) {
-            //     getRestAPI.push(getSiteInfo[i]?.restAPI);
-            // }
-
             if (getSiteInfo?.restAPI === restAPI) {
-                console.log('여기는오?');
                 const response = {
                     status: true,
                     name: name,
                     mobile: mobile,
-                    restAPI
+                    restAPI,
                 };
-                console.log('1')
                 await axios.post('http://localhost:4000/api/oauth/getCode', response);
-            } else if ( getSiteInfo?.restAPI === restAPI) {
-                console.log('여기와야해 친구들????');
+            } else if (getSiteInfo?.restAPI === restAPI) {
                 const response = {
                     status: true,
-                    hash:hash,
+                    hash: hash,
                     restAPI: restAPI,
-                    redirectURI:redirectURI,
-                    name:name,
-                    gender:gender,
-                    mobile:mobile
+                    redirectURI: redirectURI,
+                    name: name,
+                    gender: gender,
+                    mobile: mobile,
                 };
 
                 await axios.post('http://localhost:4001/api/oauth/getCode', response);
-            } else if ( getSiteInfo?.restAPI === restAPI) {
+            } else if (getSiteInfo?.restAPI === restAPI) {
                 const response = {
                     status: true,
                     restAPI: restAPI,
-                    mobile:mobile,
-                    userEmail:userEmail
+                    mobile: mobile,
+                    userEmail: userEmail,
                 };
                 await axios.post('http://localhost:4002/api/oauth/getCode', response);
             } else if (getSiteInfo?.restAPI === restAPI) {
@@ -93,18 +75,15 @@ router.post('/authorize', async (req: Request, res: Response) => {
                     name: name,
                     age: age,
                     address: address,
-                      restAPI:restAPI
+                    restAPI: restAPI,
                 };
                 await axios.post('http://localhost:4003/api/oauth/getCode', response);
             }
         }
-    }catch(e){
-        if(e instanceof Error) console.log(e.message);
+    } catch (e) {
+        if (e instanceof Error) console.log(e.message);
     }
 });
-
-
-
 
 router.post('/localAuthorize', async (req: Request, res: Response) => {
     const { email, password } = req.body;
@@ -115,18 +94,19 @@ router.post('/localAuthorize', async (req: Request, res: Response) => {
         where: {
             hashId: {
                 [Op.eq]: hash,
-            }
-        }
-    })
+            },
+        },
+    });
 
     if (dbUser) {
-        let token = jwt.sign({
-            email: email,
-            hashId: hash,
-        },
-        process.env.SECRET_KEY as string
-        )
-        res.cookie('user', token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 })
+        let token = jwt.sign(
+            {
+                email: email,
+                hashId: hash,
+            },
+            process.env.SECRET_KEY as string,
+        );
+        res.cookie('user', token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
         res.json({
             status: true,
             token: token,
@@ -135,28 +115,27 @@ router.post('/localAuthorize', async (req: Request, res: Response) => {
         res.json({
             status: false,
             msg: '일치하는 아이디가 없습니다',
-        })
+        });
     }
 });
 
 router.post('/getToken', async (req: Request, res: Response) => {
-    const {name,gender,mobile,hash} = req.body
+    const { name, gender, mobile, hash } = req.body;
 
     const EXPIRES_IN = 43199;
     const REFRESH_TOKEN_EXPIRES_IN = 25184000;
     const TOKEN_TYPE = 'bearer';
 
     const TOKEN = jwt.sign(
-
         {
             name,
             gender,
             mobile,
             hash,
-            exp:EXPIRES_IN
+            exp: EXPIRES_IN,
         },
-        process.env.SECRET_KEY as string
-    )
+        process.env.SECRET_KEY as string,
+    );
 
     ////
 
@@ -204,8 +183,8 @@ router.post('/getToken', async (req: Request, res: Response) => {
 
     try {
         // await axios.post('http://localhost:3500/oAuthGetToken', DATA);
-    }catch(e){
-        if(e instanceof Error) console.log(e.message);
+    } catch (e) {
+        if (e instanceof Error) console.log(e.message);
     }
 });
 
@@ -229,4 +208,4 @@ router.post('/getToken', async (req: Request, res: Response) => {
      * 사용자 토큰 갱신 요청을 하면 갱신된 access token과 갱신된 refresh token이 함께 반환됩니다.
     */
 
-      export default router;
+export default router;

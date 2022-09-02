@@ -32,5 +32,5 @@ sequelize
     });
 
 app.listen(port, () => {
-    console.log('Back Server Running Port 4000  🏃🏻');
+    console.log(`Back Server Running Port ${port}  🏃🏻`);
 });

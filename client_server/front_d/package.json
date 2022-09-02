@@ -1,28 +1,28 @@
 {
-  "name": "front_d",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
-  "dependencies": {
-    "@chakra-ui/icons": "^2.0.8",
-    "@chakra-ui/react": "^2.2.8",
-    "axios": "^0.27.2",
-    "babel-plugin-styled-components": "^2.0.7",
-    "next": "12.2.5",
-    "react": "18.2.0",
-    "react-alice-carousel": "^2.6.4",
-    "react-dom": "18.2.0",
-    "react-responsive-carousel": "^3.2.23",
-    "styled-components": "^5.3.5",
-    "web3": "^1.7.5"
-  },
-  "devDependencies": {
-    "eslint": "8.22.0",
-    "eslint-config-next": "12.2.5"
-  }
+	"name": "front_d",
+	"version": "0.1.0",
+	"private": true,
+	"scripts": {
+		"dev": "export PORT=3003 && next dev",
+		"build": "next build",
+		"start": "export PORT=3003 && next start",
+		"lint": "next lint"
+	},
+	"dependencies": {
+		"@chakra-ui/icons": "^2.0.8",
+		"@chakra-ui/react": "^2.2.8",
+		"axios": "^0.27.2",
+		"babel-plugin-styled-components": "^2.0.7",
+		"next": "12.2.5",
+		"react": "18.2.0",
+		"react-alice-carousel": "^2.6.4",
+		"react-dom": "18.2.0",
+		"react-responsive-carousel": "^3.2.23",
+		"styled-components": "^5.3.5",
+		"web3": "^1.7.5"
+	},
+	"devDependencies": {
+		"eslint": "8.22.0",
+		"eslint-config-next": "12.2.5"
+	}
 }

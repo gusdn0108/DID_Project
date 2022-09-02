@@ -1,4 +1,7 @@
 /node_modules
 .env
+/build
+/test
+package-lock.json
 
 #Truffle files

@@ -1,12 +1,9 @@
-import express,{Request, Response} from 'express';
+import express, { Request, Response } from 'express';
 import crypto from 'crypto';
-
-const router = express.Router();
-
 import App from '../../models/webSite/app.model';
 import DataNeeded from '../../models/webSite/dataNeeded.model';
 import RedirectURI from '../../models/webSite/redirectURI.model';
-
+const router = express.Router();
 
 router.post('/apiDistribution', async (req: Request, res: Response) => {
     const { appName, email } = req.body;
@@ -22,17 +19,15 @@ router.post('/apiDistribution', async (req: Request, res: Response) => {
     try {
         const exAppName = await App.findOne({
             where: {
-                appName
+                appName,
             },
         });
 
         if (exAppName) {
-            const response = {
+            res.json({
                 status: false,
                 msg: '이미 사용 중인 어플리케이션 이름입니다.',
-            };
-            res.json(response);
-            return;
+            });
         }
 
         await App.create({
@@ -46,24 +41,25 @@ router.post('/apiDistribution', async (req: Request, res: Response) => {
             owner: email,
             email: false,
             name: false,
-            gender:false,
-            age : false,
+            gender: false,
+            age: false,
             addr: false,
-            mobile: false
-        })
+            mobile: false,
+        });
 
-        const response = {
+        res.json({
             status: true,
             msg: '성공적으로 등록되었습니다.',
             REST_API: REST_API,
-            // client_secret: client_secret,
-        };
-        res.json(response);
-    }catch(e){
-        if(e instanceof Error) console.log(e.message);
+        });
+    } catch (e) {
+        if (e instanceof Error) console.log(e.message);
+        res.json({
+            status: false,
+            msg: '어플리케이션 등록에 실패하였습니다.',
+        });
     }
 });
-
 
 router.post('/getMyApp', async (req: Request, res: Response) => {
     const { email } = req.body;
@@ -73,61 +69,59 @@ router.post('/getMyApp', async (req: Request, res: Response) => {
                 owner: email,
             },
         });
-        const response = {
+        res.json({
+            status: true,
             myapp: myAppName,
-        };
-        res.json(response);
-    }catch(e){
-        if(e instanceof Error) console.log(e.message);
+        });
+    } catch (e) {
+        if (e instanceof Error) console.log(e.message);
+        res.json({
+            status: false,
+            msg: '어플리케이션 정보를 불러오는데 실패하였습니다.',
+        });
     }
 });
 
 router.use('/appInfo', async (req: Request, res: Response) => {
     const { restAPI } = req.body;
 
-
     try {
         const urlInfo = await RedirectURI.findAll({
             where: {
-                restAPI
+                restAPI,
             },
         });
         const appInfo = await App.findOne({
-            where : {
-                restAPI
-            }
-        })
+            where: {
+                restAPI,
+            },
+        });
         const neededInfo = await DataNeeded.findOne({
-            where : {
-                restAPI
-            }
-        })
-
-        console.log(urlInfo)
+            where: {
+                restAPI,
+            },
+        });
 
         const result = {
             email: appInfo?.owner,
             appName: appInfo?.appName,
             redirectURI: urlInfo,
             restAPI,
-            neededInfo : [
-                { att: 'name', get: neededInfo?.name},
-                { att: 'email', get: neededInfo?.email},
-                { att : 'gender', get: neededInfo?.gender},
-                { att : 'age', get: neededInfo?.age},
-                { att : 'address', get: neededInfo?.addr},
-                { att : 'mobile', get : neededInfo?.mobile}
-            ]
+            neededInfo: [
+                { att: 'name', get: neededInfo?.name },
+                { att: 'email', get: neededInfo?.email },
+                { att: 'gender', get: neededInfo?.gender },
+                { att: 'age', get: neededInfo?.age },
+                { att: 'address', get: neededInfo?.addr },
+                { att: 'mobile', get: neededInfo?.mobile },
+            ],
         };
-
-        const response = {
+        res.json({
             status: true,
-            result
-        };
-        res.json(response);
-    }catch(e){
-        if(e instanceof Error) console.log(e.message);
-
+            result,
+        });
+    } catch (e) {
+        if (e instanceof Error) console.log(e.message);
         res.json({
             status: false,
             msg: '비정상적 접근이 감지되었습니다.',
@@ -139,48 +133,44 @@ router.use('/getInfoUpdate', async (req: Request, res: Response) => {
     const { getUserInfo, restAPI } = req.body;
     const newGetInfo = [];
 
-    
-    for(let i = 0; i < getUserInfo.length; i++) {
-        if(getUserInfo[i].get == true) {
-            newGetInfo.push(1)
-        }
-        else {
-            newGetInfo.push(0)
+    for (let i = 0; i < getUserInfo.length; i++) {
+        if (getUserInfo[i].get == true) {
+            newGetInfo.push(1);
+        } else {
+            newGetInfo.push(0);
         }
     }
 
-    try{
+    try {
         await DataNeeded.update(
             {
-                name : newGetInfo[0],
-                email : newGetInfo[1],
-                gender : newGetInfo[2],
-                age : newGetInfo[3],
-                addr : newGetInfo[4],
-                mobile : newGetInfo[5]
+                name: newGetInfo[0],
+                email: newGetInfo[1],
+                gender: newGetInfo[2],
+                age: newGetInfo[3],
+                addr: newGetInfo[4],
+                mobile: newGetInfo[5],
             },
             {
-                where : {
+                where: {
                     restAPI,
-                }
-            }
-        )
+                },
+            },
+        );
 
-        const response = {
+        res.json({
             status: true,
-            msg: '성공적으로 반영되었습니다.'
-        }
-        res.json(response)
-    }catch(e){
-        if(e instanceof Error) console.log(e.message);
+            msg: '성공적으로 반영되었습니다.',
+        });
+    } catch (e) {
+        if (e instanceof Error) console.log(e.message);
 
-        const response = {
+        res.json({
             status: false,
-            msg : '서버 에러'
-        }
-        res.json(response)
+            msg: '서버 에러',
+        });
     }
-})
+});
 
 router.use('/updateRedirect', async (req: Request, res: Response) => {
     const { uri, restAPI } = req.body;
@@ -193,7 +183,7 @@ router.use('/updateRedirect', async (req: Request, res: Response) => {
     }
 
     try {
-        const update = await RedirectURI.update(
+        await RedirectURI.update(
             {
                 redirectURI1: uri[0],
                 redirectURI2: uri[1],
@@ -203,19 +193,17 @@ router.use('/updateRedirect', async (req: Request, res: Response) => {
             },
             {
                 where: {
-                    restAPI
+                    restAPI,
                 },
             },
         );
 
-        const response = {
+        res.json({
             status: true,
             msg: '리다이렉트 uri 수정이 완료되었습니다.',
-        };
-        res.json(response);
-    }catch(e){
-        if(e instanceof Error) console.log(e.message);
-
+        });
+    } catch (e) {
+        if (e instanceof Error) console.log(e.message);
         res.json({
             status: false,
             msg: '알수 없는 에러가 발생하였습니다. 나중에 다시 시도해주세요',
