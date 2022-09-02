@@ -5,7 +5,6 @@ import { getCookie } from 'cookies-next';
 
 function MyApp({ Component, pageProps }) {
   const [user, setUser] = useState(undefined);
-  console.log('hello');
 
   const Cookie = getCookie('user');
 
