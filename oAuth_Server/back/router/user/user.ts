@@ -20,12 +20,12 @@ router.post('/oAuthRegister', async (req: Request, res: Response) => {
             mobile,
         };
 
-        const deploy = await deployed();
-        await deploy.methods.registerUser(hash, DATA).send({
+        const contract = await deployed();
+        await contract.methods.registerUser(hash, DATA).send({
             from: '0x7b6283591c09b1a738a46Acc0BBFbb5943EDb4F4',
         });
 
-        const result = await deploy.methods.isRegistered(hash).call();
+        const result = await contract.methods.isRegistered(hash).call();
 
         const restAPI = '1';
 
@@ -56,9 +56,9 @@ router.post('/upDatePassword', async (req: Request, res: Response) => {
     try {
         const newpasswordId = email + newPassword;
         const newHash = crypto.createHash('sha256').update(newpasswordId).digest('base64');
-        const deploy = await deployed();
 
-        await deploy.methods.updatePassword(hashId, newHash).send({
+        const contract = await deployed();
+        await contract.methods.updatePassword(hashId, newHash).send({
             from: '0x7b6283591c09b1a738a46Acc0BBFbb5943EDb4F4',
         });
 
@@ -98,16 +98,18 @@ router.post('/upDateUser', async (req: Request, res: Response) => {
             email,
         };
 
-        const deploy = await deployed();
-        const checkUser = await deploy.methods.isRegistered(hashId).call();
+        const contract = await deployed();
+        const checkUser = await contract.methods.isRegistered(hashId).call();
 
         if (checkUser) {
-            await deploy.methods.updateUser(hashId, DATA).send({
+            await contract.methods.updateUser(hashId, DATA).send({
                 from: '0x7b6283591c09b1a738a46Acc0BBFbb5943EDb4F4',
                 gas: 10000000,
             });
 
-            const result = await deploy.methods.getUser(hashId).call();
+            const result = await contract.methods.getUser(hashId).call();
+
+            console.log(result);
 
             res.json({
                 status: true,
@@ -132,8 +134,9 @@ router.post('/searchUser', async (req: Request, res: Response) => {
     const { hashId } = req.body;
 
     try {
-        const deploy = await deployed();
-        const result = await deploy.methods.getUser(hashId).call();
+        const contract = await deployed();
+
+        const result = await contract.methods.getUser(hashId).call();
 
         res.json({
             status: true,
@@ -158,14 +161,14 @@ router.post('/deleteUser', async (req: Request, res: Response) => {
     try {
         await VerifyId.destroy({ where: { hashId: hashId } });
 
-        const deploy = await deployed();
+        const contract = await deployed();
 
-        await deploy.methods.deleteUser(hashId).send({
+        await contract.methods.deleteUser(hashId).send({
             from: '0x7b6283591c09b1a738a46Acc0BBFbb5943EDb4F4',
             gas: 10000000,
         });
 
-        const checkUser = await deploy.methods.isRegistered(hashId).call();
+        const checkUser = await contract.methods.isRegistered(hashId).call();
 
         if (checkUser) throw new Error('회원 탈퇴 처리 실패');
 

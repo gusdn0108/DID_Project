@@ -30,11 +30,11 @@ router.post('/oAuthRegister', (req, res) => __awaiter(void 0, void 0, void 0, fu
             addr,
             mobile,
         };
-        const deploy = yield (0, web3_1.default)();
-        yield deploy.methods.registerUser(hash, DATA).send({
+        const contract = yield (0, web3_1.default)();
+        yield contract.methods.registerUser(hash, DATA).send({
             from: '0x7b6283591c09b1a738a46Acc0BBFbb5943EDb4F4',
         });
-        const result = yield deploy.methods.isRegistered(hash).call();
+        const result = yield contract.methods.isRegistered(hash).call();
         const restAPI = '1';
         if (result) {
             yield verifyId_model_1.default.create({
@@ -62,8 +62,8 @@ router.post('/upDatePassword', (req, res) => __awaiter(void 0, void 0, void 0, f
     try {
         const newpasswordId = email + newPassword;
         const newHash = crypto_1.default.createHash('sha256').update(newpasswordId).digest('base64');
-        const deploy = yield (0, web3_1.default)();
-        yield deploy.methods.updatePassword(hashId, newHash).send({
+        const contract = yield (0, web3_1.default)();
+        yield contract.methods.updatePassword(hashId, newHash).send({
             from: '0x7b6283591c09b1a738a46Acc0BBFbb5943EDb4F4',
         });
         yield verifyId_model_1.default.update({
@@ -98,14 +98,15 @@ router.post('/upDateUser', (req, res) => __awaiter(void 0, void 0, void 0, funct
             mobile,
             email,
         };
-        const deploy = yield (0, web3_1.default)();
-        const checkUser = yield deploy.methods.isRegistered(hashId).call();
+        const contract = yield (0, web3_1.default)();
+        const checkUser = yield contract.methods.isRegistered(hashId).call();
         if (checkUser) {
-            yield deploy.methods.updateUser(hashId, DATA).send({
+            yield contract.methods.updateUser(hashId, DATA).send({
                 from: '0x7b6283591c09b1a738a46Acc0BBFbb5943EDb4F4',
                 gas: 10000000,
             });
-            const result = yield deploy.methods.getUser(hashId).call();
+            const result = yield contract.methods.getUser(hashId).call();
+            console.log(result);
             res.json({
                 status: true,
                 name: result[1],
@@ -129,8 +130,8 @@ router.post('/upDateUser', (req, res) => __awaiter(void 0, void 0, void 0, funct
 router.post('/searchUser', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { hashId } = req.body;
     try {
-        const deploy = yield (0, web3_1.default)();
-        const result = yield deploy.methods.getUser(hashId).call();
+        const contract = yield (0, web3_1.default)();
+        const result = yield contract.methods.getUser(hashId).call();
         res.json({
             status: true,
             name: result[1],
@@ -153,12 +154,12 @@ router.post('/deleteUser', (req, res) => __awaiter(void 0, void 0, void 0, funct
     const { hashId } = req.body;
     try {
         yield verifyId_model_1.default.destroy({ where: { hashId: hashId } });
-        const deploy = yield (0, web3_1.default)();
-        yield deploy.methods.deleteUser(hashId).send({
+        const contract = yield (0, web3_1.default)();
+        yield contract.methods.deleteUser(hashId).send({
             from: '0x7b6283591c09b1a738a46Acc0BBFbb5943EDb4F4',
             gas: 10000000,
         });
-        const checkUser = yield deploy.methods.isRegistered(hashId).call();
+        const checkUser = yield contract.methods.isRegistered(hashId).call();
         if (checkUser)
             throw new Error('회원 탈퇴 처리 실패');
         res.json({
