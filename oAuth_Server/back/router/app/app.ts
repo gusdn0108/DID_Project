@@ -3,19 +3,18 @@ import crypto from 'crypto';
 import App from '../../models/webSite/app.model';
 import DataNeeded from '../../models/webSite/dataNeeded.model';
 import RedirectURI from '../../models/webSite/redirectURI.model';
+import {makeRedirectUriList, generateHash} from './utils';
+
+
 const router = express.Router();
+const MAX_REDIRECT_URI_NUM = 5
 
 router.post('/apiDistribution', async (req: Request, res: Response) => {
     const { appName, email } = req.body;
     console.log(email, appName)
 
-    //  프론트에서 보낸 쿠키를 쪼개서 맞는 email인지 확인 (db와 대조)
-    const randomNum = Math.floor(Math.random() * 1000000);
-    const forRestAPI = appName + email + randomNum;
-    const randomNum2 = Math.floor(Math.random() * 1000000) + 1000000;
-    const forSecret = appName + email + randomNum2;
-    const REST_API = crypto.createHmac('sha256', forRestAPI).digest('hex').substr(0, 31);
-    // const client_secret = crypto.createHmac('sha256', forSecret).digest('hex').substr(0, 31);
+    const AppCodes = generateHash(appName, email);
+    const restAPI = AppCodes[0];
 
     try {
         const exAppName = await App.findOne({
@@ -34,11 +33,11 @@ router.post('/apiDistribution', async (req: Request, res: Response) => {
         await App.create({
             owner: email,
             appName,
-            restAPI: REST_API,
+            restAPI: restAPI,
         });
 
         await DataNeeded.create({
-            restAPI: REST_API,
+            restAPI: restAPI,
             owner: email,
             email: false,
             name: false,
@@ -51,7 +50,7 @@ router.post('/apiDistribution', async (req: Request, res: Response) => {
         res.json({
             status: true,
             msg: '성공적으로 등록되었습니다.',
-            REST_API: REST_API,
+            REST_API: restAPI,
         });
     } catch (e) {
         if (e instanceof Error) console.log(e.message);
@@ -103,10 +102,16 @@ router.use('/appInfo', async (req: Request, res: Response) => {
             },
         });
 
+        const tempUri = makeRedirectUriList(MAX_REDIRECT_URI_NUM)
+
+        for(let i = 0; i<urlInfo.length; i++) {
+            tempUri[i] = urlInfo[i].redirectURI
+        }
+
         const result = {
             email: appInfo?.owner,
             appName: appInfo?.appName,
-            redirectURI: urlInfo,
+            redirectURI: tempUri,
             restAPI,
             neededInfo: [
                 { att: 'name', get: neededInfo?.name },
@@ -176,28 +181,35 @@ router.use('/getInfoUpdate', async (req: Request, res: Response) => {
 router.use('/updateRedirect', async (req: Request, res: Response) => {
     const { uri, restAPI } = req.body;
 
+    console.log(uri)
+
     for (let i = 0; i < uri.length; i++) {
         if (uri[i] !== null) {
             uri[i] = uri[i].trim();
-            console.log(uri[i]);
         }
     }
 
     try {
-        await RedirectURI.update(
-            {
-                redirectURI1: uri[0],
-                redirectURI2: uri[1],
-                redirectURI3: uri[2],
-                redirectURI4: uri[3],
-                redirectURI5: uri[4],
-            },
-            {
-                where: {
-                    restAPI,
-                },
-            },
-        );
+        const oldRedirectURI = await RedirectURI.destroy({
+            where : {
+                restAPI
+            }
+        })
+
+        const newRedirectUri = []
+
+        for (let i = 0; i < uri.length; i++) {
+            if (uri[i] !== null) {
+                newRedirectUri.push(uri[i]);
+            }
+        }
+
+        for (let i = 0; i < newRedirectUri.length; i++) {
+            const newInsert = await RedirectURI.create({
+                restAPI: restAPI,
+                redirectURI: newRedirectUri[i],
+            });
+        }
 
         res.json({
             status: true,

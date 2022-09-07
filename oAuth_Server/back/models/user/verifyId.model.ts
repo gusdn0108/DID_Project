@@ -3,7 +3,7 @@ import {AllowNull, Column, DataType, Model, PrimaryKey, Table} from 'sequelize-t
 @Table({
     tableName:'verify_id',
     omitNull:true,
-    timestamps:true,
+    timestamps:false,
     charset:'utf8mb4',
     collate:'utf8mb4_general_ci'
 })
