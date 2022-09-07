@@ -5,7 +5,7 @@ import App from './app.model';
 @Table({
     modelName:'data_needed',
     omitNull:true,
-    timestamps:true,
+    timestamps:false,
     charset:'utf8mb4',
     collate:'utf8mb4_general_ci'
 })

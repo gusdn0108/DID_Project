@@ -70,9 +70,7 @@ const Mypage = ({ appList, cemail }) => {
       <Box p="5%" key={k}>
         <Flex justifyContent={"space-around"}>
           <Text px="5%">
-            <Link
-              href={{ pathname: `/appinfo`, query: { appName: v.appName } }}
-            >
+            <Link href={`/appinfo?appName=${v.appName}&RestAPI=${v.restAPI}`}>
               {v.appName}
             </Link>
           </Text>
