@@ -2,8 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const options = {
     development: {
-        username: 'ash991213',
-        password: 'ash991213',
+        username: 'cjh5701',
+        password: 'a1234',
         database: 'oAuthDB',
         host: '127.0.0.1',
         dialect: 'mysql',

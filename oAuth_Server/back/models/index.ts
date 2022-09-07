@@ -1,5 +1,5 @@
 import { Sequelize } from 'sequelize-typescript';
-import options from '../config/config';
+import options from '../dist/config/config'
 
 
 const mode = process.env.NODE_ENV === 'production' ? process.env.NODE_ENV : 'development'

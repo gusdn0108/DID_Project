@@ -1,10 +1,27 @@
 import express, { Request, Response } from 'express';
 import nodeMailer, { SentMessageInfo } from 'nodemailer';
 import emailTemplate from './emailTemplate';
+import VerifyId from '../../models/user/verifyId.model';
 const router = express.Router();
 
-router.post('/email', async (req: Request, res: Response) => {
+//?
+router.post('/email', async (req: Request, res: Response) => { 
     const { email } = req.body;
+
+    try { //중복체크 
+        const exEmail = await VerifyId.findOne({
+            where: {
+                email: email,
+            },
+        });
+
+        if (exEmail) {
+            return res.status(403).send('이미 사용중인 메일입니다 ');
+        }
+    } catch (e) {
+        console.log(e);
+    }
+
 
     const generateRandom = (min: number, max: number) => {
         const ranNum = (Math.floor(Math.random() * (max - min + 1)) + min).toString();
