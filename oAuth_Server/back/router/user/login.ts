@@ -13,8 +13,9 @@ router.post('/authorize', async (req: Request, res: Response) => {
     const { email, password, restAPI, redirectURI } = req.body;
     const userhash = email + password;
     const hash = crypto.createHash('sha256').update(userhash).digest('base64');
-    const deploy = await deployed();
-    const result = await deploy.methods.getUser(hash).call();
+
+    const contract = await deployed();
+    const result = await contract.methods.getUser(hash).call();
 
     const gender = result[0];
     const name = result[1];

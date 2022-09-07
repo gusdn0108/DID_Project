@@ -16,5 +16,4 @@ const deployed = async () => {
     return deploy;
 };
 
-
 export default deployed;

@@ -7,6 +7,7 @@ const router = express.Router();
 
 router.post('/apiDistribution', async (req: Request, res: Response) => {
     const { appName, email } = req.body;
+    console.log(email, appName)
 
     //  프론트에서 보낸 쿠키를 쪼개서 맞는 email인지 확인 (db와 대조)
     const randomNum = Math.floor(Math.random() * 1000000);
