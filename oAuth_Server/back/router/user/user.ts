@@ -3,6 +3,7 @@ import crypto from 'crypto';
 import deployed from '../../web3';
 import VerifyId from '../../models/user/verifyId.model';
 import sequelize from '../../models';
+import { Console } from 'console';
 
 const router = express.Router();
 
@@ -11,6 +12,7 @@ router.post('/oAuthRegister', async (req: Request, res: Response) => {
 
     try {
         const userHash = email + password;
+
         const hash = crypto.createHash('sha256').update(userHash).digest('base64');
         const DATA = {
             email,
@@ -25,7 +27,6 @@ router.post('/oAuthRegister', async (req: Request, res: Response) => {
         await contract.methods.registerUser(hash, DATA).send({
             from: '0x7b6283591c09b1a738a46Acc0BBFbb5943EDb4F4',
         });
-
         const result = await contract.methods.isRegistered(hash).call();
 
         const restAPI = '1';

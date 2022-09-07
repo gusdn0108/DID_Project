@@ -43,43 +43,28 @@ const Mypage = ({ appList, cemail }) => {
 	// };
 
 
+  const showAppList = myAppList?.map((v, k) => {
+    return (
+      <Box p="5%" key={k}>
+        <Flex justifyContent={"space-around"}>
+          <Text px="5%">
+            <Link href={`/appinfo?appName=${v.appName}&RestAPI=${v.restAPI}`}>
+              {v.appName}
+            </Link>
+          </Text>
+          <Text>{v.restAPI}</Text>
+        </Flex>
+      </Box>
+    );
+  });
 
-	const getMyApp = async () => {
+  const getMyApp = async () => {
 		const response = await axios.post(`${backend}/oauth/app/getMyApp`, {
 			email: cemail,
 		});
 
 		setmyAppList(response.data.myapp);
 	};
-
-	const showAppList = myAppList?.map((v, k) => {
-		return (
-			<Box p="5%" key={k}>
-				<Flex justifyContent={"space-around"}>
-					<Text px="5%">
-						<Link
-							href={{ pathname: `/appinfo`, query: { appName: v.appName } }}
-						>
-							{v.appName}
-						</Link>
-					</Text>
-					<Text>{v.restAPI}</Text>
-				</Flex>
-			</Box>
-		);
-	});
-
-	// const getUser = async () => {
-	// 	let userInfo;
-	// 	const Cookie = getCookie('user');
-
-	// 	if (Cookie) {
-	// 		userInfo = JSON.parse(Buffer.from(Cookie, 'base64').toString('utf-8'));
-	// 	}
-
-	// 	setEmail(userInfo.email);
-	// 	setHashId(userInfo.hashId);
-	// };
 
 	const getUserInfo = async () => {
 		let userInfo;
