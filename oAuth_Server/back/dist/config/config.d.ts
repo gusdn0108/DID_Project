@@ -1,4 +1,4 @@
-import { SequelizeOptions } from 'sequelize-typescript';
+import { SequelizeOptions } from "sequelize-typescript";
 interface Ioptions {
     development: SequelizeOptions;
     production: SequelizeOptions;
