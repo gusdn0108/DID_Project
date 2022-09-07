@@ -10,7 +10,7 @@ import DataNeeded from '../../models/webSite/dataNeeded.model';
 const router = express.Router();
 
 router.post('/authorize', async (req: Request, res: Response) => {
-    const { email, password, restAPI, redirectURI } = req.body;
+    const { email, password, restAPI, reURL } = req.body;
     const userhash = email + password;
     const hash = crypto.createHash('sha256').update(userhash).digest('base64');
     const deploy = await deployed();
@@ -31,59 +31,91 @@ router.post('/authorize', async (req: Request, res: Response) => {
         },
     });
 
+    // redirectURL 검증 추가해야됨
+    const code = 'adsfads';
     try {
         if (dbUser) {
-            const getSiteInfo = await DataNeeded.findOne({
-                where: {
-                    restAPI: {
-                        [Op.eq]: restAPI,
-                    },
+            let DID_ACCESS = jwt.sign(
+                {
+                    status: 1,
                 },
-            });
+                process.env.SECRET_KEY as string,
+            );
 
-            if (getSiteInfo?.restAPI === restAPI) {
-                const response = {
-                    status: true,
-                    name: name,
-                    mobile: mobile,
-                    restAPI,
-                };
-                await axios.post('http://localhost:4000/api/oauth/getCode', response);
-            } else if (getSiteInfo?.restAPI === restAPI) {
-                const response = {
-                    status: true,
-                    hash: hash,
-                    restAPI: restAPI,
-                    redirectURI: redirectURI,
-                    name: name,
-                    gender: gender,
-                    mobile: mobile,
-                };
+            let REFRESH_ACCESS = jwt.sign(
+                {
+                    status: 1,
+                },
+                process.env.SECRET_KEY as string,
+            );
 
-                await axios.post('http://localhost:4001/api/oauth/getCode', response);
-            } else if (getSiteInfo?.restAPI === restAPI) {
-                const response = {
-                    status: true,
-                    restAPI: restAPI,
-                    mobile: mobile,
-                    userEmail: userEmail,
-                };
-                await axios.post('http://localhost:4002/api/oauth/getCode', response);
-            } else if (getSiteInfo?.restAPI === restAPI) {
-                const response = {
-                    status: true,
-                    name: name,
-                    age: age,
-                    address: address,
-                    restAPI: restAPI,
-                };
-                await axios.post('http://localhost:4003/api/oauth/getCode', response);
-            }
+            const response = {
+                DID_ACCESS,
+                REFRESH_ACCESS,
+                code,
+            };
+
+            // res.cookie('DID_ACCESS', DID_ACCESS, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
+            // res.cookie('REFRESH_ACCESS', REFRESH_ACCESS, { httpOnly: true, maxAge: 24 * 60 * 60 * 10000 });
+            // console.log(reURL);
+            // res.redirect(`${reURL}?code=${code}`);
+            // const url = `http://localhost:3001`;
+            // res.redirect(url);
+            // await axios.post('http://localhost:4001/api/oauth/getCode');
+            // console.log('123');
+            await axios.post(`${reURL}`, response);
         }
     } catch (e) {
         if (e instanceof Error) console.log(e.message);
     }
 });
+
+// const getSiteInfo = await DataNeeded.findOne({
+//     where: {
+//         restAPI: {
+//             [Op.eq]: restAPI,
+//         },
+//     },
+// });
+
+// if (getSiteInfo?.restAPI === restAPI) {
+//     const response = {
+//         status: true,
+//         name: name,
+//         mobile: mobile,
+//         restAPI,
+//     };
+//     await axios.post('http://localhost:4000/api/oauth/getCode', response);
+// } else if (getSiteInfo?.restAPI === restAPI) {
+//     const response = {
+//         status: true,
+//         hash: hash,
+//         restAPI: restAPI,
+//         redirectURI: redirectURI,
+//         name: name,
+//         gender: gender,
+//         mobile: mobile,
+//     };
+
+//     await axios.post('http://localhost:4001/api/oauth/getCode', response);
+// } else if (getSiteInfo?.restAPI === restAPI) {
+//     const response = {
+//         status: true,
+//         restAPI: restAPI,
+//         mobile: mobile,
+//         userEmail: userEmail,
+//     };
+//     await axios.post('http://localhost:4002/api/oauth/getCode', response);
+// } else if (getSiteInfo?.restAPI === restAPI) {
+//     const response = {
+//         status: true,
+//         name: name,
+//         age: age,
+//         address: address,
+//         restAPI: restAPI,
+//     };
+//     await axios.post('http://localhost:4003/api/oauth/getCode', response);
+// }
 
 router.post('/localAuthorize', async (req: Request, res: Response) => {
     const { email, password } = req.body;
