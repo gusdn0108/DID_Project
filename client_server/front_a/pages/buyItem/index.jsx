@@ -13,11 +13,17 @@ const BuyItem = ({ user }) => {
   const [formattedPrice, setFormattedPrice] = useState(0);
   const [point, setPoint] = useState(0);
 
+  const [hashId, setHashId] = useState('');
+  const [did, setDid] = useState(false);
+  const [token, setToken] = useState(true);
+
   const buyItem = async () => {
     const response = await axios.post('http://localhost:4000/api/auth/usePoint', { email, price: formattedPrice });
     if (response.data.status) {
       getPoint();
       alert('구매 완료되었습니다');
+    } else {
+      alert('구매에 실패하였습니다.');
     }
   };
 
@@ -25,6 +31,25 @@ const BuyItem = ({ user }) => {
     const response = await axios.post('http://localhost:4000/api/auth/pointInquiry', { email: user.email });
     if (response.data.status) {
       setPoint(response.data.point);
+    }
+  };
+
+  // OAuth의 페이지 요청하는 함수
+  const getPage = async () => {
+    window.open('http://localhost:8080/payment', 'test', 'width=800, height=600');
+  };
+
+  // OAuth에 포인트를 차감 요청할 함수
+  const didBuyItem = async () => {
+    const response = await axios.post('http://localhost:4000/api/buyItem/buyItem', {
+      hashId,
+      token,
+    });
+
+    if (response.data.status) {
+      alert('구매 완료되었습니다');
+    } else {
+      alert('구매에 실패하였습니다.');
     }
   };
 
@@ -36,6 +61,7 @@ const BuyItem = ({ user }) => {
     if (user) {
       setUsername(user.username);
       setEmail(user.email);
+      setHashId(user.hashId);
 
       getPoint();
     }
@@ -53,7 +79,7 @@ const BuyItem = ({ user }) => {
                 <Text fontSize="1.5rem">{title}</Text>
               </Box>
             </Flex>
-            <Box w="40rem" flex={2} pl="0.5rem" pt="1rem" borderBottom="1px solid rgba(0, 0, 0, 0.1);">
+            <Box w="4 0rem" flex={2} pl="0.5rem" pt="1rem" borderBottom="1px solid rgba(0, 0, 0, 0.1);">
               <Center borderBottom="1px solid rgba(0, 0, 0, 0.1);">
                 <Text fontSize="1.8rem" fontWeight="bold" pt="5rem" pl="24rem" pb="0.5rem">
                   판매가 : {formattedPrice} P
@@ -81,52 +107,36 @@ const BuyItem = ({ user }) => {
               ) : null}
             </Box>
             <Box w="40rem" flex={2} pl="0.5rem" pt="1rem" borderBottom="1px solid rgba(0, 0, 0, 0.1);">
-              {user ? (
-                <Flex>
-                  <Center pt="0.5rem" flex={1}>
-                    <Flex direction="column">
-                      <Text fontSize="1rem" fontWeight="bold" pb="1rem" textAlign="center">
-                        B 사이트 포인트 사용
+              {did ? (
+                <>
+                  <Text textAlign="center" fontSize="1.5rem" fontWeight="bold">
+                    다른 사이트 포인트 사용
+                  </Text>
+                  {token ? (
+                    /** 총 사용할 포인트가 아닌 포인트를 사용하는 사이트별로 보여줘야할까? 귀찮 */
+                    <>
+                      <Text textAlign="right" fontSize="1.5rem" fontWeight="bold" pt="6rem" pr="0.5rem">
+                        {user ? `사용할 총 포인트 ${point}  ` : '로그인 후 이용가능 합니다'}
                       </Text>
-                      <Text fontSize="1rem" fontWeight="bold" pt="5rem" textAlign="center">
-                        {username}님 보유 포인트 : ??? P
-                      </Text>
-                      <Button w="5rem" colorScheme="teal" variant="outline" m="0 auto" mt="0.5rem" mb="0.5rem">
+                      <Button w="15rem" colorScheme="teal" variant="outline" ml="24rem" onClick={didBuyItem} mb="1rem">
                         구매
                       </Button>
-                    </Flex>
-                  </Center>
-                  <Center pt="0.5rem" flex={1}>
-                    <Flex direction="column">
-                      <Text fontSize="1rem" fontWeight="bold" pb="1rem" textAlign="center">
-                        C 사이트 포인트 사용
+                    </>
+                  ) : (
+                    <>
+                      <Text textAlign="right" fontSize="1.5rem" fontWeight="bold" pt="6rem" pr="0.5rem">
+                        {user ? `${username}님 포인트 조회하기 ` : '로그인 후 이용가능 합니다'}
                       </Text>
-                      <Text fontSize="1rem" fontWeight="bold" pt="5rem" textAlign="center">
-                        {username}님 보유 포인트 : ??? P
-                      </Text>
-                      <Button w="5rem" colorScheme="teal" variant="outline" m="0 auto" mt="0.5rem" mb="0.5rem">
-                        구매
+                      <Button w="15rem" colorScheme="teal" variant="outline" ml="24rem" onClick={getPage} mb="1rem" disabled={user ? false : true}>
+                        조회
                       </Button>
-                    </Flex>
-                  </Center>
-                  <Center pt="0.5rem" flex={1}>
-                    <Flex direction="column">
-                      <Text fontSize="1rem" fontWeight="bold" pb="1rem" textAlign="center">
-                        D 사이트 포인트 사용
-                      </Text>
-                      <Text fontSize="1rem" fontWeight="bold" pt="5rem" textAlign="center">
-                        {username}님 보유 포인트 : ??? P
-                      </Text>
-                      <Button w="5rem" colorScheme="teal" variant="outline" m="0 auto" mt="0.5rem" mb="0.5rem">
-                        구매
-                      </Button>
-                    </Flex>
-                  </Center>
-                </Flex>
+                    </>
+                  )}
+                </>
               ) : (
                 <Center>
-                  <Text fontSize="1.5rem" fontWeight="bold" pl="24rem" pt="12rem" pb="0.5rem">
-                    로그인 후 이용가능 합니다
+                  <Text fontSize="1.5rem" fontWeight="bold" pl="20rem" pt="11rem" pb="1rem">
+                    DID 등록 후 이용가능 합니다
                   </Text>
                 </Center>
               )}
