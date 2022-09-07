@@ -1,8 +1,9 @@
-import { Box, Flex, Text, Input, FormControl, FormLabel, FormHelperText, Select, Radio, RadioGroup, Stack } from '@chakra-ui/react';
+import { Box, Flex, Text, Input, FormControl, FormLabel, FormHelperText, Select, Radio, RadioGroup, Stack, useEditable, Checkbox } from '@chakra-ui/react';
 import axios from 'axios';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { backend, frontend } from '../utils/ip.js';
 import { pwdCheck } from '../utils/regiCheck.js';
+import Spinner from '../components/Spinner.jsx';
 
 const register = () => {
 	const [password, setPassword] = useState(undefined);
@@ -18,6 +19,8 @@ const register = () => {
 	const [age, setAge] = useState(undefined);
 	const [adr, setAdr] = useState(undefined);
 	const [phone, setPhone] = useState(undefined);
+
+	const [loading,setLoading] = useState(true);
 
 	const setpwdCheck = (e) => {
 		setPassword(e.target.value);
@@ -102,6 +105,10 @@ const register = () => {
 		}
 	};
 
+	useEffect(()=>{
+		setLoading(false)
+	})
+
 	return (
 		<Box display='flex' justifyContent='center'>
 			<Box pt='3rem' display='flex' justifyContent='center' w='22%'>
@@ -174,6 +181,9 @@ const register = () => {
 							<Input type='text' placeholder='발송된 6자리 숫자를 입력하세요' id='verifier' />
 							<FormHelperText>인증 번호는 3분간 유효합니다.</FormHelperText>
 							<Input type='submit' onClick={verifyAccount} />
+							{loading? (<Spinner/>):(<text> 제출 </text>
+							)}
+							
 						</>
 					)}
 				</FormControl>

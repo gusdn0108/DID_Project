@@ -76,6 +76,7 @@ router.post('/upDatePassword', (req, res) => __awaiter(void 0, void 0, void 0, f
         res.json({
             status: true,
             msg: '비밀번호 변경이 완료되었습니다.',
+            newPassword : newPassword,
         });
     }
     catch (e) {
