@@ -80,7 +80,7 @@ contract DID is IDID {
             VP.age = userObj.age ;
         } 
         if(_shouldSend.mobile){
-            userObj.mobile = VP.mobile;
+            VP.mobile = userObj.mobile;
         } 
         if(_shouldSend.email){
             VP.email = userObj.email;

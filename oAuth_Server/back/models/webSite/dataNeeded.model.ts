@@ -1,4 +1,5 @@
 import {Model, Column, Table, PrimaryKey, DataType, AllowNull, ForeignKey, HasMany, BelongsTo} from 'sequelize-typescript';
+import internal from 'stream';
 import App from './app.model';
 
 
@@ -53,4 +54,6 @@ export default class DataNeeded extends Model {
         type:DataType.BOOLEAN
     })
     public addr?: boolean;
+    static noticePopup: any;
 }
+
