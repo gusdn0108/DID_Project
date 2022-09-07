@@ -6,6 +6,7 @@ import { getCookie } from 'cookies-next';
 import crypto from 'crypto';
 import AppModal from '../components/appModal.jsx';
 import { deleteCookie } from 'cookies-next';
+import {useCookie} from 'react-cookie';
 
 const Mypage = ({ appList }) => {
 	const { isOpen, onOpen, onClose } = useDisclosure();
@@ -18,6 +19,8 @@ const Mypage = ({ appList }) => {
 	const [password, setPassword] = useState('');
 	const [pwCheck, setPwCheck] = useState(false); //뒤에 비밀번호 수정
 	const [pwdCheck, setPwdCheck] = useState(''); //첫번째 비밀번호입력란
+	const [loading, setLoading] = useState(''); //로딩바
+
 
 	const [email, setEmail] = useState('');
 	const [hashId, setHashId] = useState('');
@@ -106,6 +109,12 @@ const Mypage = ({ appList }) => {
 			alert('비밀번호가 일치하지 않습니다.');
 		}
 	};
+
+
+	const logout =()=>{
+
+		
+	}
 
 	const updateUser = async () => {
 		const body = {
@@ -292,12 +301,5 @@ const Mypage = ({ appList }) => {
 		</Center>
 	);
 };
-
-// export const getServerSideProps = async () => {
-//     const email = '619049@naver.com'
-//     const response = await axios.post(`${backend}/api/oauth/getMyApp`, { email: email })
-
-//     return { props: { appList: response.data.myapp } };
-// };
 
 export default Mypage;
