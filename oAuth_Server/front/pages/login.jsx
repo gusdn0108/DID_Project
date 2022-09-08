@@ -16,16 +16,15 @@ export default function Home() {
 	};
 
 	const didLoginHandler = async () => {
-		console.log(DIDid, DIdPw);
-
 		const codeUrl = location.href;
-		const code = codeUrl.split('response_type=')[1];
+		const reURL = codeUrl.split('redirectUri=')[1].split('&')[0];
 		const restAPI = codeUrl.split('clientId=')[1].split('&')[0];
-		console.log(restAPI);
-		const response = await axios.post(`${backend}/api/oauth/authorize`, {
+		console.log(DIDid);
+		console.log(DIdPw);
+		const response = await axios.post(`${backend}/oauth/login/authorize`, {
 			email: DIDid,
 			password: DIdPw,
-			code: code,
+			reURL: reURL,
 			restAPI: restAPI,
 		});
 	};

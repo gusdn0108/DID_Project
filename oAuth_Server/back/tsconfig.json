@@ -14,9 +14,9 @@
 
         "resolveJsonModule": true,
         "noImplicitAny": true, //any타입 금지 여부
-        "noImplicitThis": true, //this 키워드가 any 타입일 경우 에러내기
-        "alwaysStrict": true, //자바스크립트 "use strict" 모드 켜기
-        "noImplicitReturns": true, //함수에서 return 빼먹으면 에러내기
+        // "noImplicitThis": true, //this 키워드가 any 타입일 경우 에러내기
+        // "alwaysStrict": true, //자바스크립트 "use strict" 모드 켜기
+        // "noImplicitReturns": true, //함수에서 return 빼먹으면 에러내기
         "noFallthroughCasesInSwitch": true //switch문 이상하면 에러내기
     }
 }

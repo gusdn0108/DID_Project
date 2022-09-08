@@ -11,15 +11,15 @@ import MainCarousel from '../components/mainPage/Carousel.jsx';
 
 const Home = ({ userId, email, point, setPoint }) => {
 	const [clicked, setClicked] = useState('package');
-	const [ product1, product2, product3, product4] = [34900, 39000, 52900, 449000]
+	const [product1, product2, product3, product4] = [34900, 39000, 52900, 449000];
 
 	const setUnderLiner = (e) => {
 		setClicked(e.target.id);
 	};
 
 	const purchase = async (price) => {
-		if(!email) {
-			alert('로그인 후 이용 가능합니다.')
+		if (!email) {
+			alert('로그인 후 이용 가능합니다.');
 			return;
 		}
 
