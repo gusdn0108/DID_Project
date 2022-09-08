@@ -6,6 +6,8 @@ import crypto from 'crypto';
 import deployed from '../../web3';
 import VerifyId from '../../models/user/verifyId.model';
 import DataNeeded from '../../models/webSite/dataNeeded.model';
+import TotalPoint from '../../models/user/totalPoint.model';
+import { frontend } from './utils';
 
 const router = express.Router();
 
@@ -15,6 +17,29 @@ router.post('/authorize', async (req: Request, res: Response) => {
     console.log(email, password, restAPI, reURL);
     const hash = crypto.createHash('sha256').update(userhash).digest('base64');
 
+<<<<<<< HEAD
+    const contract = await deployed();
+    const result = await contract.methods.getUser(hash).call();
+
+    const gender = result[0];
+    const name = result[1];
+    const age = result[2];
+    const address = result[3];
+    const mobile = result[4];
+    const userEmail = result[5];
+
+    const isRegistered = await TotalPoint.findOne({
+        where : {
+            email:userEmail
+        }
+    })
+
+    if(!isRegistered) {
+        res.redirect(`${frontend}/userAppRegister?restAPI=${restAPI}`)
+    }
+
+=======
+>>>>>>> ed91a3527ae5646860af136fd7c3b7493eeda371
     const dbUser = await VerifyId.findOne({
         where: {
             hashId: {
