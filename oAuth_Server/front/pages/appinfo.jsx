@@ -64,7 +64,7 @@ const AppInfo = ({ email }) => {
     }
     const response = await axios.post(`${backend}/oauth/app/updateRedirect`, {
       restAPI: router.query.RestAPI,
-      uri,
+      uris: uri,
     });
     alert(response.data.msg);
   };
