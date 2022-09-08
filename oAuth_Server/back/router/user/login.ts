@@ -6,6 +6,8 @@ import crypto from 'crypto';
 import deployed from '../../web3';
 import VerifyId from '../../models/user/verifyId.model';
 import DataNeeded from '../../models/webSite/dataNeeded.model';
+import TotalPoint from '../../models/user/totalPoint.model';
+import { frontend } from './utils';
 
 const router = express.Router();
 
@@ -23,6 +25,16 @@ router.post('/authorize', async (req: Request, res: Response) => {
     const address = result[3];
     const mobile = result[4];
     const userEmail = result[5];
+
+    const isRegistered = await TotalPoint.findOne({
+        where : {
+            email:userEmail
+        }
+    })
+
+    if(!isRegistered) {
+        res.redirect(`${frontend}/userAppRegister?restAPI=${restAPI}`)
+    }
 
     const dbUser = await VerifyId.findOne({
         where: {
