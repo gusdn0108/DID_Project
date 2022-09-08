@@ -14,8 +14,8 @@ const BuyItem = ({ user }) => {
   const [point, setPoint] = useState(0);
 
   const [hashId, setHashId] = useState('');
-  const [did, setDid] = useState(false);
-  const [token, setToken] = useState(true);
+  const [did, setDid] = useState(true);
+  const [token, setToken] = useState(false);
 
   const buyItem = async () => {
     const response = await axios.post('http://localhost:4000/api/auth/usePoint', { email, price: formattedPrice });
