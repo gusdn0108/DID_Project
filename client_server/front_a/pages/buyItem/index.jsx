@@ -35,8 +35,17 @@ const BuyItem = ({ user }) => {
   };
 
   // OAuth의 페이지 요청하는 함수
-  const getPage = async () => {
-    window.open('http://localhost:8080/payment', 'test', 'width=800, height=600');
+  const getPage = () => {
+    let child;
+
+    window.name = 'OAuth Module';
+
+    child = window.open('http://localhost:8080/payment', 'test', 'width=800, height=600');
+  };
+
+  // OAuth 페이지에 hashID 보내는 함수
+  const toPage = () => {
+    console.log(child.document);
   };
 
   // OAuth에 포인트를 차감 요청할 함수

@@ -58,6 +58,10 @@ const payment = () => {
 		}
 	};
 
+	const getPoint = async () => {
+		const response = await axios.post('http://localhost:8000/Oauth/usePoint/getPoint');
+	};
+
 	// axios 날려서 Token 받아올 함수
 	const Pay = async () => {
 		console.log(payPoint);
@@ -67,13 +71,9 @@ const payment = () => {
 
 	// 최초 페이지 렌더될때 각 사이트별 포인트 정보 가져올 함수
 	useEffect(() => {
-		// async () => {
-		// 	const response = await axios.post('http://localhost:8000/');
-		// 	console.log(response.data);
-		// 	setPayMenu(response.data);
-		// };
-		console.log('axios 요청 보내서 DID 등록되어 있는 사이트 정보 가져오기 ');
-	}, [payMenu]);
+		getPoint();
+		// setPayMenu(response.data);
+	}, []);
 
 	return (
 		<Box w='90%' h='100%' m='0 5%' mt='2rem'>
