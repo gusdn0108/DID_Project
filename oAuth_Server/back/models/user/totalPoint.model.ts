@@ -4,7 +4,7 @@ import App from "../webSite/app.model";
 @Table({
     modelName:'point_total',
     omitNull:true,
-    timestamps:true,
+    timestamps:false,
     charset:'utf8mb4',
     collate:'utf8mb4_general_ci'
 })

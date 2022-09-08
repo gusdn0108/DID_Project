@@ -3,10 +3,10 @@
 1. redirectURI 등록 기능 추가해야 함-현재 업뎃 라우터만 존재
 2. DID registerUser() 중복 email? hash 값에 대한 예외처리 해주기
 3. back/router/user/user.ts
-   (1) oAuthRegister - 중복에 대한 예외처리 해주기/ 응답 없이 멈춰있음,,,,DB에 넣을 restAPI값 받기
+   <!-- (1) oAuthRegister - 중복에 대한 예외처리 해주기/ 응답 없이 멈춰있음,,,,DB에 넣을 restAPI값 받기
    (2) upDateUser - 컨트랙트 EVM에서 reverted 되는 부분 재확인하기/isRegisterd() 실행 시 false 떨어짐
    (3) searchUser - isRegistered() 실행 시 false 떨어지나 getUser()는 실행됨
-   (4) deleteUser - isRegistered() 실행 시 false 떨어지고 deleteUser() 실행 안됨
+   (4) deleteUser - isRegistered() 실행 시 false 떨어지고 deleteUser() 실행 안됨 -->
 
 # Done list
 

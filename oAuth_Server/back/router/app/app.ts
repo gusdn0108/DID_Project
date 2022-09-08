@@ -1,20 +1,19 @@
-import express, { Request, Response } from 'express';
+import express, { Request, response, Response } from 'express';
 import crypto from 'crypto';
 import App from '../../models/webSite/app.model';
 import DataNeeded from '../../models/webSite/dataNeeded.model';
 import RedirectURI from '../../models/webSite/redirectURI.model';
+import {makeRedirectUriList, generateHash, responseObject, infoStringToBool, noWhiteSpace, filterNull, insertNewUri, filterNotNeeded} from './utils';
+import TotalPoint from '../../models/user/totalPoint.model';
+
 const router = express.Router();
+const MAX_REDIRECT_URI_NUM = 5
 
 router.post('/apiDistribution', async (req: Request, res: Response) => {
     const { appName, email } = req.body;
 
-    //  프론트에서 보낸 쿠키를 쪼개서 맞는 email인지 확인 (db와 대조)
-    const randomNum = Math.floor(Math.random() * 1000000);
-    const forRestAPI = appName + email + randomNum;
-    const randomNum2 = Math.floor(Math.random() * 1000000) + 1000000;
-    const forSecret = appName + email + randomNum2;
-    const REST_API = crypto.createHmac('sha256', forRestAPI).digest('hex').substr(0, 31);
-    // const client_secret = crypto.createHmac('sha256', forSecret).digest('hex').substr(0, 31);
+    const AppCodes = generateHash(appName, email);
+    const restAPI = AppCodes[0];
 
     try {
         const exAppName = await App.findOne({
@@ -24,20 +23,17 @@ router.post('/apiDistribution', async (req: Request, res: Response) => {
         });
 
         if (exAppName) {
-            res.json({
-                status: false,
-                msg: '이미 사용 중인 어플리케이션 이름입니다.',
-            });
+            res.json(responseObject(false, '이미 사용중인 이름입니다.'));
         }
 
         await App.create({
             owner: email,
             appName,
-            restAPI: REST_API,
+            restAPI: restAPI,
         });
 
         await DataNeeded.create({
-            restAPI: REST_API,
+            restAPI: restAPI,
             owner: email,
             email: false,
             name: false,
@@ -50,14 +46,11 @@ router.post('/apiDistribution', async (req: Request, res: Response) => {
         res.json({
             status: true,
             msg: '성공적으로 등록되었습니다.',
-            REST_API: REST_API,
+            REST_API: restAPI,
         });
     } catch (e) {
         if (e instanceof Error) console.log(e.message);
-        res.json({
-            status: false,
-            msg: '어플리케이션 등록에 실패하였습니다.',
-        });
+        res.json(responseObject(false, '등록 실패'));
     }
 });
 
@@ -75,10 +68,7 @@ router.post('/getMyApp', async (req: Request, res: Response) => {
         });
     } catch (e) {
         if (e instanceof Error) console.log(e.message);
-        res.json({
-            status: false,
-            msg: '어플리케이션 정보를 불러오는데 실패하였습니다.',
-        });
+        res.json(responseObject(false, '비정상적 접근입니다.'));
     }
 });
 
@@ -102,10 +92,16 @@ router.use('/appInfo', async (req: Request, res: Response) => {
             },
         });
 
+        const tempUri = makeRedirectUriList(MAX_REDIRECT_URI_NUM)
+
+        for(let i = 0; i<urlInfo.length; i++) {
+            tempUri[i] = urlInfo[i].redirectURI
+        }
+
         const result = {
             email: appInfo?.owner,
             appName: appInfo?.appName,
-            redirectURI: urlInfo,
+            redirectURI: tempUri,
             restAPI,
             neededInfo: [
                 { att: 'name', get: neededInfo?.name },
@@ -122,24 +118,13 @@ router.use('/appInfo', async (req: Request, res: Response) => {
         });
     } catch (e) {
         if (e instanceof Error) console.log(e.message);
-        res.json({
-            status: false,
-            msg: '비정상적 접근이 감지되었습니다.',
-        });
+        res.json(responseObject(false, '비정상적 접근이 감지되었습니다.'));
     }
 });
 
 router.use('/getInfoUpdate', async (req: Request, res: Response) => {
     const { getUserInfo, restAPI } = req.body;
-    const newGetInfo = [];
-
-    for (let i = 0; i < getUserInfo.length; i++) {
-        if (getUserInfo[i].get == true) {
-            newGetInfo.push(1);
-        } else {
-            newGetInfo.push(0);
-        }
-    }
+    const newGetInfo = infoStringToBool(getUserInfo);
 
     try {
         await DataNeeded.update(
@@ -158,57 +143,107 @@ router.use('/getInfoUpdate', async (req: Request, res: Response) => {
             },
         );
 
-        res.json({
-            status: true,
-            msg: '성공적으로 반영되었습니다.',
-        });
+        res.json(responseObject(true, '정상적으로 반영되었습니다'));
     } catch (e) {
         if (e instanceof Error) console.log(e.message);
-
-        res.json({
-            status: false,
-            msg: '서버 에러',
-        });
+        res.json(responseObject(false, '서버 에러, 나중에 다시 시도해주세요.'));
     }
 });
 
-router.use('/updateRedirect', async (req: Request, res: Response) => {
-    const { uri, restAPI } = req.body;
+router.post('/updateRedirect', async (req: Request, res: Response) => {
+    const { uris, restAPI } = req.body;
 
-    for (let i = 0; i < uri.length; i++) {
-        if (uri[i] !== null) {
-            uri[i] = uri[i].trim();
-            console.log(uri[i]);
-        }
-    }
+    const uri = noWhiteSpace(uris)
 
     try {
-        await RedirectURI.update(
-            {
-                redirectURI1: uri[0],
-                redirectURI2: uri[1],
-                redirectURI3: uri[2],
-                redirectURI4: uri[3],
-                redirectURI5: uri[4],
-            },
-            {
-                where: {
-                    restAPI,
-                },
-            },
-        );
+        const oldRedirectURI = await RedirectURI.destroy({
+            where : {
+                restAPI
+            }
+        })
 
-        res.json({
-            status: true,
-            msg: '리다이렉트 uri 수정이 완료되었습니다.',
-        });
+        const newRedirectUri = filterNull(uri)
+
+        insertNewUri(restAPI, newRedirectUri)
+
+        res.json(responseObject(true, '리다이렉트 url 수정이 완료되었습니다.'));
     } catch (e) {
         if (e instanceof Error) console.log(e.message);
-        res.json({
-            status: false,
-            msg: '알수 없는 에러가 발생하였습니다. 나중에 다시 시도해주세요',
-        });
+        res.json(responseObject(false, '서버 에러'));
     }
 });
+
+router.get('/giveUserInfo', async (req:Request, res : Response) => {
+    const { restAPI } = req.query
+    
+    try {
+
+        const appName = await App.findOne({
+            where : {
+                restAPI
+            }
+        })
+
+        const infoReq = await DataNeeded.findOne({
+            where : {
+                restAPI
+            }
+        })
+
+        if(!infoReq) {
+            throw new Error('비정상적인 접근입니다.')
+        }
+
+        let infos = [ 
+            {att : 'email' , value:infoReq.email},
+            {att : 'name' , value: infoReq.name},
+            {att : 'age', value: infoReq.age},
+            {att : 'gender', value : infoReq.gender},
+            {att : 'mobile', value : infoReq.mobile},
+            {att : 'addr', value : infoReq.addr} 
+        ]
+
+        const filteredInfos = filterNotNeeded(infos)
+
+        const response = {
+            status: true,
+            appName: appName.appName,
+            infos: filteredInfos
+        }
+
+        res.json(response)
+    }
+    catch (e) {
+        console.log(e.message)
+        res.json(responseObject(false, '비정상적인 접근입니다.'))
+    }
+})
+
+router.post('/userdidregister', async (req, res) => {
+    const { restAPI, email, point } = req.body
+    console.log(restAPI, email, point)
+    try{
+        const ifUser = await TotalPoint.findOne({
+            where : {
+                hashId : email,
+                restAPI 
+            }
+        })
+
+        if(ifUser) throw new Error('이미 가입된 사용자입니다.')
+
+        const syncUser = await TotalPoint.create({
+            restAPI,
+            hashId: email,
+            point
+        })
+        // 문제가 없다면 로그인, 쿠키 생성을 위해 클라이언트 서버의 백엔드로 리다이렉트
+    }
+    catch(e) {
+        console.log(e.message)
+        res.json(responseObject(false, '비정상적인 접근입니다.'))
+    }
+})
+
 
 export default router;

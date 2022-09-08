@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 const axios = require('axios');
 const jwt = require('jsonwebtoken');
 const router = express.Router();
-const { Auth, sequelize } = require('../models');
+const { Auth } = require('../models');
 const { Op } = require('sequelize');
 
 const generateRandom = (min, max) => {
@@ -231,6 +231,7 @@ router.post('/login', async (req, res) => {
                 delete _user.dataValues.password;
                 delete _user.dataValues.point;
                 delete _user.dataValues.uuid;
+
                 console.log(_user.dataValues);
 
                 let token = jwt.sign(

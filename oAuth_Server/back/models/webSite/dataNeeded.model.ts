@@ -1,11 +1,12 @@
 import {Model, Column, Table, PrimaryKey, DataType, AllowNull, ForeignKey, HasMany, BelongsTo} from 'sequelize-typescript';
+import internal from 'stream';
 import App from './app.model';
 
 
 @Table({
     modelName:'data_needed',
     omitNull:true,
-    timestamps:true,
+    timestamps:false,
     charset:'utf8mb4',
     collate:'utf8mb4_general_ci'
 })
@@ -53,4 +54,6 @@ export default class DataNeeded extends Model {
         type:DataType.BOOLEAN
     })
     public addr?: boolean;
+    static noticePopup: any;
 }
+
