@@ -1,4 +1,4 @@
-import { Box, Flex, Text, Divider, Spinner,useDisclosure, Center, FormLabel, Button, FormControl, FormHelperText, Radio, Stack, Input, Select, RadioGroup, useTagStyles } from '@chakra-ui/react';
+import { Box, Flex, Text, Divider, Spinner,useDisclosure, Center, FormLabel, Button, FormControl, FormHelperText, Radio, Stack, Input, Select, RadioGroup, useTagStyles, Heading } from '@chakra-ui/react';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { backend, frontend } from '../utils/ip.js';
@@ -8,7 +8,7 @@ import AppModal from '../components/appModal.jsx';
 import { deleteCookie } from 'cookies-next';
 import { useCookie } from 'react-cookie';
 
-const Mypage = ({ appList, cemail }) => {
+const Mypage = ({ appList, hashId,email }) => {
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	const [myAppList, setmyAppList] = useState(appList);
 	const [name, setName] = useState('');
@@ -17,14 +17,13 @@ const Mypage = ({ appList, cemail }) => {
 	const [addr, setAddr] = useState('');
 	const [mobile, setMobile] = useState('');
 	const [password, setPassword] = useState('');
-	const [pwCheck, setPwCheck] = useState(''); //뒤에 비밀번호 수정
+	const [pwCheck, setPwCheck] = useState(false); //뒤에 비밀번호 수정
 	const [pwdCheck, setPwdCheck] = useState(''); //첫번째 비밀번호입력란
 	const [loading, setLoading] = useState(true); //로딩바
 
 
 
-	const [email, setEmail] = useState(cemail);
-	const [hashId, setHashId] = useState("");
+
 
 	const getAddress = (e) => {
 		setAddr(e.target.value);
@@ -38,10 +37,6 @@ const Mypage = ({ appList, cemail }) => {
 	const getAge = (e) => {
 		setAge(e.target.value);
 	};
-
-	// const createApp = () => {
-	// 	location.href = `${frontend}/appRegi`;
-	// };
 
 
   const showAppList = myAppList?.map((v, k) => {
@@ -61,33 +56,25 @@ const Mypage = ({ appList, cemail }) => {
 
   const udtdPassword = (e) =>{
 			setPwCheck(e.target.value)
-
   }
 
   const udtPassword = (e)=>{
 			setPwdCheck(e.target.value)
-
   }
   const getMyApp = async () => {
 		const response = await axios.post(`${backend}/oauth/app/getMyApp`, {
-			email: cemail,
+			email: email,
 		});
 
 		setmyAppList(response.data.myapp);
 	};
 
 	const getUserInfo = async () => {
-		let userInfo;
-
-		const Cookie = getCookie("user");
-
-		if (Cookie) {
-			userInfo = JSON.parse(Buffer.from(Cookie, "base64").toString("utf-8"));
-		}
-
+		console.log(hashId)
+		
 		const response = await axios.post(
 			"http://localhost:8000/Oauth/user/searchUser",
-			{ hashId: userInfo.hashId }
+			{ hashId:hashId}
 		);
 
 		setName(response.data.name);
@@ -95,8 +82,7 @@ const Mypage = ({ appList, cemail }) => {
 		setAge(response.data.age);
 		setMobile(response.data.mobile);
 		setGender(response.data.gender);
-		setEmail(userInfo.email);
-		setHashId(userInfo.hashId);
+		
 	};
 
 	const setPwdCheckfunction = (e) => {
@@ -182,7 +168,6 @@ const Mypage = ({ appList, cemail }) => {
 
 		if (response.data.status) {
 			deleteCookie("user", { req, res, maxAge: 60 * 60 * 24 * 1000 });
-
 			alert(response.data.msg);
 			window.location.replace("/");
 		} else {

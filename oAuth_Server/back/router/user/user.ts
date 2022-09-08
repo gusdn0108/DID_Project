@@ -3,7 +3,8 @@ import crypto from 'crypto';
 import deployed from '../../web3';
 import VerifyId from '../../models/user/verifyId.model';
 import sequelize from '../../models';
-import { Console } from 'console';
+import { hash } from 'bcrypt';
+
 
 const router = express.Router();
 
@@ -33,7 +34,6 @@ router.post('/oAuthRegister', async (req: Request, res: Response) => {
 
         if (result) {
             await VerifyId.create({
-                hashId: hash,
                 email,
                 restAPI,
             });
@@ -63,6 +63,7 @@ router.post('/upDatePassword', async (req: Request, res: Response) => {
         await contract.methods.updatePassword(hashId, newHash).send({
             from: '0x7b6283591c09b1a738a46Acc0BBFbb5943EDb4F4',
         });
+
         res.json({
             status: true,
             msg: '비밀번호 변경이 완료되었습니다.',
@@ -91,13 +92,14 @@ router.post('/upDateUser', async (req: Request, res: Response) => {
 
         const contract = await deployed();
         const checkUser = await contract.methods.isRegistered(hashId).call();
-
+        console.log(checkUser) //false 뜸
         if (checkUser) {
+
             await contract.methods.updateUser(hashId, DATA).send({
                 from: '0x7b6283591c09b1a738a46Acc0BBFbb5943EDb4F4',
                 gas: 10000000,
             });
-
+            
             const result = await contract.methods.getUser(hashId).call();
 
             console.log(result);
@@ -123,6 +125,7 @@ router.post('/upDateUser', async (req: Request, res: Response) => {
 
 router.post('/searchUser', async (req: Request, res: Response) => {
     const { hashId } = req.body;
+    
 
     try {
         const contract = await deployed();
@@ -194,10 +197,10 @@ router.post('/deleteUser2', async (req: Request, res: Response) => {
 
 
 router.post('/deleteUser', async (req: Request, res: Response) => {
-    const { hashId } = req.body;
+    const { hashId, cemail } = req.body;
 
     try {
-        await VerifyId.destroy({ where: { hashId: hashId } });
+        await VerifyId.destroy({ where: { email: cemail } });
 
         const contract = await deployed();
 
