@@ -1,10 +1,14 @@
 import express, { Request, Response } from 'express';
 import nodeMailer, { SentMessageInfo } from 'nodemailer';
 import emailTemplate from './emailTemplate';
+import VerifyId from '../../models/user/verifyId.model';
 const router = express.Router();
 
-router.post('/email', async (req: Request, res: Response) => {
+//?
+router.post('/email', async (req: Request, res: Response) => { 
     const { email } = req.body;
+
+
 
     const generateRandom = (min: number, max: number) => {
         const ranNum = (Math.floor(Math.random() * (max - min + 1)) + min).toString();
@@ -15,6 +19,7 @@ router.post('/email', async (req: Request, res: Response) => {
         }
         return array;
     };
+
 
     const number = generateRandom(111111, 999999);
 

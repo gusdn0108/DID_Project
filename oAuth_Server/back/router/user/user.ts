@@ -2,7 +2,9 @@ import express, { Request, Response } from 'express';
 import crypto from 'crypto';
 import deployed from '../../web3';
 import VerifyId from '../../models/user/verifyId.model';
-import { Console } from 'console';
+import sequelize from '../../models';
+import { hash } from 'bcrypt';
+
 
 const router = express.Router();
 
@@ -51,10 +53,10 @@ router.post('/oAuthRegister', async (req: Request, res: Response) => {
 });
 
 router.post('/upDatePassword', async (req: Request, res: Response) => {
-    const { hashId, email, newPassword } = req.body;
+    const { hashId, email, pwCheck } = req.body;
 
     try {
-        const newpasswordId = email + newPassword;
+        const newpasswordId = email + pwCheck;
         const newHash = crypto.createHash('sha256').update(newpasswordId).digest('base64');
 
         const contract = await deployed();
@@ -69,8 +71,8 @@ router.post('/upDatePassword', async (req: Request, res: Response) => {
     } catch (e) {
         if (e instanceof Error) console.log(e.message);
         res.json({
-            status: true,
-            msg: '비밀번호 변경이 완료되었습니다.',
+            status: false,
+            msg: '비밀번호 변경이 실패하였습니다.',
         });
     }
 });
@@ -90,13 +92,14 @@ router.post('/upDateUser', async (req: Request, res: Response) => {
 
         const contract = await deployed();
         const checkUser = await contract.methods.isRegistered(hashId).call();
-
+        console.log(checkUser) //false 뜸
         if (checkUser) {
+
             await contract.methods.updateUser(hashId, DATA).send({
                 from: '0x7b6283591c09b1a738a46Acc0BBFbb5943EDb4F4',
                 gas: 10000000,
             });
-
+            
             const result = await contract.methods.getUser(hashId).call();
 
             console.log(result);
@@ -122,6 +125,7 @@ router.post('/upDateUser', async (req: Request, res: Response) => {
 
 router.post('/searchUser', async (req: Request, res: Response) => {
     const { hashId } = req.body;
+    
 
     try {
         const contract = await deployed();
@@ -144,6 +148,53 @@ router.post('/searchUser', async (req: Request, res: Response) => {
         });
     }
 });
+
+
+router.post('/deleteUser2', async (req: Request, res: Response) => {
+    const {hashId} = req.body
+    const t = await sequelize.transaction();
+
+    
+    const sucess = await VerifyId.destroy({ where: { hashId: hashId } })
+    try {
+        const deploy = await deployed();
+
+        await deploy.methods.deleteUser(hashId).send({
+            from: '0x7b6283591c09b1a738a46Acc0BBFbb5943EDb4F4',
+            gas: 10000000,
+        })
+    
+        transaction : t
+    
+
+    await t.commit();
+    
+    }catch(err){
+        await t.rollback();
+    }
+    const deploy = await deployed();
+    
+    const checkUser = await deploy.methods.isRegistered(hashId).call();
+
+    if (checkUser) throw new Error('회원 탈퇴 처리 실패');
+
+    res.json({
+        status: true,
+        msg: '회원탈퇴가 완료되었습니다.',
+    });
+
+})
+// } catch (e) {
+//     if (e instanceof Error) console.log(e.message);
+//     res.json({
+//         status: false,
+//         msg: '회원탈퇴를 실패하였습니다.',
+//     });
+// }
+
+
+// });
+
 
 router.post('/deleteUser', async (req: Request, res: Response) => {
     const { hashId, cemail } = req.body;

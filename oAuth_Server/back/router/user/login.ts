@@ -157,13 +157,11 @@ router.post('/localAuthorize', async (req: Request, res: Response) => {
     const userhash = email + password;
     const hash = crypto.createHash('sha256').update(userhash).digest('base64');
 
-    const dbUser = await VerifyId.findOne({
-        where: {
-            hashId: {
-                [Op.eq]: hash,
+        const dbUser = await VerifyId.findOne({
+            where:{
+                email: email,
             },
-        },
-    });
+        });
 
     if(!dbUser) throw new Error('id/pw를 확인해주세요')
 
