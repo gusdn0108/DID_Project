@@ -32,7 +32,6 @@ router.post('/oAuthRegister', async (req: Request, res: Response) => {
 
         if (result) {
             await VerifyId.create({
-                hashId: hash,
                 email,
                 restAPI,
             });
@@ -63,16 +62,6 @@ router.post('/upDatePassword', async (req: Request, res: Response) => {
             from: '0x7b6283591c09b1a738a46Acc0BBFbb5943EDb4F4',
         });
 
-        await VerifyId.update(
-            {
-                hashId: newHash,
-            },
-            {
-                where: {
-                    hashId: hashId,
-                },
-            },
-        );
         res.json({
             status: true,
             msg: '비밀번호 변경이 완료되었습니다.',
@@ -157,10 +146,10 @@ router.post('/searchUser', async (req: Request, res: Response) => {
 });
 
 router.post('/deleteUser', async (req: Request, res: Response) => {
-    const { hashId } = req.body;
+    const { hashId, cemail } = req.body;
 
     try {
-        await VerifyId.destroy({ where: { hashId: hashId } });
+        await VerifyId.destroy({ where: { email: cemail } });
 
         const contract = await deployed();
 

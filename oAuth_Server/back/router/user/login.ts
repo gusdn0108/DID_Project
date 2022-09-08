@@ -20,9 +20,7 @@ router.post('/authorize', async (req: Request, res: Response) => {
 
     const dbUser = await VerifyId.findOne({
         where: {
-            hashId: {
-                [Op.eq]: hash,
-            },
+            email: email
         },
     });
 
@@ -167,7 +165,12 @@ router.post('/localAuthorize', async (req: Request, res: Response) => {
         },
     });
 
-    if (dbUser) {
+    if(!dbUser) throw new Error('id/pw를 확인해주세요')
+
+    const contract = await deployed();
+    const result = await contract.methods.getUser(hash).call();
+
+    if (result) {
         let token = jwt.sign(
             {
                 email: email,

@@ -53,10 +53,6 @@ const Mypage = ({ appList, cemail }) => {
     setAge(e.target.value);
   };
 
-  // const createApp = () => {
-  // 	location.href = `${frontend}/appRegi`;
-  // };
-
   const getMyApp = async () => {
     const response = await axios.post(`${backend}/oauth/app/getMyApp`, {
       email: cemail,
@@ -164,7 +160,7 @@ const Mypage = ({ appList, cemail }) => {
   const deleteUser = async (req, res) => {
     const response = await axios.post(
       "http://localhost:8000/oauth/user/deleteUser",
-      { hashId }
+      { hashId, cemail }
     );
 
     if (response.data.status) {

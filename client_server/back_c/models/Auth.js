@@ -6,10 +6,6 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
-            username: {
-                type: DataTypes.STRING,
-                allowNull: false,
-            },
             password: {
                 type: DataTypes.STRING,
                 allowNull: false,
@@ -18,6 +14,10 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 default: 0,
+            },
+            mobile: {
+                type: DataTypes.STRING,
+                allowNull: false,
             },
         },
         {
