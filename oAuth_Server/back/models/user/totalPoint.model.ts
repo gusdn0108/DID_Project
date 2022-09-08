@@ -15,7 +15,7 @@ export default class TotalPoint extends Model {
     @Column({
         type:DataType.STRING
     })
-    public hashId?: string;
+    public email?: string;
 
     @AllowNull(false)
     @Column({
