@@ -9,7 +9,7 @@ const baseUrl = 'http://localhost:8000/api/Oauth';
 
 const Otp = {
     clientId: '460716d6dfc9d3e95765694659384cd',
-    redirectUri: 'http://localhost:4001/api/oauth/getCode',
+    redirectUri: 'http://localhost:4001',
 };
 
 router.get('/DIDLogin', async (req, res) => {
@@ -19,6 +19,7 @@ router.get('/DIDLogin', async (req, res) => {
 
 router.get('/getCode', async (req, res) => {
     console.log('시발');
+    console.log(req.query);
     console.log(req.body);
 
     // const url = `http://localhost:8080/login?code=${code}`;

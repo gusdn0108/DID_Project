@@ -58,12 +58,12 @@ router.post('/authorize', async (req: Request, res: Response) => {
             // res.cookie('DID_ACCESS', DID_ACCESS, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
             // res.cookie('REFRESH_ACCESS', REFRESH_ACCESS, { httpOnly: true, maxAge: 24 * 60 * 60 * 10000 });
             // console.log(reURL);
-            // res.redirect(`${reURL}?code=${code}`);
+            res.redirect(`${reURL}/api/oauth/getCode?code=${code}`);
             // const url = `http://localhost:3001`;
             // res.redirect(url);
             // await axios.post('http://localhost:4001/api/oauth/getCode');
             // console.log('123');
-            await axios.post(`${reURL}`, response);
+            // await axios.post(`${reURL}`, response);
         }
     } catch (e) {
         if (e instanceof Error) console.log(e.message);
