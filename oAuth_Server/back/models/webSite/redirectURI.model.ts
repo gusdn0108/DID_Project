@@ -5,7 +5,7 @@ import App from "./app.model";
 @Table({
     modelName:'redirectURI',
     omitNull:true,
-    timestamps:true,
+    timestamps:false,
     charset:'utf8mb4',
     collate:'utf8mb4_general_ci'
 })
@@ -21,29 +21,5 @@ export default class RedirectURI extends Model{
     @Column({
         type:DataType.STRING
     })
-    public redirectURI1?: string;
-
-    @AllowNull(false)
-    @Column({
-        type:DataType.STRING
-    })
-    public redirectURI2?: string;
-
-    @AllowNull(false)
-    @Column({
-        type:DataType.STRING
-    })
-    public redirectURI3?: string;
-
-    @AllowNull(false)
-    @Column({
-        type:DataType.STRING
-    })
-    public redirectURI4?: string;
-
-    @AllowNull(false)
-    @Column({
-        type:DataType.STRING
-    })
-    public redirectURI5?: string;
+    public redirectURI?: string;
 }
