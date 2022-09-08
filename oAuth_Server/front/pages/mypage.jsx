@@ -17,9 +17,10 @@ const Mypage = ({ appList, cemail }) => {
 	const [addr, setAddr] = useState('');
 	const [mobile, setMobile] = useState('');
 	const [password, setPassword] = useState('');
-	const [pwCheck, setPwCheck] = useState(false); //뒤에 비밀번호 수정
+	const [pwCheck, setPwCheck] = useState(''); //뒤에 비밀번호 수정
 	const [pwdCheck, setPwdCheck] = useState(''); //첫번째 비밀번호입력란
-	const [loading, setLoading] = useState(''); //로딩바
+	const [loading, setLoading] = useState(true); //로딩바
+
 
 
 	const [email, setEmail] = useState(cemail);
@@ -58,6 +59,15 @@ const Mypage = ({ appList, cemail }) => {
     );
   });
 
+  const udtdPassword = (e) =>{
+			setPwCheck(e.target.value)
+
+  }
+
+  const udtPassword = (e)=>{
+			setPwdCheck(e.target.value)
+
+  }
   const getMyApp = async () => {
 		const response = await axios.post(`${backend}/oauth/app/getMyApp`, {
 			email: cemail,
@@ -110,36 +120,24 @@ const Mypage = ({ appList, cemail }) => {
 
 	//	비밀번호...수정
 	const updatePassword = async (e) => {
-		const newPassword = setPwdCheck(e.target.value)
+		setLoading(false)
+
+		if (pwCheck !== pwdCheck) {
+			alert('비밀번호가 일치하지 않습니다.')
+		}
+
 		const body = {
-			hashId, email, newPassword
-		}
-		console.log(newPassword)
-		const userHash = email + newPassword
-		const Hash = crypto.createHash("sha256").update(userHash).digest("base64");
-
-		if (hashId === Hash) {
-			setPwCheck(true); //true
-
-		} else {
-			alert("비밀번호가 일치하지 않습니다")
+			hashId, email, pwCheck
 		}
 
-
-		console.log(body)
 		const response = await axios.post(
 			"http://localhost:8000/Oauth/user/upDatePassword", body
 		)
 
-		console.log(response.data.newPassword)
-
-		console.log(response.data.newPassword);
 		if (response.data.status == true) {
-			setPassword(response.data.newPassword)
 			alert(response.data.msg);
-
-			window.location.replace("/");
-
+			deleteCookie('user', { req, res, maxAge: 60 * 60 * 24 * 1000 });
+			window.location.replace('/');
 		}
 		else {
 			alert(response.data.msg);
@@ -147,6 +145,8 @@ const Mypage = ({ appList, cemail }) => {
 	}
 
 	const updateUser = async () => {
+
+		setLoading(false)
 		const body = {
 			gender,
 			name,
@@ -363,7 +363,7 @@ const Mypage = ({ appList, cemail }) => {
 								onChange={getMobile}
 							/>
 						</FormControl>
-						<Center>
+						{loading ?  <Center>
 							<Button
 								colorScheme="yellow"
 								mb="2rem"
@@ -373,6 +373,18 @@ const Mypage = ({ appList, cemail }) => {
 								변경하기
 							</Button>
 						</Center>
+						  : 
+						  <Center>
+								<Spinner
+										thickness='4px'
+										speed = '0.65s'
+										emptyColor='gray.200'
+										color = 'blue.500'
+										size='md'
+
+									/>
+						  </Center>
+						  }
 						<Divider />
 
 						<Text fontSize={"180%"} px="35%" pt="4rem">
@@ -397,24 +409,36 @@ const Mypage = ({ appList, cemail }) => {
 							id="password"
 							size="md"
 						/>
-						<Center>
-							<Button
-								colorScheme="yellow"
-								mb="2rem"
-								mt="2rem"
-								variant="outline"
-								onClick={updatePassword}
-							>
-								변경하기
+						{loading ?
+						<Center>  <Button 
+						colorScheme="yellow"
+						mb="2rem"
+						mt="2rem"
+						variant="outline"
+						onClick={updatePassword} //updatePassword setLoading(false)
+						>
+						변경하기
 							</Button>
-						</Center>
+							</Center>
+							:
+							<Center>
+									<Spinner 
+										thickness='4px'
+										speed ='0.65s'
+										emptyColor='gray.200'
+										color ='blue.500'
+										size='md'
+									/>
 
+							</Center>
+}
 						<Divider />
 						<Text fontSize={"180%"} px="35%" pt="4rem" textAlign={"center"}>
 							{" "}
 							회원 탈퇴{" "}
 						</Text>
 
+						{loading ?  
 						<Center>
 							<Button
 								colorScheme="yellow"
@@ -427,7 +451,17 @@ const Mypage = ({ appList, cemail }) => {
 								회원탈퇴버튼
 							</Button>
 						</Center>
-					</>
+						:<Center>
+							<Spinner
+									thickkness ='4px'
+									speed = '0.65s'
+									emptyColor='gray.200'
+									color='blue.500'
+									size ='md'
+							/>
+						</Center>
+						}
+				</>
 				)}
 			</Box>
 		</Center>

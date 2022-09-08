@@ -53,27 +53,16 @@ router.post('/oAuthRegister', async (req: Request, res: Response) => {
 });
 
 router.post('/upDatePassword', async (req: Request, res: Response) => {
-    const { hashId, email, newPassword } = req.body;
+    const { hashId, email, pwCheck } = req.body;
 
     try {
-        const newpasswordId = email + newPassword;
+        const newpasswordId = email + pwCheck;
         const newHash = crypto.createHash('sha256').update(newpasswordId).digest('base64');
 
         const contract = await deployed();
         await contract.methods.updatePassword(hashId, newHash).send({
             from: '0x7b6283591c09b1a738a46Acc0BBFbb5943EDb4F4',
         });
-
-        await VerifyId.update(
-            {
-                hashId: newHash,
-            },
-            {
-                where: {
-                    hashId: hashId,
-                },
-            },
-        );
         res.json({
             status: true,
             msg: '비밀번호 변경이 완료되었습니다.',
@@ -81,8 +70,8 @@ router.post('/upDatePassword', async (req: Request, res: Response) => {
     } catch (e) {
         if (e instanceof Error) console.log(e.message);
         res.json({
-            status: true,
-            msg: '비밀번호 변경이 완료되었습니다.',
+            status: false,
+            msg: '비밀번호 변경이 실패하였습니다.',
         });
     }
 });
