@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Text, Input, Image, FormControl, FormLabel, FormErrorMessage, FormHelperText } from '@chakra-ui/react';
+import { Box, Button, Flex, Text, Input, Center, Spinner, Image, FormControl, FormLabel, FormErrorMessage, FormHelperText } from '@chakra-ui/react';
 import axios from 'axios';
 import { useState } from 'react';
 import { backend } from '../utils/ip';
@@ -6,6 +6,7 @@ import { setCookie } from 'cookies-next';
 export default function Home() {
 	const [DIDid, setDIDid] = useState(undefined);
 	const [DIDPw, setDIDPw] = useState(undefined);
+	const [loading, setLoading] = useState(true);
 
 	//const [isLogin,setIsLogin] = useState(false)
 
@@ -19,6 +20,7 @@ export default function Home() {
 
 	const didLoginHandler = async (req, res) => {
 		//앞에 상태변수를 요청
+		setLoading(false)
 		const response = await axios.post('http://localhost:8000/Oauth/login/localAuthorize', { email: DIDid, password: DIDPw });
 		//보내온 데이터의 status 가 true면,
 		//payload 라는변수에 split으로 잘라넣고
@@ -64,20 +66,35 @@ export default function Home() {
 						</FormLabel>
 						<Input type='password' placeholder='password을 입력해주세요' size='md' id='userPw' mb='5%' onChange={getPw} />
 					</FormControl>
-					<Button onClick={didLoginHandler} bg='yellow.300' w='100%'>
-						로그인
-					</Button>
-					<Button
-						onClick={() => {
-							window.location.replace('/register');
-						}}
-						colorScheme='yellow'
-						variant='outline'
-						w='100%'
-						mt='2rem'
-					>
-						회원가입{' '}
-					</Button>
+					{loading ?
+						<>
+							<Button onClick={didLoginHandler} bg='yellow.300' w='100%'>
+								로그인
+							</Button> <Button
+								onClick={() => {
+									window.location.replace('/register');
+								}}
+								colorScheme='yellow'
+								variant='outline'
+								w='100%'
+								mt='2rem'
+							>
+								회원가입{' '}
+							</Button>
+						</>
+						:
+						<Center>
+							<Spinner
+								thickness='4px'
+								speed='0.65s'
+								emptyColor='gray.200'
+								color='blue.500'
+								size='lg'
+
+							/>
+						</Center>
+
+					}
 				</Box>
 			</Flex>
 		</>

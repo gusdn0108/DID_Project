@@ -23,7 +23,7 @@ function MyApp({ Component, pageProps }) {
 
   return (
     <ChakraProvider>
-      <Component {...pageProps} cemail={cemail} hashId={chashId} />
+      <Component {...pageProps} email={cemail} hashId={chashId} />
     </ChakraProvider>
   );
 }

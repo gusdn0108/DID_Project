@@ -289,7 +289,7 @@ router.post('/idCheck', async (req, res) => {
                 status: 2,
             });
         }
-    } catch (e) {}
+    } catch (e) {console.log(e.messasge)}
 });
 
 router.post('/usePoint', async (req, res) => {
