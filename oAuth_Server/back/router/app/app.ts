@@ -234,7 +234,7 @@ router.post('/userdidregister', async (req, res) => {
 
         const syncUser = await TotalPoint.create({
             restAPI,
-            hashId: email,
+            email,
             point
         })
         // 문제가 없다면 로그인, 쿠키 생성을 위해 클라이언트 서버의 백엔드로 리다이렉트
