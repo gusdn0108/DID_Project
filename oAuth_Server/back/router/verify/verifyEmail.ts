@@ -20,28 +20,8 @@ router.post('/email', async (req: Request, res: Response) => {
         return array;
     };
 
-    try { //중복체크 
-        const exEmail = await VerifyId.findOne({
-            where: {
-                email: email,
-            },
-        });
-        
-            //이거 풀면 오류남
-        // if (exEmail) {
-        //     return res.status(403).send('이미 사용중인 메일입니다 ');
-        // }else{
-        //     alert('사용 가능한 이메일 입니다,')
-        // }
-        
-        } catch (e) {
-        console.log(e);
-    }
-
 
     const number = generateRandom(111111, 999999);
-
-
 
     const mailPoster = nodeMailer.createTransport({
         service: 'Naver',
