@@ -12,34 +12,12 @@ import { frontend } from './utils';
 const router = express.Router();
 
 router.post('/authorize', async (req: Request, res: Response) => {
+    console.log('authorize');
     const { email, password, restAPI, reURL } = req.body;
     const userhash = email + password;
     console.log(email, password, restAPI, reURL);
     const hash = crypto.createHash('sha256').update(userhash).digest('base64');
 
-<<<<<<< HEAD
-    const contract = await deployed();
-    const result = await contract.methods.getUser(hash).call();
-
-    const gender = result[0];
-    const name = result[1];
-    const age = result[2];
-    const address = result[3];
-    const mobile = result[4];
-    const userEmail = result[5];
-
-    const isRegistered = await TotalPoint.findOne({
-        where : {
-            email:userEmail
-        }
-    })
-
-    if(!isRegistered) {
-        res.redirect(`${frontend}/userAppRegister?restAPI=${restAPI}`)
-    }
-
-=======
->>>>>>> ed91a3527ae5646860af136fd7c3b7493eeda371
     const dbUser = await VerifyId.findOne({
         where: {
             hashId: {
@@ -70,34 +48,22 @@ router.post('/authorize', async (req: Request, res: Response) => {
                 DID_ACCESS,
                 REFRESH_ACCESS,
                 code,
-<<<<<<< HEAD
-            };
-
-            // res.cookie('DID_ACCESS', DID_ACCESS, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
-            // res.cookie('REFRESH_ACCESS', REFRESH_ACCESS, { httpOnly: true, maxAge: 24 * 60 * 60 * 10000 });
-            // console.log(reURL);
-            res.redirect(`${reURL}/api/oauth/getCode?code=${code}`);
-            // const url = `http://localhost:3001`;
-            // res.redirect(url);
-            // await axios.post('http://localhost:4001/api/oauth/getCode');
-            // console.log('123');
-            // await axios.post(`${reURL}`, response);
-=======
                 restAPI,
                 hash,
                 email,
                 reURL,
             });
->>>>>>> c3690a7bf4d25c0b9eda71ce2d8e0addb189d15c
         }
     } catch (e) {
-        console.log(e.message);
+        console.log(e);
     }
 
     // redirectURL 검증 추가해야됨
 });
 
 router.post('/codeAuthorize', async (req: Request, res: Response) => {
+    console.log('connect codeAuthorize');
+    console.log('codeAuthorize', req.body);
     const { code, restAPI, hash, email, reURL, DID_ACCESS, REFRESH_ACCESS } = req.body;
 
     const getRestAPI: any = await DataNeeded.findOne({
@@ -134,8 +100,9 @@ router.post('/codeAuthorize', async (req: Request, res: Response) => {
 
             let ACCESS_TOKEN;
 
-            console.log(user);
+            console.log('if out');
             if (DID_ACCESS !== undefined) {
+                console.log('if 1');
                 ACCESS_TOKEN = jwt.sign(
                     {
                         user,
@@ -146,7 +113,9 @@ router.post('/codeAuthorize', async (req: Request, res: Response) => {
                 res.json({
                     ACCESS_TOKEN,
                 });
+                //  await axios.post('http://localhost:4001/api/oauth/getToken', ACCESS_TOKEN);
             } else if (REFRESH_ACCESS !== undefined) {
+                console.log('if 2');
                 const ACCESS_TOKEN = jwt.sign(
                     {
                         user,
@@ -165,14 +134,23 @@ router.post('/codeAuthorize', async (req: Request, res: Response) => {
                     ACCESS_TOKEN,
                     DID_ACCESS,
                 });
+                //    await axios.post('http://localhost:4001/api/oauth/getToken', { ACCESS_TOKEN, DID_ACCESS });
             }
+            console.log('if 3');
+            ACCESS_TOKEN = jwt.sign(
+                {
+                    user,
+                },
+                process.env.SECRET_KEY as string,
+            );
+            //  await axios.post('http://localhost:4001/api/oauth/getToken', { ACCESS_TOKEN });
             res.cookie('firstuser', ACCESS_TOKEN);
             res.json({
                 ACCESS_TOKEN,
             });
         }
     } catch (error) {
-        console.log(error.message);
+        console.log(error);
     }
 });
 

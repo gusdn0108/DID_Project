@@ -300,7 +300,7 @@
   "sourceMap": "",
   "deployedSourceMap": "",
   "source": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.15;\n\ninterface IDID {\n    struct User{\n        string gender;\n        string name;\n        uint8 age;\n        string addr;\n        string mobile;\n        string email;\n    }\n\n    struct NeededUser {\n        bool gender;\n        bool name;\n        bool age;\n        bool addr;\n        bool mobile;\n        bool email;\n    }\n\n    function registerUser (string memory _hashedId ,User memory _data) external;\n    function updatePassword (string memory _hashedId,string memory _hashedId_new)external;\n    function updateUser (string memory _hashedId, User memory _data) external;\n    function deleteUser (string memory _hashedId) external;\n    function getUser (string memory _hashedId) view external returns(User memory);\n    function getVP(string memory _identifier, NeededUser memory _shouldSend) view external returns(User memory);\n    function isRegistered(string memory _hashedId) view external returns(bool);\n}",
-  "sourcePath": "/Users/ansuhwan/project/Team_DAO/truffle/contracts/IDID.sol",
+  "sourcePath": "/home/rayna1221/new/Team_DAO/truffle/contracts/IDID.sol",
   "ast": {
     "absolutePath": "project:/contracts/IDID.sol",
     "exportedSymbols": {
@@ -2317,7 +2317,7 @@
   },
   "networks": {},
   "schemaVersion": "3.4.5",
-  "updatedAt": "2022-09-07T08:05:50.674Z",
+  "updatedAt": "2022-09-08T03:50:23.764Z",
   "devdoc": {
     "kind": "dev",
     "methods": {},
