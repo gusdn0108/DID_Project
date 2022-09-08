@@ -74,10 +74,11 @@ export const insertNewUri = async ( restAPI : string, uris : any ) => {
     }
 }
 
-export const filterNotNeeded = async ( infos : any) => {
+export const filterNotNeeded = ( infos : any) => {
     for (let i = 0; i < infos.length; i++) {
         if(infos[i].value == false) {
             delete infos[i]
         }
     }
+    return infos
 }

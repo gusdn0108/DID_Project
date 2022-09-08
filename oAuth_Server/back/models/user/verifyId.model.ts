@@ -9,13 +9,6 @@ import {AllowNull, Column, DataType, Model, PrimaryKey, Table} from 'sequelize-t
 })
 
 export default class VerifyId extends Model{
-    @PrimaryKey
-    @AllowNull(false)
-    @Column({
-        type:DataType.STRING
-    })
-    public hashId?: string;
-
     @AllowNull(false)
     @Column({
         type:DataType.STRING

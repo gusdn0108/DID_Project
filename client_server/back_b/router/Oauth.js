@@ -19,7 +19,7 @@ router.get('/DIDLogin', async (req, res) => {
 });
 
 router.post('/getCode', async (req, res) => {
-    console.log('getcode');
+
     const { code, DID_ACCESS, REFRESH_ACCESS, restAPI, hash, email, reURL } = req.body;
 
     try {
