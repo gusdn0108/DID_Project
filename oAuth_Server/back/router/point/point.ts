@@ -12,10 +12,9 @@ const router = express.Router();
 
 router.post('/checkPoint', async (req: Request, res: Response)=>{
     const {email} = req.body
-    let response;
-    // let response: Failable<Point[],string>
+    let response: Failable<Point[],string>
     try{
-        const [result] = await sequelize.query(`select * from point_totals where email = :email`,{
+        const result = await sequelize.query(`select * from point_totals where email = :email`,{
             replacements:{email},
             raw: true,
             model: TotalPoint,
@@ -32,7 +31,6 @@ router.post('/checkPoint', async (req: Request, res: Response)=>{
         }
     }
     res.json(response)
-    // res.json(response)
 })
 
 //토큰 생성 후 프론트로 보내기

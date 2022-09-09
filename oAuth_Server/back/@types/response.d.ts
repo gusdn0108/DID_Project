@@ -10,7 +10,7 @@ declare type Failure <E> = {
 
 export interface Point {
     id?: number,
-    hashId?: string,
+    email?: string,
     restAPI?: string,
     point?: number
 }
