@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
-    const account = sequelize.define(
-        'account',
+    const Account = sequelize.define(
+        'Account',
         {
             email: {
                 type: DataTypes.STRING,
@@ -9,12 +9,12 @@ module.exports = (sequelize, DataTypes) => {
         },
         {
             timestamps: false,
-            tableName: 'account',
+            tableName: 'Account',
             charset: 'utf8mb4',
             collate: 'utf8mb4_general_ci',
             freezeTableName: true,
         },
     );
 
-    return account;
+    return Account;
 };

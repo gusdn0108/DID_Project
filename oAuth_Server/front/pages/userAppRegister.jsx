@@ -18,13 +18,19 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { backend, frontend } from "../utils/ip.js";
 
-const userAppRegister = ({ getUserInfo, appName }) => {
-  const setArray = (k) => {
-    const newArray = isAgreed;
-    newArray[k] = !newArray[k];
-    setIsAgreed(isAgreed);
-    console.log(isAgreed);
-  };
+const userAppRegister = ({
+  getUserInfo,
+  appName,
+  restAPI,
+  redirectUri,
+  hash,
+}) => {
+  // const setArray = (k) => {
+  //   const newArray = isAgreed;
+  //   newArray[k] = !newArray[k];
+  //   setIsAgreed(isAgreed);
+  //   console.log(isAgreed);
+  // };
 
   const attributes = getUserInfo.map((v, k) => {
     return (
@@ -35,21 +41,21 @@ const userAppRegister = ({ getUserInfo, appName }) => {
   });
 
   const didRegister = async () => {
+    const codeUrl = location.href;
+    const email = codeUrl.split("?")[1].split("&")[0].split("=")[1];
     // 모든 체크 박스에 체크가 되어있다면 < 이 부분 처리를 못하겠음
-    for (let i = 0; i < isAgreed.length; i++) {
-      if (isAgreed[i] == false) {
-        alert("모든 항목에 동의해주세요");
-        return;
-      }
-    }
+    console.log(email);
     const response = await axios.post(`${backend}/oauth/app/userdidregister`, {
-      restAPI: "1a991c978f941a31733d4159a7a912b",
-      email: "619049@naver.com",
-      // 상수는 나중에 변수화 할 것
+      restAPI,
+      email,
       point: 50000,
-      // 포인트는 처음 가입할 때 front에서 넣을지 backend에서 넣을지 고민해볼것
+      hash,
     });
-    console.log(response.data);
+
+    if (response.data.status == true) {
+      alert(response.data.msg);
+      location.href = `${frontend}/login?clientId=${restAPI}&redirectUri=${redirectUri}`;
+    }
   };
 
   return (
@@ -110,9 +116,13 @@ const userAppRegister = ({ getUserInfo, appName }) => {
 };
 
 export const getServerSideProps = async (ctx) => {
-  // oauthDB에 요청을 보내서 요청 유저 정보 데이터를 가져온다.
-  // console.log(ctx.req);
-  const restAPI = "1a991c978f941a31733d4159a7a912b";
+  //oauthDB에 요청을 보내서 요청 유저 정보 데이터를 가져온다.
+  const restAPI = ctx.query.restAPI;
+  const email = ctx.query.email;
+  const redirectUri = ctx.query.redirectUri;
+  const hash = ctx.query.hash;
+
+  console.log(email);
   const response = await axios.get(
     `${backend}/oauth/app/giveUserInfo?restAPI=${restAPI}`
   );
@@ -121,6 +131,10 @@ export const getServerSideProps = async (ctx) => {
     props: {
       getUserInfo: response.data.infos.filter(Boolean),
       appName: response.data.appName,
+      restAPI,
+      email,
+      redirectUri,
+      hash,
     },
   };
 };

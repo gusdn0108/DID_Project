@@ -1,13 +1,12 @@
-import Header from './Header.jsx'
+import Header from "./Header.jsx";
 
-const Layout = ({ children, userId }) => {
-    return (
-        <div>
-            <Header children={children} userId={userId} />
-                {children}
-        </div>
-    );
-}
-
+const Layout = ({ children, email }) => {
+  return (
+    <div>
+      <Header children={children} email={email} />
+      {children}
+    </div>
+  );
+};
 
 export default Layout;
