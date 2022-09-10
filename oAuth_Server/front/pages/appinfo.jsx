@@ -39,9 +39,9 @@ const AppInfo = ({ email }) => {
     const response = await axios.post(`${backend}/oauth/app/appinfo`, {
       restAPI: router.query.RestAPI,
     });
-    // console.log(response.data);
+    console.log(response.data.result);
     setappRestAPI(response.data.result.restAPI);
-    setAppSecret(response.data.result.clientSecretKey);
+    setAppSecret(response.data.result.client_secret);
 
     seturi(response.data.result.redirectURI);
     setGetUserInfo(response.data.result.neededInfo);
@@ -188,13 +188,13 @@ const AppInfo = ({ email }) => {
                   <Thead>
                     <Tr>
                       <Th textAlign={"center"}>Rest API</Th>
-                      {/* <Th textAlign={"center"}>Client Secret</Th> */}
+                      <Th textAlign={"center"}>Client Secret</Th>
                     </Tr>
                   </Thead>
                   <Tbody>
                     <Tr>
                       <Td textAlign={"center"}>{appRestAPI}</Td>
-                      {/* <Td textAlign={"center"}>{appSecret}</Td> */}
+                      <Td textAlign={"center"}>{appSecret}</Td>
                     </Tr>
                   </Tbody>
                 </Table>

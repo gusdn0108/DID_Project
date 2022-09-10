@@ -25,6 +25,7 @@ import { getCookie } from "cookies-next";
 import crypto from "crypto";
 import AppModal from "../components/appModal.jsx";
 import { deleteCookie } from "cookies-next";
+import Link from "next/link";
 
 const Mypage = ({ appList, hashId, email }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -465,15 +466,24 @@ const Mypage = ({ appList, hashId, email }) => {
     </Center>
   );
 };
+
 export const getServerSideProps = async (ctx) => {
   const cookie = ctx.req ? ctx.req.headers.cookie : "";
-  const encodedCookie = cookie.split("=")[1];
-  // 이 방법은 쿠키가 여러 개일 경우 에러가 발생해 그 경우엔 코드를 수정해야 합니다. 일단 보류
+  const encodedCookie = cookie.split(";");
+
+  let cookieNeeded;
+
+  for (let i = 0; i < encodedCookie.length; i++) {
+    const tokenName = encodedCookie[i].split("=");
+    if (tokenName[0].trim() == "user") {
+      cookieNeeded = tokenName;
+    }
+  }
+
   const email = JSON.parse(
-    Buffer.from(encodedCookie, "base64").toString("utf-8")
+    Buffer.from(cookieNeeded[1], "base64").toString("utf-8")
   ).email;
 
-  console.log(email);
   const response = await axios.post(`${backend}/oauth/app/getMyApp`, {
     email: email,
   });

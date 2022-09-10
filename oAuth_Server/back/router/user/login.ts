@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express, { Request, response, Response } from 'express';
 import { Op } from 'sequelize';
 import jwt from 'jsonwebtoken';
 import axios from 'axios';
@@ -8,35 +8,94 @@ import VerifyId from '../../models/user/verifyId.model';
 import DataNeeded from '../../models/webSite/dataNeeded.model';
 import TotalPoint from '../../models/user/totalPoint.model';
 import { frontend } from './utils';
+import { ifError } from 'assert';
+import RedirectURI from '../../models/webSite/redirectURI.model';
+import { getUserinfo, infoStringToBool, refineVP, responseObject } from '../app/utils';
+import App from '../../models/webSite/app.model';
 
 const router = express.Router();
 
 router.post('/authorize', async (req: Request, res: Response) => {
     const { email, password, restAPI, reURL } = req.body;
+
     const userhash = email + password;
-    console.log(email, password, restAPI, reURL);
     const hash = crypto.createHash('sha256').update(userhash).digest('base64');
+    // 개인적으로 서버 검증 이전에 hash값이 이렇게 왔다갔다 하는게 좋아보이진 않아보이는데..
+    // 가능한 다른 방법이 생각나지 않는다. 나중에 생각나면 수정해볼 예정
 
+    try{
+        // 맞는 redirectUri인지 확인, 존재하는 restAPI인지도 이 과정에서 확인 가능
+        const checkRedirectUri = await RedirectURI.findOne({
+            where : {
+                restAPI: restAPI,
+                redirectURI : reURL
+            }
+        })
 
-    const contract = await deployed();
-    const result = await contract.methods.getUser(hash).call();
+        if(!checkRedirectUri) throw new Error('존재하지 않는 어플리케이션 혹은 redirect Uri')
 
-    try {
-        if (result) {
-            res.redirect(`http://localhost:4001/api/oauth/getCode?email=${email}&hash=${hash}`);
+        const contract = await deployed();
+        const result = await contract.methods.getUser(hash).call();
+
+        if((result[0] =='' && result[2] == 0)|| email !== result[5]) {
+            res.json(responseObject(false, 'id/pw를 확인해주세요'))
+            return;
         }
-    } catch (e) {
-        console.log(e);
-    }
 
-    // redirectURL 검증 추가해야됨
+        const isRegistered = await TotalPoint.findOne({
+            where : {
+                restAPI,
+                email
+            }
+        })
+
+        if(!isRegistered) {
+            // const response = 
+            res.header('Access-Control-Allow-Origin', 'http://localhost:8080');
+            const response = {
+                status: 'first',
+                registerUri : `http://${frontend}/userAppRegister?email=${email}&restAPI=${restAPI}&redirectUri=${reURL}&hash=${hash}`
+            }
+            res.json(response)
+            return;
+        }
+
+        if (result) {
+            // redirecturi가 여기 오면 됨
+            // res.header('Access_control_allow_origin', 'http://localhost:3001');
+            res.header('Content-Type', 'application/x-www-form-urlencoded');
+            res.redirect(`${reURL}?email=${email}&hash=${hash}`);
+        }
+        
+    }
+    catch (e) {
+        console.log(e.message);
+        res.json(responseObject(false, '비정상적인 접근입니다.'))
+    }
 });
 
 router.post('/codeAuthorize', async (req: Request, res: Response)=> {
+    // accessToken을 검증해줘야 한다.
     const MAKE_ACCESS_TOKEN = req.body;
     const EXPIRES_IN = 43199;
-
     try {
+
+        if(MAKE_ACCESS_TOKEN.grant_type !== 'authorization_code' ) {
+            throw new Error ('잘못된 데이터 형식입니다.')
+        }
+        
+        // restAPI에 대응하는 client_secret이 맞는지 확인
+        const checkSecretKey = await App.findOne({
+            where : {
+                restAPI : MAKE_ACCESS_TOKEN.restAPI,
+                code : MAKE_ACCESS_TOKEN.client_secret
+            }
+        })
+    
+        if(!checkSecretKey) {
+            throw new Error ('잘못된 접근입니다.')
+        }
+        
         const ACCESS_TOKEN = jwt.sign(
             {
                 MAKE_ACCESS_TOKEN,
@@ -52,33 +111,43 @@ router.post('/codeAuthorize', async (req: Request, res: Response)=> {
         res.json(response);
     } catch (e: any) {
         console.log(e.message);
-        const response = { status: false, msg: 'accessToken 생성에러' };
+        res.json(responseObject(false, 'ACCESSTOKEN 생성 에러'))
     }
 })
 
 router.get('/codeAuthorize2', async (req: Request, res: Response) => {
     const bearer_token: any = req.headers.authorization;
     const bearer_req: string[] = bearer_token.split(' ');
-    if (bearer_req[0] == 'Bearer') {
+
+    try {
+        if(bearer_req[0] !== 'Bearer') {
+            throw new Error ('잘못된 토큰 입니다.')
+        }
         const decoded_token = Buffer.from(bearer_req[1], 'base64').toString('utf-8');
 
         const decode1 = decoded_token.split('}');
-        const decode2 = JSON.parse(decode1[1] + '}}');
+        const decode2 = JSON.parse(decode1[1] + '}}').MAKE_ACCESS_TOKEN;
 
-        const decode3 = decode2.MAKE_ACCESS_TOKEN;
-        console.log(decode3)
-        // clientId, clientSecret,grant_type 확인후
-        // 맞는 사용자 정보를 가져다 토큰을 만들어 주면 된다..
-        if (decode3.grant_type == 'authorization_code') {
-            // 여기선 이렇게 하지만 과제에서는 restapi,client_secret를 다시 한 번 db에서 읽고 확인해야한다.
+        console.log(decode2)
+
+        
+   
+        if (decode2.grant_type == 'authorization_code') {
+
+            const rawVP = getUserinfo(decode2.restAPI, decode2.hash)
+            const refinedVP = refineVP(rawVP)
+            
             const response = {
-                userId: 'asdf',
-                userPw: '1234',
-            };
-            // access_token 확인이 끝났다면 블록체인 네트워크에서 필요한 정보만을 읽어온 후,
-            // 이걸 객체로 준다.
+                status: true,
+                VP : refinedVP,
+                hash : decode2.hash
+            }
             res.json(response);
         }
+    }
+    catch(e) {
+        console.log(e.message)
+        res.json(responseObject(false, 'access token 검증 실패'))
     }
 });
 
