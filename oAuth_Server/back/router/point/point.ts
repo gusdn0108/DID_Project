@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { Failable, Failure, Point, Result } from '../../@types/response';
+import { Failable, Point } from '../../@types/response';
 import jwt from 'jsonwebtoken';
 import sequelize from '../../models';
 import TotalPoint from '../../models/user/totalPoint.model';
