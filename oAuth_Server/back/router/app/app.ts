@@ -3,8 +3,10 @@ import crypto from 'crypto';
 import App from '../../models/webSite/app.model';
 import DataNeeded from '../../models/webSite/dataNeeded.model';
 import RedirectURI from '../../models/webSite/redirectURI.model';
-import {makeRedirectUriList, generateHash, responseObject, infoStringToBool, noWhiteSpace, filterNull, insertNewUri, filterNotNeeded} from './utils';
+import {makeRedirectUriList, generateHash, responseObject, infoStringToBool, noWhiteSpace, filterNull, insertNewUri, filterNotNeeded, getUserinfo, rawVP, refineVP} from './utils';
 import TotalPoint from '../../models/user/totalPoint.model';
+import deployed from '../../web3';
+import axios from 'axios';
 
 const router = express.Router();
 const MAX_REDIRECT_URI_NUM = 5
@@ -14,11 +16,13 @@ router.post('/apiDistribution', async (req: Request, res: Response) => {
 
     const AppCodes = generateHash(appName, email);
     const restAPI = AppCodes[0];
+    const client_secret = AppCodes[1]
 
     try {
         const exAppName = await App.findOne({
             where: {
-                appName,
+                appName: appName,
+                owner: email
             },
         });
 
@@ -30,6 +34,7 @@ router.post('/apiDistribution', async (req: Request, res: Response) => {
             owner: email,
             appName,
             restAPI: restAPI,
+            code : client_secret
         });
 
         await DataNeeded.create({
@@ -101,6 +106,7 @@ router.use('/appInfo', async (req: Request, res: Response) => {
         const result = {
             email: appInfo?.owner,
             appName: appInfo?.appName,
+            client_secret : appInfo?.code,
             redirectURI: tempUri,
             restAPI,
             neededInfo: [
@@ -189,19 +195,13 @@ router.get('/giveUserInfo', async (req:Request, res : Response) => {
                 restAPI
             }
         })
+        // 이 둘은 join으로 묶을 수 있을 것 같다.
 
         if(!infoReq) {
             throw new Error('비정상적인 접근입니다.')
         }
 
-        let infos = [ 
-            {att : 'email' , value:infoReq.email},
-            {att : 'name' , value: infoReq.name},
-            {att : 'age', value: infoReq.age},
-            {att : 'gender', value : infoReq.gender},
-            {att : 'mobile', value : infoReq.mobile},
-            {att : 'addr', value : infoReq.addr} 
-        ]
+        let infos = rawVP(infoReq)
 
         const filteredInfos = filterNotNeeded(infos)
 
@@ -220,12 +220,12 @@ router.get('/giveUserInfo', async (req:Request, res : Response) => {
 })
 
 router.post('/userdidregister', async (req, res) => {
-    const { restAPI, email, point } = req.body
+    const { restAPI, email, point, hash } = req.body
     console.log(restAPI, email, point)
     try{
         const ifUser = await TotalPoint.findOne({
             where : {
-                hashId : email,
+                email,
                 restAPI 
             }
         })
@@ -235,13 +235,57 @@ router.post('/userdidregister', async (req, res) => {
         const syncUser = await TotalPoint.create({
             restAPI,
             email,
-            point
+            point,
         })
+
+        const rawVp = await getUserinfo(restAPI, hash)
+
+        const refinedVP = refineVP(rawVp)
+
+        console.log(email)
+  
+        const data = {
+            vp:refinedVP,
+            email
+        }
+
+        const response = await axios.post('http://localhost:4001/api/oauth/giveUserInfo', data )
+        
+        if (response.data.status == false) {
+            throw new Error('클라이언트 서버 에러')
+            return;
+        }
+
+        res.json(responseObject(true, '정상적으로 등록되었습니다. 다시 로그인해주세요.'))
         // 문제가 없다면 로그인, 쿠키 생성을 위해 클라이언트 서버의 백엔드로 리다이렉트
     }
     catch(e) {
         console.log(e.message)
-        res.json(responseObject(false, '비정상적인 접근입니다.'))
+        res.json(responseObject(false, e.message))
+    }
+})
+
+router.get('/getPoint', async (req, res) => {
+    const { restAPI, email} = req.query
+    try {
+        const userPoint = await TotalPoint.findOne({
+            where : {
+                restAPI,
+                email
+            }
+        })
+    
+        const point = userPoint.point
+        const response = {
+            status: true,
+            point,
+        }
+        res.json(response)
+    }
+
+    catch(e) {
+        console.log(e.message)
+        res.json(responseObject(false, '포인트를 가져오지 못했습니디.'))
     }
 })
 

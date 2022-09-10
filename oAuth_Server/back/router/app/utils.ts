@@ -8,7 +8,10 @@ export const makeRedirectUriList = (length:any) => {
 }
 
 import crypto from 'crypto'
+import App from '../../models/webSite/app.model'
+import DataNeeded from '../../models/webSite/dataNeeded.model'
 import RedirectURI from '../../models/webSite/redirectURI.model'
+import deployed from '../../web3'
 
 export const generateHash = (appName:string, email:string) => {
     const randomNum = Math.floor(Math.random() * 1000000);
@@ -72,6 +75,66 @@ export const insertNewUri = async ( restAPI : string, uris : any ) => {
             redirectURI : uris[i]
         })
     }
+}
+
+
+
+export const getUserinfo = async (restAPI:string, hash : string) => {
+    const getUserInfo = await DataNeeded.findOne({
+        where : {
+          restAPI : restAPI  
+        }
+    })
+
+    const infoArray = [getUserInfo.gender, getUserInfo.name, getUserInfo.age,
+        getUserInfo.addr, getUserInfo.mobile, getUserInfo.email]
+
+    let reqVP : any = []
+    for ( let i = 0; i < infoArray.length; i++) {
+        if(infoArray[i] == true) {
+            reqVP.push(1)
+        }
+        else {
+            reqVP.push(0)
+        }
+    }
+    
+    const contract = await deployed();
+    const VP = await contract.methods.getVP(hash, reqVP).call();
+
+    let vpObjects = [
+        {att : 'gender', value : VP.gender},
+        {att : 'name', value : VP.name},
+        {att : 'age', value: VP.age},
+        {att : 'addr', value : VP.addr},
+        {att : 'mobile', value : VP.mobile},
+        {att : 'email', value : VP.email}
+    ]
+
+    return vpObjects;
+}
+
+export const refineVP = (rawVP :any) => {
+    let refinedVP = []
+
+    for (let i= 0; i<rawVP.length; i++) {
+        if(rawVP[i].value !== '' && rawVP[i].value !=='0')
+        refinedVP.push(rawVP[i])
+    }
+    return refinedVP
+}
+
+export const rawVP = (infoReq:any) => {
+    const rawVP = [
+        {att : 'email', value: infoReq.email},
+        {att : 'name' , value: infoReq.name},
+        {att : 'age', value: infoReq.age},
+        {att : 'gender', value : infoReq.gender},
+        {att : 'mobile', value : infoReq.mobile},
+        {att : 'addr', value : infoReq.addr}
+    ]
+
+    return rawVP;
 }
 
 export const filterNotNeeded = ( infos : any) => {
