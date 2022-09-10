@@ -1,12 +1,9 @@
 import express, { Request, Response } from 'express';
 import { Failable, Failure, Point, Result } from '../../@types/response';
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import sequelize from '../../models';
 import TotalPoint from '../../models/user/totalPoint.model';
-import App from '../../models/webSite/app.model';
-import { stringify } from 'querystring';
-import { where } from 'sequelize/types';
-import { text } from 'stream/consumers';
+
 
 const router = express.Router();
 
@@ -76,7 +73,6 @@ router.post('/usePoint', async (req: Request, res: Response) => {
     const result = compatible == JSON.stringify(payPoint);
 
     if (!result) {
-        console.log(result)
         response = {
             isError: true,
             error: '유효하지 않은 토큰입니다.',
