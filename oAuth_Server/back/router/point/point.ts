@@ -11,17 +11,22 @@ router.post('/checkPoint', async (req: Request, res: Response) => {
     const { email } = req.body;
     let response: Failable<Point[], string>;
     try {
-        const result = await sequelize.query(`select * from point_totals where email = :email`, {
+        const result = await sequelize.query(`
+        SELECT p.id, p.email, p.restAPI, a.appName, p.point 
+            FROM point_totals as p 
+            LEFT OUTER JOIN apps as a 
+                ON p.restAPI = a.restAPI 
+            WHERE email = :email`, {
             replacements: { email },
             raw: true,
             model: TotalPoint,
         });
+
         response = {
             isError: false,
             value: result,
         };
     } catch (e) {
-        console.log(e.message);
         response = {
             isError: true,
             error: e.message,
