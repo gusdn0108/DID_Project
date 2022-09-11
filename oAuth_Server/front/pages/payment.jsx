@@ -1,15 +1,10 @@
 import { Box, Center, Text, Button, Flex, Checkbox, Divider, NumberInput, NumberInputField, NumberInputStepper, NumberIncrementStepper, NumberDecrementStepper } from '@chakra-ui/react';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
+import { setCookie } from 'cookies-next';
 
 const payment = () => {
-	const [payMenu, setPayMenu] = useState([
-		{ restAPI: '1111', appName: 'A', point: '100' },
-		{ restAPI: '2222', appName: 'B', point: '200' },
-		{ restAPI: '3333', appName: 'C', point: '300' },
-		{ restAPI: '4444', appName: 'D', point: '400' },
-		{ restAPI: '5555', appName: 'E', point: '500' },
-	]);
+	const [payMenu, setPayMenu] = useState([]);
 	const [payPoint, setPayPoint] = useState({});
 	const [usePoint, setUsePoint] = useState([]);
 
@@ -22,7 +17,7 @@ const payment = () => {
 			return (
 				<Flex w='100%' mt='1rem' border='1px solid #000' key={k}>
 					<Center w='15%' h='3rem'>
-						{v.appName}
+						{v.restAPI}
 					</Center>
 					<Center w='80%' h='3rem' borderLeft='1px solid #000'>
 						<Text w='50%' h='3rem' pl='1rem' pt='0.7rem' fontSize='1rem' borderRight='1px solid #000'>
@@ -59,20 +54,27 @@ const payment = () => {
 	};
 
 	const getPoint = async () => {
-		const response = await axios.post('http://localhost:8000/Oauth/usePoint/getPoint');
+		const email = window.location.search.split('=')[1];
+		const response = await axios.post('http://localhost:8000/Oauth/point/checkPoint', { email });
+		if (!response.data.isError) {
+			setPayMenu(response.data.value);
+		} else {
+			alert('포인트 정보를 불러오는데 실패하였습니다 다시 시도하여 주십시오.');
+		}
 	};
 
 	// axios 날려서 Token 받아올 함수
-	const Pay = async () => {
-		console.log(payPoint);
-		// const response = await axios.post('http://localhost:8000/',payPoint)
-		// console.log(response.data);
+	const Pay = async (req, res) => {
+		const response = await axios.post('http://localhost:8000/Oauth/point/sendToken', { pointInfo: payPoint });
+		document.domain = 'localhost';
+		setCookie('item', response.data.value, { req, res, maxAge: 60 * 60 * 24 * 1000 });
+		opener.location.reload();
+		window.self.close();
 	};
 
 	// 최초 페이지 렌더될때 각 사이트별 포인트 정보 가져올 함수
 	useEffect(() => {
 		getPoint();
-		// setPayMenu(response.data);
 	}, []);
 
 	return (
@@ -85,6 +87,7 @@ const payment = () => {
 			<Text fontSize='1.5rem' fontWeight='semibold' textAlign='center' mt='1rem'>
 				사용할 수 있는 포인트
 			</Text>
+			<Text className='emailText'></Text>
 			<Divider mt='1rem' />
 			<Center w='100%' h='20%' mt='1rem'>
 				<Flex direction='column' w='100%'>

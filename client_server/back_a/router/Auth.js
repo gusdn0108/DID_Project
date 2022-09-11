@@ -179,17 +179,11 @@ router.post('/email', async (req, res) => {
 
 router.post('/SignUp', async (req, res) => {
     const { email, password, nickName } = req.body;
-    console.log(email, password, nickName);
 
     try {
         const exEmail = await Auth.findOne({
             where: {
                 email: email,
-            },
-        });
-        const exUserName = await Auth.findOne({
-            where: {
-                userName: nickName,
             },
         });
 
@@ -198,11 +192,12 @@ router.post('/SignUp', async (req, res) => {
         }
 
         const hash = await bcrypt.hash(password, 12);
-        console.log('asdf??', hash);
+
         await Auth.create({
             email: email,
             password: hash,
-            username: nickName,
+            name: nickName,
+            mobile: '01012345678',
             point: 50000,
         });
 
@@ -289,7 +284,9 @@ router.post('/idCheck', async (req, res) => {
                 status: 2,
             });
         }
-    } catch (e) {console.log(e.messasge)}
+    } catch (e) {
+        console.log(e.messasge);
+    }
 });
 
 router.post('/usePoint', async (req, res) => {
@@ -354,7 +351,6 @@ router.post('/updatePoint', async (req, res) => {
         },
     });
     console.log(havepoint.point);
-    console.log('123');
     try {
         if (havepoint.point >= usePoint) {
             // havepoint.point - point***
