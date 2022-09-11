@@ -3,7 +3,7 @@ import { Failable, Point } from '../../@types/response';
 import jwt from 'jsonwebtoken';
 import sequelize from '../../models';
 import TotalPoint from '../../models/user/totalPoint.model';
-
+import App from '../../models/webSite/app.model';
 
 const router = express.Router();
 
@@ -52,7 +52,7 @@ router.post('/sendToken', async (req: Request, res: Response) => {
 
 //검증 및 포인트 사용
 router.post('/usePoint', async (req: Request, res: Response) => {
-    const { token, payPoint } = req.body;
+    const { token, payPoint, email } = req.body;
     let response: Failable<string, string>;
 
     const verifyToken = (token: string) => {
@@ -68,8 +68,9 @@ router.post('/usePoint', async (req: Request, res: Response) => {
             isError: true,
             error: '토큰이 없습니다',
         };
-        throw new Error(response.error)};
-    const { parsed, compatible } = await verifyToken(token);
+        throw new Error(response.error);
+    }
+    const { parsed, compatible } = verifyToken(token);
     const result = compatible == JSON.stringify(payPoint);
 
     if (!result) {

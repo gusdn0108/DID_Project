@@ -2,6 +2,7 @@ import useRouter from 'next/router';
 import { useState, useEffect } from 'react';
 import { Button, Divider, Stack, Flex, Box, Image, Text, Center } from '@chakra-ui/react';
 import axios from 'axios';
+import { setCookie, getCookie } from 'cookies-next';
 
 const BuyItem = ({ user }) => {
   const router = useRouter;
@@ -16,6 +17,7 @@ const BuyItem = ({ user }) => {
   const [hashId, setHashId] = useState('');
   const [did, setDid] = useState(true);
   const [token, setToken] = useState(false);
+  const [tokenData, setTokenData] = useState('');
 
   const buyItem = async () => {
     const response = await axios.post('http://localhost:4000/api/auth/usePoint', { email, price: formattedPrice });
@@ -36,30 +38,38 @@ const BuyItem = ({ user }) => {
 
   // OAuth의 페이지 요청하는 함수
   const getPage = () => {
-    let child;
-
-    window.name = 'OAuth Module';
-
-    child = window.open('http://localhost:8080/payment', 'test', 'width=800, height=600');
-  };
-
-  // OAuth 페이지에 hashID 보내는 함수
-  const toPage = () => {
-    console.log(child.document);
+    document.domain = 'localhost';
+    window.open(`http://localhost:8080/payment?email=${email}`, 'childWindow', 'width=800, height=600');
   };
 
   // OAuth에 포인트를 차감 요청할 함수
   const didBuyItem = async () => {
-    const response = await axios.post('http://localhost:4000/api/buyItem/buyItem', {
-      hashId,
-      token,
+    const Cookie = getCookie('item');
+
+    const payPoint = JSON.parse(Buffer.from(Cookie.split('.')[1], 'base64').toString('utf-8')).pointInfo;
+
+    const response = await axios.post('http://localhost:8000/Oauth/point/usePoint', {
+      email,
+      token: Cookie,
+      payPoint,
     });
 
-    if (response.data.status) {
-      alert('구매 완료되었습니다');
+    if (!response.data.isError) {
+      alert(response.data.value);
     } else {
-      alert('구매에 실패하였습니다.');
+      alert(response.data.error);
     }
+  };
+
+  const showUsePoint = () => {
+    return Object.entries(tokenData).map((v, k) => {
+      return (
+        <Box key={k}>
+          <Text>{v[0]}</Text>
+          <Text>{v[1]}</Text>
+        </Box>
+      );
+    });
   };
 
   useEffect(() => {
@@ -68,16 +78,26 @@ const BuyItem = ({ user }) => {
     setFormattedPrice(router.query.formattedPrice);
 
     if (user) {
-      setUsername(user.username);
+      setUsername(user.name);
       setEmail(user.email);
       setHashId(user.hashId);
 
       getPoint();
     }
+
+    if (!token) {
+      if (getCookie('item')) {
+        setTokenData(JSON.parse(Buffer.from(getCookie('item').split('.')[1], 'base64').toString('utf-8')).pointInfo);
+        setToken(true);
+      }
+    }
   });
 
   return (
     <Box m="10">
+      <Text className="tokenText" display="none">
+        test
+      </Text>
       <Flex>
         <Image flex={1} src={imageUrl} height={700} />
         <Stack flex={1} ml="5" direction="row" p={4}>
@@ -125,7 +145,7 @@ const BuyItem = ({ user }) => {
                     /** 총 사용할 포인트가 아닌 포인트를 사용하는 사이트별로 보여줘야할까? 귀찮 */
                     <>
                       <Text textAlign="right" fontSize="1.5rem" fontWeight="bold" pt="6rem" pr="0.5rem">
-                        {user ? `사용할 총 포인트 ${point}  ` : '로그인 후 이용가능 합니다'}
+                        {user ? showUsePoint() : '로그인 후 이용가능 합니다'}
                       </Text>
                       <Button w="15rem" colorScheme="teal" variant="outline" ml="24rem" onClick={didBuyItem} mb="1rem">
                         구매

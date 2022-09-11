@@ -7,8 +7,8 @@ const sequelize = new Sequelize(config.database, config.username, config.passwor
 
 const Auth = require('./Auth')(sequelize, DataTypes);
 
-const account = require('./oauth/account')(sequelize,DataTypes)
-const userInfo = require('/oauth/userInfo')(sequelize,DataTypes)
+const account = require('./oauth/account')(sequelize, DataTypes);
+const userInfo = require('./oauth/userInfo')(sequelize, DataTypes);
 
 const db = {};
 db.sequelize = sequelize;
