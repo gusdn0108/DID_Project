@@ -14,7 +14,6 @@ const BuyItem = ({ user }) => {
   const [formattedPrice, setFormattedPrice] = useState(0);
   const [point, setPoint] = useState(0);
 
-  const [hashId, setHashId] = useState('');
   const [did, setDid] = useState(true);
   const [token, setToken] = useState(false);
   const [tokenData, setTokenData] = useState('');
@@ -62,14 +61,11 @@ const BuyItem = ({ user }) => {
   };
 
   const showUsePoint = () => {
-    return Object.entries(tokenData).map((v, k) => {
-      return (
-        <Box key={k}>
-          <Text>{v[0]}</Text>
-          <Text>{v[1]}</Text>
-        </Box>
-      );
+    let point = 0;
+    Object.entries(tokenData).forEach((v) => {
+      point += Number(v[1]);
     });
+    return point;
   };
 
   useEffect(() => {
@@ -80,7 +76,6 @@ const BuyItem = ({ user }) => {
     if (user) {
       setUsername(user.name);
       setEmail(user.email);
-      setHashId(user.hashId);
 
       getPoint();
     }
@@ -145,7 +140,7 @@ const BuyItem = ({ user }) => {
                     /** 총 사용할 포인트가 아닌 포인트를 사용하는 사이트별로 보여줘야할까? 귀찮 */
                     <>
                       <Text textAlign="right" fontSize="1.5rem" fontWeight="bold" pt="6rem" pr="0.5rem">
-                        {user ? showUsePoint() : '로그인 후 이용가능 합니다'}
+                        {user ? `총 사용 포인트 ${showUsePoint()} P` : '로그인 후 이용가능 합니다'}
                       </Text>
                       <Button w="15rem" colorScheme="teal" variant="outline" ml="24rem" onClick={didBuyItem} mb="1rem">
                         구매
