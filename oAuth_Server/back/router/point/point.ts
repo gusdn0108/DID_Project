@@ -3,25 +3,29 @@ import { Failable, Point } from '../../@types/response';
 import jwt from 'jsonwebtoken';
 import sequelize from '../../models';
 import TotalPoint from '../../models/user/totalPoint.model';
-import App from '../../models/webSite/app.model';
-
+import { Op } from 'sequelize';
 const router = express.Router();
 
 router.post('/checkPoint', async (req: Request, res: Response) => {
     const { email } = req.body;
     let response: Failable<Point[], string>;
     try {
-        const result = await sequelize.query(`select * from point_totals where email = :email`, {
+        const result = await sequelize.query(`
+        SELECT p.id, p.email, p.restAPI, a.appName, p.point 
+            FROM point_totals as p 
+            LEFT OUTER JOIN apps as a 
+                ON p.restAPI = a.restAPI 
+            WHERE email = :email`, {
             replacements: { email },
             raw: true,
             model: TotalPoint,
         });
+
         response = {
             isError: false,
             value: result,
         };
     } catch (e) {
-        console.log(e.message);
         response = {
             isError: true,
             error: e.message,
@@ -52,7 +56,7 @@ router.post('/sendToken', async (req: Request, res: Response) => {
 
 //검증 및 포인트 사용
 router.post('/usePoint', async (req: Request, res: Response) => {
-    const { token, payPoint, email } = req.body;
+    const { token, payPoint } = req.body;
     let response: Failable<string, string>;
 
     const verifyToken = (token: string) => {
@@ -84,12 +88,29 @@ router.post('/usePoint', async (req: Request, res: Response) => {
     const tx = await sequelize.transaction();
     try {
         for (let i = 0; i < payPoint.length; i++) {
-            await TotalPoint.decrement(
+            const [result] = await TotalPoint.findAll({
+                where: {
+                    [Op.and]: [
+                        {
+                            id: payPoint[i].id,
+                        },
+                        {
+                            point: {
+                                [Op.gte]: payPoint[i].point,
+                            },
+                        },
+                    ],
+                },
+            });
+            if (result === undefined) throw new Error();
+            const decrement = await TotalPoint.decrement(
                 {
                     point: payPoint[i].point,
                 },
                 {
-                    where: { id: payPoint[i].id },
+                    where: {
+                        id: payPoint[i].id,
+                    },
                     transaction: tx,
                 },
             );
@@ -103,7 +124,7 @@ router.post('/usePoint', async (req: Request, res: Response) => {
         await tx.rollback();
         response = {
             isError: true,
-            error: '입력한 포인트 사용 불가 및 롤백',
+            error: `입력한 포인트 사용 불가 및 롤백`,
         };
     }
     res.json(response);
