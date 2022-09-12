@@ -128,15 +128,11 @@ router.get('/codeAuthorize2', async (req: Request, res: Response) => {
         const decode1 = decoded_token.split('}');
         const decode2 = JSON.parse(decode1[1] + '}}').MAKE_ACCESS_TOKEN;
 
-        console.log(decode2)
-
-        
-   
         if (decode2.grant_type == 'authorization_code') {
 
-            const rawVP = getUserinfo(decode2.restAPI, decode2.hash)
+            const rawVP = await getUserinfo(decode2.restAPI, decode2.hash)
             const refinedVP = refineVP(rawVP)
-            
+
             const response = {
                 status: true,
                 VP : refinedVP,
