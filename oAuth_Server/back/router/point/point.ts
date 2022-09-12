@@ -10,16 +10,19 @@ router.post('/checkPoint', async (req: Request, res: Response) => {
     const { email } = req.body;
     let response: Failable<Point[], string>;
     try {
-        const result = await sequelize.query(`
+        const result = await sequelize.query(
+            `
         SELECT p.id, p.email, p.restAPI, a.appName, p.point 
             FROM point_totals as p 
             LEFT OUTER JOIN apps as a 
                 ON p.restAPI = a.restAPI 
-            WHERE email = :email`, {
-            replacements: { email },
-            raw: true,
-            model: TotalPoint,
-        });
+            WHERE email = :email`,
+            {
+                replacements: { email },
+                raw: true,
+                model: TotalPoint,
+            },
+        );
 
         response = {
             isError: false,
@@ -57,6 +60,7 @@ router.post('/sendToken', async (req: Request, res: Response) => {
 //검증 및 포인트 사용
 router.post('/usePoint', async (req: Request, res: Response) => {
     const { token, payPoint } = req.body;
+
     let response: Failable<string, string>;
 
     const verifyToken = (token: string) => {
@@ -85,18 +89,20 @@ router.post('/usePoint', async (req: Request, res: Response) => {
         throw new Error(response.error);
     }
 
+    const usePoint = Object.entries(payPoint);
+
     const tx = await sequelize.transaction();
     try {
-        for (let i = 0; i < payPoint.length; i++) {
+        for (let i = 0; i < usePoint.length; i++) {
             const [result] = await TotalPoint.findAll({
                 where: {
                     [Op.and]: [
                         {
-                            id: payPoint[i].id,
+                            id: usePoint[i][0],
                         },
                         {
                             point: {
-                                [Op.gte]: payPoint[i].point,
+                                [Op.gte]: usePoint[i][1],
                             },
                         },
                     ],
@@ -105,11 +111,11 @@ router.post('/usePoint', async (req: Request, res: Response) => {
             if (result === undefined) throw new Error();
             const decrement = await TotalPoint.decrement(
                 {
-                    point: payPoint[i].point,
+                    point: Number(usePoint[i][1]),
                 },
                 {
                     where: {
-                        id: payPoint[i].id,
+                        id: usePoint[i][0],
                     },
                     transaction: tx,
                 },
