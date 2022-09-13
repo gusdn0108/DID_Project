@@ -176,7 +176,7 @@ const Mypage = ({ appList, hashId, email }) => {
   const deleteUser = async (req, res) => {
     const response = await axios.post(
       "http://localhost:8000/oauth/user/deleteUser",
-      { hashId }
+      { hashId, email }
     );
 
     if (response.data.status) {

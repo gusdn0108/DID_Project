@@ -4,6 +4,7 @@ import deployed from '../../web3';
 import VerifyId from '../../models/user/verifyId.model';
 import sequelize from '../../models';
 import { hash } from 'bcrypt';
+import { responseObject } from '../app/utils';
 
 
 const router = express.Router();
@@ -197,10 +198,10 @@ router.post('/deleteUser2', async (req: Request, res: Response) => {
 
 
 router.post('/deleteUser', async (req: Request, res: Response) => {
-    const { hashId, cemail } = req.body;
+    const { hashId, email } = req.body;
 
     try {
-        await VerifyId.destroy({ where: { email: cemail } });
+        await VerifyId.destroy({ where: { email: email } });
 
         const contract = await deployed();
 
@@ -213,16 +214,10 @@ router.post('/deleteUser', async (req: Request, res: Response) => {
 
         if (checkUser) throw new Error('회원 탈퇴 처리 실패');
 
-        res.json({
-            status: true,
-            msg: '회원탈퇴가 완료되었습니다.',
-        });
+        res.json(responseObject(true, '회원 탈퇴가 완료되었습니다.'));
     } catch (e) {
         if (e instanceof Error) console.log(e.message);
-        res.json({
-            status: false,
-            msg: '회원탈퇴를 실패하였습니다.',
-        });
+        res.json(responseObject(false, '회원 탈퇴에 실패했습니다.'));
     }
 });
 

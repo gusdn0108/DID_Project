@@ -1,10 +1,10 @@
 const express = require('express');
 const nodeMailer = require('nodemailer');
-const bcrypt = require('bcrypt');
+const crypto = require('crypto');
 const axios = require('axios');
 const jwt = require('jsonwebtoken');
 const router = express.Router();
-const { Auth, sequelize } = require('../models');
+const { Auth, sequelize, UserInfo, Account } = require('../models');
 const { Op } = require('sequelize');
 
 const generateRandom = (min, max) => {
@@ -19,16 +19,22 @@ const generateRandom = (min, max) => {
 };
 
 router.post('/email', async (req, res) => {
-    const { email, nickName } = req.body;
+    const { email, name } = req.body;
 
     try {
-        const exEmail = await Auth.findOne({
+        const exEmail = await Account.findOne({
             where: {
                 email: email,
             },
         });
 
-        if (exEmail) {
+        const exLocalEmail = await Auth.findOne({
+            where: {
+                email: email,
+            },
+        });
+
+        if (exEmail || exLocalEmail) {
             return res.status(403).send('이미 사용중인 메일입니다 ');
         }
     } catch (e) {
@@ -178,31 +184,33 @@ router.post('/email', async (req, res) => {
 });
 
 router.post('/SignUp', async (req, res) => {
-    const { email, password, nickName } = req.body;
-    console.log(email, password, nickName);
+    const { email, password, name, age, phone } = req.body;
 
     try {
-        const exEmail = await Auth.findOne({
+        const exDID = await Account.findOne({
             where: {
                 email: email,
             },
         });
-        const exUserName = await Auth.findOne({
+        const exLocal = await Auth.findOne({
             where: {
-                userName: nickName,
+                email,
             },
         });
 
-        if (exEmail) {
+        if (exDID || exLocal) {
             return res.status(403).send('이미 사용중인 메일입니다 ');
         }
 
-        const hash = await bcrypt.hash(password, 12);
-        console.log('asdf??', hash);
+        const userHash = email + password;
+        const hash = crypto.createHash('sha256').update(userHash).digest('base64');
+
         await Auth.create({
             email: email,
             password: hash,
-            username: nickName,
+            name,
+            age,
+            mobile: phone,
             point: 50000,
         });
 
@@ -211,6 +219,8 @@ router.post('/SignUp', async (req, res) => {
         });
     } catch (error) {
         console.log(error);
+        const response = { status: false, msg: '서버 에러, 관리자에게 문의해주세요.' };
+        res.json(response);
     }
 });
 
@@ -380,7 +390,6 @@ router.post('/updatePoint', async (req, res) => {
         });
     }
 });
-
 
 router.post('/updateUser', async (req, res) => {
     const { email, password, oldPassword } = req.body;

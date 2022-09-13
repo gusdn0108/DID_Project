@@ -221,7 +221,7 @@ router.get('/giveUserInfo', async (req:Request, res : Response) => {
 
 router.post('/userdidregister', async (req, res) => {
     const { restAPI, email, point, hash } = req.body
-    console.log(restAPI, email, point)
+
     try{
         const ifUser = await TotalPoint.findOne({
             where : {
@@ -239,8 +239,6 @@ router.post('/userdidregister', async (req, res) => {
         })
 
         const rawVp = await getUserinfo(restAPI, hash)
-
-        console.log(rawVp)
 
         const refinedVP = refineVP(rawVp)
 

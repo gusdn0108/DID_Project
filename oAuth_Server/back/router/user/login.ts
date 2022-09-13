@@ -10,8 +10,9 @@ import TotalPoint from '../../models/user/totalPoint.model';
 import { frontend } from './utils';
 import { ifError } from 'assert';
 import RedirectURI from '../../models/webSite/redirectURI.model';
-import { getUserinfo, infoStringToBool, refineVP, responseObject } from '../app/utils';
+import { boolToNum, getUserinfo, infoStringToBool, makeRawVP, refineVP, responseObject } from '../app/utils';
 import App from '../../models/webSite/app.model';
+import { info } from 'console';
 
 const router = express.Router();
 
@@ -63,7 +64,6 @@ router.post('/authorize', async (req: Request, res: Response) => {
         if (result) {
             // redirecturi가 여기 오면 됨
             // res.header('Access_control_allow_origin', 'http://localhost:3001');
-            console.log(hash)
             // res.header('Content-Type', 'application/x-www-form-urlencoded');
             res.redirect(`${reURL}?email=${email}&hash1=${hash}`);
         }
@@ -78,9 +78,6 @@ router.post('/authorize', async (req: Request, res: Response) => {
 router.post('/codeAuthorize', async (req: Request, res: Response)=> {
     // accessToken을 검증해줘야 한다.
     const MAKE_ACCESS_TOKEN = req.body;
-    console.log('--------')
-       console.log(req.body)
-       console.log('------------')
     
     const EXPIRES_IN = 43199;
     try {
@@ -109,8 +106,6 @@ router.post('/codeAuthorize', async (req: Request, res: Response)=> {
             'asdf',
         )
 
-        console.log(Buffer.from(ACCESS_TOKEN, 'base64').toString('utf-8'));
-
         const response = {
             status: true,
             ACCESS_TOKEN,
@@ -130,57 +125,28 @@ router.get('/codeAuthorize2', async (req: Request, res: Response) => {
     try {
         const decoded_token = Buffer.from(bearer_token, 'base64').toString('utf-8');
 
-        //console.log(decoded_token)
-
         const decode1 = decoded_token.split('}');
         const decode2 = JSON.parse(decode1[1] + '}}').MAKE_ACCESS_TOKEN;
-
-        //console.log(decode2)
 
         if (decode2.grant_type == 'authorization_code') {
 
             const getUserInfo = await DataNeeded.findOne({
                 where : {
                   restAPI : decode2.restAPI,
-
                 }
             })
         
             const infoArray = [getUserInfo.gender, getUserInfo.name, getUserInfo.age,
                 getUserInfo.addr, getUserInfo.mobile, getUserInfo.email]
         
-            let reqVP : any = []
-            for ( let i = 0; i < infoArray.length; i++) {
-                if(infoArray[i] == true) {
-                    reqVP.push(1)
-                }
-                else {
-                    reqVP.push(0)
-                }
-            }
-
-            console.log(decode2.hash)
+            const reqVP = boolToNum(infoArray)
             
             const contract = await deployed();
-            const VP = await contract.methods.getVP(decode2.hash.trim(), reqVP).call();
+            const VP = await contract.methods.getVP(decode2.hash, reqVP).call();
 
-            let rawVP = [
-                {att : 'gender', value : VP.gender},
-                {att : 'name', value : VP.name},
-                {att : 'age', value: VP.age},
-                {att : 'addr', value : VP.addr},
-                {att : 'mobile', value : VP.mobile},
-                {att : 'email', value : VP.email}
-            ]
-
-            let refinedVP = []
-
-            for (let i= 0; i<rawVP.length; i++) {
-                if(rawVP[i].value !== '' && rawVP[i].value !=='0')
-                refinedVP.push(rawVP[i])
-            }
-
-            console.log(refinedVP)
+            const rawVP = makeRawVP(VP)
+            
+            const refinedVP = refineVP(rawVP)
 
             const response = {
                 status: true,
@@ -291,38 +257,39 @@ router.get('/codeAuthorize2', async (req: Request, res: Response) => {
 
 router.post('/localAuthorize', async (req: Request, res: Response) => {
     const { email, password } = req.body;
-    const userhash = email + password;
-    const hash = crypto.createHash('sha256').update(userhash).digest('base64');
+    
+    try {
+        const userhash = email + password;
+        const hash = crypto.createHash('sha256').update(userhash).digest('base64');
 
-        const dbUser = await VerifyId.findOne({
-            where:{
-                email: email,
-            },
-        });
+            const dbUser = await VerifyId.findOne({
+                where:{
+                    email: email,
+                },
+            });
 
-    if(!dbUser) throw new Error('id/pw를 확인해주세요')
+        if(!dbUser) throw new Error('id/pw를 확인해주세요')
 
-    const contract = await deployed();
-    const result = await contract.methods.getUser(hash).call();
+        const contract = await deployed();
+        const result = await contract.methods.getUser(hash).call();
 
-    if (result) {
-        let token = jwt.sign(
-            {
-                email: email,
-                hashId: hash,
-            },
-            process.env.SECRET_KEY as string,
-        );
-        res.cookie('user', token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
-        res.json({
-            status: true,
-            token: token,
-        });
-    } else {
-        res.json({
-            status: false,
-            msg: '일치하는 아이디가 없습니다',
-        });
+        if (result) {
+            let token = jwt.sign(
+                {
+                    email: email,
+                    hashId: hash,
+                },
+                process.env.SECRET_KEY as string,
+            );
+            res.cookie('user', token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
+            res.json({
+                status: true,
+                token: token,
+            });
+        }
+    }
+    catch(e) {
+        responseObject(false, e.message)
     }
 });
 
