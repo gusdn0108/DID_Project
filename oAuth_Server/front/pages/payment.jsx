@@ -17,18 +17,18 @@ const payment = () => {
 			return (
 				<Flex w='100%' mt='1rem' border='1px solid #000' key={k}>
 					<Center w='15%' h='3rem'>
-						{v.restAPI}
+						{v.appName}
 					</Center>
 					<Center w='80%' h='3rem' borderLeft='1px solid #000'>
 						<Text w='50%' h='3rem' pl='1rem' pt='0.7rem' fontSize='1rem' borderRight='1px solid #000'>
 							보유 Point : {v.point}
 						</Text>
 						<Text pl='1rem'>사용 Point :</Text>
-						<NumberInput w='25%' min={0} max={v.point} ml='1rem' onChange={(valueAsNumber) => usedPay(valueAsNumber, v.restAPI)}>
+						<NumberInput w='25%' min={0} max={v.point} ml='1rem' onChange={(valueAsNumber) => usedPay(valueAsNumber, v.id)}>
 							<NumberInputField />
 						</NumberInput>
 					</Center>
-					<Checkbox w='8%' colorScheme='green' onChange={() => checkedBox(v.restAPI)}>
+					<Checkbox w='8%' colorScheme='green' onChange={() => checkedBox(v.id)}>
 						사용
 					</Checkbox>
 				</Flex>
