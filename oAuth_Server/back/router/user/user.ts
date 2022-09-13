@@ -5,6 +5,10 @@ import VerifyId from '../../models/user/verifyId.model';
 import sequelize from '../../models';
 import { hash } from 'bcrypt';
 import { responseObject } from '../app/utils';
+import TotalPoint from '../../models/user/totalPoint.model';
+import App from '../../models/webSite/app.model';
+import DataNeeded from '../../models/webSite/dataNeeded.model';
+import RedirectURI from '../../models/webSite/redirectURI.model';
 
 
 const router = express.Router();
@@ -185,16 +189,6 @@ router.post('/deleteUser2', async (req: Request, res: Response) => {
     });
 
 })
-// } catch (e) {
-//     if (e instanceof Error) console.log(e.message);
-//     res.json({
-//         status: false,
-//         msg: '회원탈퇴를 실패하였습니다.',
-//     });
-// }
-
-
-// });
 
 
 router.post('/deleteUser', async (req: Request, res: Response) => {
@@ -213,6 +207,32 @@ router.post('/deleteUser', async (req: Request, res: Response) => {
         const checkUser = await contract.methods.isRegistered(hashId).call();
 
         if (checkUser) throw new Error('회원 탈퇴 처리 실패');
+
+        await TotalPoint.destroy({where : {email:email}})
+
+        const deleteApp = await App.findAll({
+            where : { owner : email }
+        })
+
+        for(let i = 0; i<deleteApp.length; i++) {
+            await DataNeeded.destroy({
+                where : {
+                    restAPI:deleteApp[i].restAPI
+                }
+            })
+
+            await RedirectURI.destroy({
+                where : {
+                    restAPI:deleteApp[i].restAPI
+                }
+            }) 
+        }
+
+        await App.destroy({
+            where : {
+                owner : email
+            }
+        })
 
         res.json(responseObject(true, '회원 탈퇴가 완료되었습니다.'));
     } catch (e) {
