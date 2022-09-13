@@ -63,8 +63,9 @@ router.post('/authorize', async (req: Request, res: Response) => {
         if (result) {
             // redirecturi가 여기 오면 됨
             // res.header('Access_control_allow_origin', 'http://localhost:3001');
-            res.header('Content-Type', 'application/x-www-form-urlencoded');
-            res.redirect(`${reURL}?email=${email}&hash=${hash}`);
+            console.log(hash)
+            // res.header('Content-Type', 'application/x-www-form-urlencoded');
+            res.redirect(`${reURL}?email=${email}&hash1=${hash}`);
         }
         
     }
@@ -77,6 +78,10 @@ router.post('/authorize', async (req: Request, res: Response) => {
 router.post('/codeAuthorize', async (req: Request, res: Response)=> {
     // accessToken을 검증해줘야 한다.
     const MAKE_ACCESS_TOKEN = req.body;
+    console.log('--------')
+       console.log(req.body)
+       console.log('------------')
+    
     const EXPIRES_IN = 43199;
     try {
 
@@ -102,12 +107,15 @@ router.post('/codeAuthorize', async (req: Request, res: Response)=> {
                 exp: EXPIRES_IN,
             },
             'asdf',
-        );
+        )
+
+        console.log(Buffer.from(ACCESS_TOKEN, 'base64').toString('utf-8'));
 
         const response = {
             status: true,
             ACCESS_TOKEN,
         };
+
         res.json(response);
     } catch (e: any) {
         console.log(e.message);
@@ -120,18 +128,59 @@ router.get('/codeAuthorize2', async (req: Request, res: Response) => {
     const bearer_req: string[] = bearer_token.split(' ');
 
     try {
-        if(bearer_req[0] !== 'Bearer') {
-            throw new Error ('잘못된 토큰 입니다.')
-        }
-        const decoded_token = Buffer.from(bearer_req[1], 'base64').toString('utf-8');
+        const decoded_token = Buffer.from(bearer_token, 'base64').toString('utf-8');
+
+        //console.log(decoded_token)
 
         const decode1 = decoded_token.split('}');
         const decode2 = JSON.parse(decode1[1] + '}}').MAKE_ACCESS_TOKEN;
 
+        //console.log(decode2)
+
         if (decode2.grant_type == 'authorization_code') {
 
-            const rawVP = await getUserinfo(decode2.restAPI, decode2.hash)
-            const refinedVP = refineVP(rawVP)
+            const getUserInfo = await DataNeeded.findOne({
+                where : {
+                  restAPI : decode2.restAPI,
+
+                }
+            })
+        
+            const infoArray = [getUserInfo.gender, getUserInfo.name, getUserInfo.age,
+                getUserInfo.addr, getUserInfo.mobile, getUserInfo.email]
+        
+            let reqVP : any = []
+            for ( let i = 0; i < infoArray.length; i++) {
+                if(infoArray[i] == true) {
+                    reqVP.push(1)
+                }
+                else {
+                    reqVP.push(0)
+                }
+            }
+
+            console.log(decode2.hash)
+            
+            const contract = await deployed();
+            const VP = await contract.methods.getVP(decode2.hash.trim(), reqVP).call();
+
+            let rawVP = [
+                {att : 'gender', value : VP.gender},
+                {att : 'name', value : VP.name},
+                {att : 'age', value: VP.age},
+                {att : 'addr', value : VP.addr},
+                {att : 'mobile', value : VP.mobile},
+                {att : 'email', value : VP.email}
+            ]
+
+            let refinedVP = []
+
+            for (let i= 0; i<rawVP.length; i++) {
+                if(rawVP[i].value !== '' && rawVP[i].value !=='0')
+                refinedVP.push(rawVP[i])
+            }
+
+            console.log(refinedVP)
 
             const response = {
                 status: true,

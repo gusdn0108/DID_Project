@@ -5,8 +5,8 @@ const config = require(__dirname + '/../config/config.json')[env];
 
 const sequelize = new Sequelize(config.database, config.username, config.password, config);
 
-const Account = require('./models/Account')(sequelize, DataTypes);
-const UserInfo = require('./models/UserInfo')(sequelize, DataTypes);
+const Account = require('./models/account')(sequelize, DataTypes);
+const UserInfo = require('./models/userInfo')(sequelize, DataTypes);
 
 const auth = require('./Auth')(sequelize, DataTypes);
 
