@@ -8,6 +8,8 @@ const payment = () => {
 	const [payPoint, setPayPoint] = useState({});
 	const [usePoint, setUsePoint] = useState([]);
 
+	const [point, setPoint] = useState(0);
+
 	const usedPay = (v, i) => {
 		setPayPoint({ ...payPoint, [i]: v });
 	};
@@ -37,11 +39,11 @@ const payment = () => {
 	};
 
 	const totalPayPrice = () => {
-		let point = 0;
+		let usedPoint = 0;
 		usePoint.map((v) => {
-			if (payPoint[v] !== undefined) point += Number(payPoint[v]);
+			if (payPoint[v] !== undefined) usedPoint += Number(payPoint[v]);
 		});
-		return point;
+		return usedPoint;
 	};
 
 	const checkedBox = (i) => {
@@ -54,7 +56,7 @@ const payment = () => {
 	};
 
 	const getPoint = async () => {
-		const email = window.location.search.split('=')[1];
+		const email = window.location.search.split('&')[0].split('=')[1];
 		const response = await axios.post('http://localhost:8000/Oauth/point/checkPoint', { email });
 		if (!response.data.isError) {
 			setPayMenu(response.data.value);
@@ -63,7 +65,6 @@ const payment = () => {
 		}
 	};
 
-	// axios 날려서 Token 받아올 함수
 	const Pay = async (req, res) => {
 		const response = await axios.post('http://localhost:8000/Oauth/point/sendToken', { pointInfo: payPoint });
 		document.domain = 'localhost';
@@ -72,8 +73,8 @@ const payment = () => {
 		window.self.close();
 	};
 
-	// 최초 페이지 렌더될때 각 사이트별 포인트 정보 가져올 함수
 	useEffect(() => {
+		setPoint(window.location.search.split('&')[1].split('=')[1]);
 		getPoint();
 	}, []);
 
@@ -84,10 +85,9 @@ const payment = () => {
 					OAuth 결제 모듈
 				</Text>
 			</Center>
-			<Text fontSize='1.5rem' fontWeight='semibold' textAlign='center' mt='1rem'>
-				사용할 수 있는 포인트
+			<Text className='pointText' fontSize='1.5rem' fontWeight='semibold' textAlign='center' mt='1rem'>
+				결제할 포인트 : {point} P
 			</Text>
-			<Text className='emailText'></Text>
 			<Divider mt='1rem' />
 			<Center w='100%' h='20%' mt='1rem'>
 				<Flex direction='column' w='100%'>
@@ -99,13 +99,19 @@ const payment = () => {
 				<Text fontSize='1.5rem'>구매하기</Text>
 			</Center>
 			<Center w='100%' h='7rem'>
-				<Center>
-					<Text fontSize='1.2rem'>결제 Point : {totalPayPrice()}</Text>
-					<Button ml='2rem' onClick={Pay}>
-						적용하기
-					</Button>
-				</Center>
-				{/* </Box> */}
+				<Flex direction='column'>
+					<Center w='100%'>
+						<Text fontSize='1.2rem'>입력 Point : {totalPayPrice()}</Text>
+						<Button ml='2rem' onClick={Pay} disabled={totalPayPrice() === Number(point) ? false : true}>
+							적용하기
+						</Button>
+					</Center>
+					<Center w='100%'>
+						<Text mt='0.2rem' color={totalPayPrice() === Number(point) ? null : 'red'}>
+							{totalPayPrice() === 0 ? null : totalPayPrice() === Number(point) ? null : '상품의 가격과 사용할 포인트를 맞춰 주십시오.'}
+						</Text>
+					</Center>
+				</Flex>
 			</Center>
 		</Box>
 	);

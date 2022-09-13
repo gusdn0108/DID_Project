@@ -16,7 +16,6 @@ const LoginModal = ({ loginIsOpen, loginOnClose }) => {
     if (response.data.status) {
       const payload = response.data.token.split('.')[1];
       setCookie('user', payload, { req, res, maxAge: 60 * 60 * 24 * 1000 });
-
       window.location.replace('/');
     } else {
       alert(response.data.msg);
