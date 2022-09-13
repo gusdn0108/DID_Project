@@ -22,9 +22,13 @@ router.get('/DIDLogin', async (req, res) => {
 });
 
 router.get('/getCode', async (req, res) => {
-    const { email, hash } = req.query;
+    const { email, hash1 } = req.query;
     const url = 'http://localhost:8000/oauth/login/codeAuthorize';
 
+    const hash = hash1.replace(/ /g, '+');
+    console.log('-----------');
+    console.log(hash);
+    console.log('--------------');
     const Data = {
         grant_type: 'authorization_code',
         restAPI: Otp.clientId,
@@ -48,12 +52,14 @@ router.get('/getCode', async (req, res) => {
         const url = 'http://localhost:8000/oauth/login/codeAuthorize2';
         const Header = {
             headers: {
-                Authorization: `Bearer ${access_token}`,
+                Authorization: access_token,
             },
         };
 
         const response = await axios.get(url, Header);
         const { VP, hash } = response.data;
+
+        console.log(VP);
 
         const vpCookie = filterNull(VP);
 
