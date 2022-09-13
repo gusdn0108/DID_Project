@@ -2,24 +2,24 @@ import useRouter from 'next/router';
 import { useState, useEffect } from 'react';
 import { Button, Divider, Stack, Flex, Box, Image, Text, Center } from '@chakra-ui/react';
 import axios from 'axios';
-import { setCookie, getCookie } from 'cookies-next';
+import { getCookie, deleteCookie } from 'cookies-next';
 
 const BuyItem = ({ user }) => {
   const router = useRouter;
 
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [title, setTitle] = useState('');
   const [formattedPrice, setFormattedPrice] = useState(0);
+
+  const [login, setLogin] = useState(false);
   const [point, setPoint] = useState(0);
 
-  const [did, setDid] = useState(true);
+  const [did, setDid] = useState(false);
   const [token, setToken] = useState(false);
   const [tokenData, setTokenData] = useState('');
 
   const buyItem = async () => {
-    const response = await axios.post('http://localhost:4000/api/auth/usePoint', { email, price: formattedPrice });
+    const response = await axios.post('http://localhost:4000/api/auth/usePoint', { email: user.email, price: formattedPrice });
     if (response.data.status) {
       getPoint();
       alert('구매 완료되었습니다');
@@ -38,23 +38,24 @@ const BuyItem = ({ user }) => {
   // OAuth의 페이지 요청하는 함수
   const getPage = () => {
     document.domain = 'localhost';
-    window.open(`http://localhost:8080/payment?email=${email}`, 'childWindow', 'width=800, height=600');
+    window.open(`http://localhost:8080/payment?email=${user.email}&point=${formattedPrice}`, '', 'width=800, height=600');
   };
 
   // OAuth에 포인트를 차감 요청할 함수
-  const didBuyItem = async () => {
+  const didBuyItem = async (req, res) => {
     const Cookie = getCookie('item');
 
     const payPoint = JSON.parse(Buffer.from(Cookie.split('.')[1], 'base64').toString('utf-8')).pointInfo;
 
     const response = await axios.post('http://localhost:8000/Oauth/point/usePoint', {
-      email,
       token: Cookie,
       payPoint,
     });
 
     if (!response.data.isError) {
       alert(response.data.value);
+      deleteCookie('item', { req, res, maxAge: 60 * 60 * 24 * 1000 });
+      window.location.reload();
     } else {
       alert(response.data.error);
     }
@@ -74,10 +75,9 @@ const BuyItem = ({ user }) => {
     setFormattedPrice(router.query.formattedPrice);
 
     if (user) {
-      setUsername(user.name);
-      setEmail(user.email);
-
       getPoint();
+      setLogin(true);
+      setDid(true);
     }
 
     if (!token) {
@@ -109,26 +109,34 @@ const BuyItem = ({ user }) => {
                   판매가 : {formattedPrice} P
                 </Text>
               </Center>
-              <Center pt="0.5rem">
-                <Text fontSize="1.5rem" fontWeight="bold" pb="1rem">
-                  Kyungli Mall 포인트 사용
-                </Text>
-              </Center>
-              <Text fontSize="1.5rem" fontWeight="bold" pl={user ? '19rem' : '24rem'} pt="5rem">
-                {user ? `${username}님 보유 포인트 : ${point} P` : '로그인 후 이용가능 합니다'}
-              </Text>
-              <Button w="15rem" colorScheme="teal" variant="outline" ml="24rem" mt="0.5rem" mb="1rem" onClick={buyItem} disabled={formattedPrice <= point ? false : true}>
-                구매
-              </Button>
-              {user ? (
-                formattedPrice >= point ? (
-                  <Center mb="0.5rem">
-                    <Text color="red" fontSize="1rem">
-                      보유 포인트가 부족합니다.
+              {did ? (
+                <Center>
+                  <Text fontSize="1.5rem" fontWeight="bold" pl="20rem" pt="11rem" pb="1rem">
+                    로컬 회원만 이용 가능합니다.
+                  </Text>
+                </Center>
+              ) : (
+                <>
+                  <Center pt="0.5rem">
+                    <Text fontSize="1.5rem" fontWeight="bold" pb="1rem">
+                      Kyungli Mall 포인트 사용
                     </Text>
                   </Center>
-                ) : null
-              ) : null}
+                  <Text fontSize="1.5rem" fontWeight="bold" textAlign="right" pt="5rem">
+                    {login ? `${user.name}님 보유 포인트 : ${point} P` : null}
+                  </Text>
+                  <Button w="15rem" colorScheme="teal" variant="outline" ml="24rem" mt="0.5rem" mb="1rem" onClick={buyItem} disabled={formattedPrice <= point ? false : true}>
+                    구매
+                  </Button>
+                  {login && formattedPrice >= point ? (
+                    <Center mb="0.5rem">
+                      <Text color="red" fontSize="1rem">
+                        보유 포인트가 부족합니다.
+                      </Text>
+                    </Center>
+                  ) : null}
+                </>
+              )}
             </Box>
             <Box w="40rem" flex={2} pl="0.5rem" pt="1rem" borderBottom="1px solid rgba(0, 0, 0, 0.1);">
               {did ? (
@@ -137,7 +145,6 @@ const BuyItem = ({ user }) => {
                     다른 사이트 포인트 사용
                   </Text>
                   {token ? (
-                    /** 총 사용할 포인트가 아닌 포인트를 사용하는 사이트별로 보여줘야할까? 귀찮 */
                     <>
                       <Text textAlign="right" fontSize="1.5rem" fontWeight="bold" pt="6rem" pr="0.5rem">
                         {user ? `총 사용 포인트 ${showUsePoint()} P` : '로그인 후 이용가능 합니다'}
@@ -149,7 +156,7 @@ const BuyItem = ({ user }) => {
                   ) : (
                     <>
                       <Text textAlign="right" fontSize="1.5rem" fontWeight="bold" pt="6rem" pr="0.5rem">
-                        {user ? `${username}님 포인트 조회하기 ` : '로그인 후 이용가능 합니다'}
+                        {user ? `${user.name}님 포인트 조회하기 ` : '로그인 후 이용가능 합니다'}
                       </Text>
                       <Button w="15rem" colorScheme="teal" variant="outline" ml="24rem" onClick={getPage} mb="1rem" disabled={user ? false : true}>
                         조회
