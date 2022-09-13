@@ -27,7 +27,7 @@ router.post('/apiDistribution', async (req: Request, res: Response) => {
         });
 
         if (exAppName) {
-            res.json(responseObject(false, '이미 사용중인 이름입니다.'));
+            throw new Error('이미 등록된 이메일입니다.')
         }
 
         await App.create({
@@ -55,7 +55,7 @@ router.post('/apiDistribution', async (req: Request, res: Response) => {
         });
     } catch (e) {
         if (e instanceof Error) console.log(e.message);
-        res.json(responseObject(false, '등록 실패'));
+        res.json(responseObject(false,  e.message));
     }
 });
 
@@ -241,8 +241,6 @@ router.post('/userdidregister', async (req, res) => {
         const rawVp = await getUserinfo(restAPI, hash)
 
         const refinedVP = refineVP(rawVp)
-
-        console.log(email)
   
         const data = {
             vp:refinedVP,
@@ -253,7 +251,6 @@ router.post('/userdidregister', async (req, res) => {
         
         if (response.data.status == false) {
             throw new Error('클라이언트 서버 에러')
-            return;
         }
 
         res.json(responseObject(true, '정상적으로 등록되었습니다. 다시 로그인해주세요.'))

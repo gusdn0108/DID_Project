@@ -114,7 +114,7 @@ router.post('/codeAuthorize', async (req: Request, res: Response)=> {
         res.json(response);
     } catch (e: any) {
         console.log(e.message);
-        res.json(responseObject(false, 'ACCESSTOKEN 생성 에러'))
+        res.json(responseObject(false, e.message))
     }
 })
 

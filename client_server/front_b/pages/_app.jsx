@@ -18,7 +18,7 @@ function MyApp({ Component, pageProps }) {
   const userCookie = getCookie("loginInfo");
   let userName = "";
   let userEmail = "";
-  let restAPI = "db4b4f6666bb7ad62368fe39fa68b94";
+  // let restAPI = "db4b4f6666bb7ad62368fe39fa68b94";
   // 이것도 상수면 영 별로다.. 그냥 db에 애만 따로 저장할까..
 
   if (userCookie) {
@@ -81,8 +81,12 @@ function MyApp({ Component, pageProps }) {
       });
       setPoint(response.data.point);
     } else if (!userCookie && accessToken) {
+      // const response = await axios.get(
+      //   `${oauthBack}/oauth/app/getPoint?email=${didEmail}&restAPI=${restAPI}`
+      // );
+      // setPoint(response.data.point);
       const response = await axios.get(
-        `${oauthBack}/oauth/app/getPoint?email=${didEmail}&restAPI=${restAPI}`
+        `${backend}/api/oauth/getoauthPoint?email=${didEmail}`
       );
       setPoint(response.data.point);
     }
