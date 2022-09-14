@@ -10,6 +10,7 @@ const JoinModal = ({ joinIsOpen, joinOnClose }) => {
   const [password, setPassword] = useState('');
   const [passwordCheck, setPasswordCheck] = useState('');
   const [nickname, setNickname] = useState('');
+  const [mobile, setMobile] = useState('');
 
   const [emailAuth, setEmailAuth] = useState(false);
   const [emailNum, setEmailNum] = useState([]);
@@ -114,6 +115,7 @@ const JoinModal = ({ joinIsOpen, joinOnClose }) => {
     setPassword('');
     setPasswordCheck('');
     setNickname('');
+    setMobile('');
 
     setEmailAuth(false);
     setEmailNum([]);
@@ -128,6 +130,7 @@ const JoinModal = ({ joinIsOpen, joinOnClose }) => {
       email: email + domain,
       password: password,
       userName: nickname,
+      mobile,
     };
 
     const response = await axios.post('http://localhost:4002/api/auth/SignUp', body);
@@ -140,6 +143,7 @@ const JoinModal = ({ joinIsOpen, joinOnClose }) => {
       setPassword('');
       setPasswordCheck('');
       setNickname('');
+      setMobile('');
 
       setEmailAuth(false);
       setEmailNum([]);
@@ -182,7 +186,7 @@ const JoinModal = ({ joinIsOpen, joinOnClose }) => {
                 <option value="@gmail.com">@gmail.com</option>
               </Select>
               {!emailAuth ? (
-                <Button w={120} ml={2} onClick={auth} disabled={emailCheck ? false : true}>
+                <Button w={120} ml={2} onClick={auth} disabled={emailCheck === 'true' ? false : true}>
                   이메일 인증
                 </Button>
               ) : (
@@ -249,6 +253,13 @@ const JoinModal = ({ joinIsOpen, joinOnClose }) => {
               placeholder="Nickname"
               onChange={(e) => {
                 onChange(e, 'Nickname');
+              }}
+            />
+            <Input
+              variant="flushed"
+              placeholder="Mobile Number"
+              onChange={(e) => {
+                setMobile(e.target.value);
               }}
             />
           </ModalBody>

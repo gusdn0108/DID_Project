@@ -69,7 +69,7 @@ router.post('/email', async (req, res) => {
 
 /** mobile 받아와야함 */
 router.post('/SignUp', async (req, res) => {
-    const { email, password } = req.body;
+    const { email, password, mobile } = req.body;
 
     try {
         const userHash = email + password;
@@ -78,7 +78,7 @@ router.post('/SignUp', async (req, res) => {
         await Auth.create({
             email: email,
             userHash: hash,
-            mobile: '01012345678',
+            mobile,
             point: 50000,
         });
 

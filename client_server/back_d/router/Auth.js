@@ -67,9 +67,8 @@ router.post('/email', async (req, res) => {
     });
 });
 
-/** mobile 받아와야함 */
 router.post('/SignUp', async (req, res) => {
-    const { email, password, nickName } = req.body;
+    const { email, password, nickName, mobile, age } = req.body;
 
     try {
         const userHash = email + password;
@@ -79,8 +78,8 @@ router.post('/SignUp', async (req, res) => {
             email: email,
             userHash: hash,
             name: nickName,
-            age: 12,
-            mobile: '01012345678',
+            age,
+            mobile,
             point: 50000,
         });
 

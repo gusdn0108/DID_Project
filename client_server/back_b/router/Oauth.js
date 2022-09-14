@@ -1,11 +1,9 @@
 const express = require('express');
 const axios = require('axios');
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
-const crypto = require('crypto');
-const { response } = require('express');
 const { filterNull } = require('./utils');
 const { Account, UserInfo } = require('../models');
+require('dotenv').config();
 
 const router = express.Router();
 
@@ -59,6 +57,7 @@ router.get('/getCode', async (req, res) => {
 
         const response = await axios.get(url, Header);
         const { VP, hash } = response.data;
+        console.log(VP);
 
         const vpCookie = filterNull(VP);
 
@@ -157,10 +156,6 @@ router.get('/getoauthPoint', async (req, res) => {
         };
         res.json(response);
     }
-});
-
-router.post('/getToken', async (req, res) => {
-    console.log('getToken', req.body);
 });
 
 module.exports = router;
