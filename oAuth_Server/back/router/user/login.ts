@@ -17,7 +17,7 @@ import { info } from 'console';
 const router = express.Router();
 
 router.post('/authorize', async (req: Request, res: Response) => {
-    const { email, password, restAPI, reURL } = req.body;
+    const { email, password, restAPI, reURL, giveUserInfo } = req.body;
 
     const userhash = email + password;
     const hash = crypto.createHash('sha256').update(userhash).digest('base64');
@@ -57,7 +57,7 @@ router.post('/authorize', async (req: Request, res: Response) => {
             res.header('Access-Control-Allow-Origin', 'http://localhost:8080');
             const response = {
                 status: 'first',
-                registerUri : `http://${frontend}/userAppRegister?email=${email}&restAPI=${restAPI}&redirectUri=${reURL}&hash=${hash}`
+                registerUri : `http://${frontend}/userAppRegister?email=${email}&restAPI=${restAPI}&redirectUri=${reURL}&hash=${hash}&giveUserInfo=${giveUserInfo}`
             }
             res.json(response)
             return;

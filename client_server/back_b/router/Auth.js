@@ -187,18 +187,13 @@ router.post('/SignUp', async (req, res) => {
     const { email, password, name, age, phone } = req.body;
 
     try {
-        const exDID = await Account.findOne({
-            where: {
-                email: email,
-            },
-        });
         const exLocal = await Auth.findOne({
             where: {
                 email,
             },
         });
 
-        if (exDID || exLocal) {
+        if (exLocal) {
             return res.status(403).send('이미 사용중인 메일입니다 ');
         }
 
@@ -400,17 +395,8 @@ router.post('/updatePoint', async (req, res) => {
 router.post('/updateUser', async (req, res) => {
     const { email, password, oldPassword } = req.body;
     try {
-        const _user = await Auth.findOne({
-            where: {
-                email: {
-                    [Op.eq]: email,
-                },
-            },
-        });
-
         const userHash = email + oldPassword;
         const hash = crypto.createHash('sha256').update(userHash).digest('base64');
-        console.log(hash);
 
         const userInfo = await Auth.findOne({
             where: {
