@@ -62,10 +62,8 @@ router.post('/authorize', async (req: Request, res: Response) => {
         }
 
         if (result) {
-            // redirecturi가 여기 오면 됨
-            // res.header('Access_control_allow_origin', 'http://localhost:3001');
-            // res.header('Content-Type', 'application/x-www-form-urlencoded');
-            res.redirect(`${reURL}?email=${email}&hash1=${hash}`);
+            const sentHash = encodeURIComponent(hash)
+            res.redirect(`${reURL}?email=${email}&hash1=${sentHash}`);
         }
         
     }
@@ -161,99 +159,6 @@ router.get('/codeAuthorize2', async (req: Request, res: Response) => {
         res.json(responseObject(false, 'access token 검증 실패'))
     }
 });
-
-// router.post('/codeAuthorize', async (req: Request, res: Response) => {
-//     console.log('connect codeAuthorize');
-//     console.log('codeAuthorize', req.body);
-//     const { code, restAPI, hash, email, reURL, DID_ACCESS, REFRESH_ACCESS } = req.body;
-
-//     const getRestAPI: any = await DataNeeded.findOne({
-//         where: {
-//             restAPI: {
-//                 [Op.eq]: restAPI,
-//             },
-//         },
-//     });
-
-//     try {
-//         if (code) {
-//             const contract = await deployed();
-//             const VP = await contract.methods.getVP(hash, getRestAPI).call();
-
-//             // 객체로 가져와야 함
-
-//             let user = {};
-//             console.log('1');
-//             Object.entries(getRestAPI.dataValues)
-//                 .filter((v) => v[1] === true)
-//                 .map((v: any) => {
-//                     user = {
-//                         ...user,
-//                         [v[0]]: VP[v[0]],
-//                     };
-//                 });
-
-//             user = {
-//                 ...user,
-//                 hashId: hash,
-//                 email,
-//             };
-
-//             let ACCESS_TOKEN;
-
-//             console.log('if out');
-//             if (DID_ACCESS !== undefined) {
-//                 console.log('if 1');
-//                 ACCESS_TOKEN = jwt.sign(
-//                     {
-//                         user,
-//                     },
-//                     process.env.SECRET_KEY as string,
-//                 );
-//                 res.cookie('user', ACCESS_TOKEN);
-//                 res.json({
-//                     ACCESS_TOKEN,
-//                 });
-//                 //  await axios.post('http://localhost:4001/api/oauth/getToken', ACCESS_TOKEN);
-//             } else if (REFRESH_ACCESS !== undefined) {
-//                 console.log('if 2');
-//                 const ACCESS_TOKEN = jwt.sign(
-//                     {
-//                         user,
-//                     },
-//                     process.env.SECRET_KEY as string,
-//                 );
-//                 const DID_ACCESS = jwt.sign(
-//                     {
-//                         hashId: hash,
-//                     },
-//                     process.env.SECRET_KEY as string,
-//                 );
-//                 res.cookie('user', ACCESS_TOKEN);
-//                 res.cookie('user2', DID_ACCESS);
-//                 res.json({
-//                     ACCESS_TOKEN,
-//                     DID_ACCESS,
-//                 });
-//                 //    await axios.post('http://localhost:4001/api/oauth/getToken', { ACCESS_TOKEN, DID_ACCESS });
-//             }
-//             console.log('if 3');
-//             ACCESS_TOKEN = jwt.sign(
-//                 {
-//                     user,
-//                 },
-//                 process.env.SECRET_KEY as string,
-//             );
-//             //  await axios.post('http://localhost:4001/api/oauth/getToken', { ACCESS_TOKEN });
-//             res.cookie('firstuser', ACCESS_TOKEN);
-//             res.json({
-//                 ACCESS_TOKEN,
-//             });
-//         }
-//     } catch (error) {
-//         console.log(error);
-//     }
-// });
 
 router.post('/localAuthorize', async (req: Request, res: Response) => {
     const { email, password } = req.body;

@@ -238,7 +238,7 @@ router.post('/userdidregister', async (req, res) => {
             point,
         })
 
-        const rawVp = await getUserinfo(restAPI, hash)
+        const rawVp = await getUserinfo(restAPI, hash.replace(/ /g, '+'))
 
         const refinedVP = refineVP(rawVp)
   

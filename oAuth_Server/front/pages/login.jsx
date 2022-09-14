@@ -37,7 +37,6 @@ export default function Home() {
       restAPI: restAPI,
     });
 
-    console.log(response.data.registerUri);
     if (response.data.status == "first") {
       location.href = response.data.registerUri;
 
