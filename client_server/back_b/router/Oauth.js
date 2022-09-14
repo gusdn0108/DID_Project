@@ -14,18 +14,18 @@ const baseUrl = 'http://localhost:8000';
 const Otp = {
     clientId: '7d5e640985ee640088271f2b9da3837',
     redirectUri: 'http://localhost:4001/api/oauth/getCode',
-    client_secret: '66a8abe9f4b354b75738f8d32ca5510',
+    client_secret: '12e4f803a3a3933b0ece3170cf1288e',
+    giveUserInfo: 'http://localhost:4001/api/oauth/giveUserInfo',
 };
 
 router.get('/DIDLogin', async (req, res) => {
-    const url = `http://localhost:8080/login?clientId=${Otp.clientId}&redirectUri=${Otp.redirectUri}&response_type=code`;
+    const url = `http://localhost:8080/login?clientId=${Otp.clientId}&redirectUri=${Otp.redirectUri}&response_type=code&giveUserInfo=${Otp.giveUserInfo}`;
     res.redirect(url);
 });
 
 router.get('/getCode', async (req, res) => {
     const { email, hash1 } = req.query;
     const url = 'http://localhost:8000/oauth/login/codeAuthorize';
-    console.log(hash1);
 
     //const hash = hash1.replace(/ /g, '+');
     const hash = decodeURIComponent(hash1);

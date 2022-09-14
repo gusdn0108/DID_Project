@@ -68,14 +68,8 @@ const mypage = ({ userId, email, point }) => {
             </Box>
 
             <Flex justifyContent={"center"}>
-              <Button onClick={didRegister} colorScheme="blue" mx="1%" w="25%">
-                DID login 연동
-              </Button>
               <Button mx="1%" w="25%" onClick={changePw}>
                 비밀번호 변경
-              </Button>
-              <Button mx="1%" w="25%">
-                포인트 충전
               </Button>
             </Flex>
           </Box>

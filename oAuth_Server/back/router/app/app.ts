@@ -220,7 +220,7 @@ router.get('/giveUserInfo', async (req:Request, res : Response) => {
 })
 
 router.post('/userdidregister', async (req, res) => {
-    const { restAPI, email, point, hash } = req.body
+    const { restAPI, email, point, hash, giveUserInfo } = req.body
 
     try{
         const ifUser = await TotalPoint.findOne({
@@ -247,7 +247,7 @@ router.post('/userdidregister', async (req, res) => {
             email
         }
 
-        const response = await axios.post('http://localhost:4001/api/oauth/giveUserInfo', data )
+        const response = await axios.post(giveUserInfo, data)
         
         if (response.data.status == false) {
             throw new Error('클라이언트 서버 에러')

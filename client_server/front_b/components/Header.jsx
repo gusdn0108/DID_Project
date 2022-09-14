@@ -3,7 +3,6 @@ import {
   Button,
   Flex,
   useDisclosure,
-  Image,
   Input,
   Text,
 } from "@chakra-ui/react";
@@ -53,7 +52,6 @@ const Header = ({ email }) => {
               borderRadius="1.25rem"
               pd="1.5rem"
               placeholder="검색어를 입력해주세요"
-              // _after={{content:<Search2Icon/>, display:'inline-block'}}
             />
           </Box>
           <Box>
