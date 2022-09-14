@@ -8,6 +8,7 @@ import { useEffect } from "react";
 
 const Purchase = ({ userId, email, point, setPoint }) => {
   const router = useRouter();
+  const productInfo = router.asPath;
 
   const [price, setPrice] = useState("");
   const [img, setImg] = useState("");
@@ -16,13 +17,9 @@ const Purchase = ({ userId, email, point, setPoint }) => {
 
   const setProductInfo = () => {
     const productInfo = location.href.split("?")[1].split("&");
-    setPrice(productInfo[0].split("=")[1]);
+    setPrice(productInfo[0].split("=")[1].toLocaleString());
     setTitle(decodeURI(productInfo[1].split("=")[1]));
     setImg(productInfo[2].split("=")[1]);
-    console.log(img, title, price);
-    if (price == 34900) {
-      setExp("#시내4성 #자유시간 #호이안투어 #바나산 #쇼핑3회");
-    }
   };
 
   const purchase = async (price) => {
@@ -62,19 +59,34 @@ const Purchase = ({ userId, email, point, setPoint }) => {
     <>
       <Box w="65%" h="40rem" mx="auto" my="0" px="5%" py="5%">
         <Box
-          w="50%"
-          bg="blue.200"
+          w="55%"
+          border="1px"
+          borderColor={"gray.200"}
           h="100%"
           mx="auto"
           my="0"
+          p="5%"
           textAlign={"center"}
+          boxShadow="xs"
         >
-          <Image src={img} mx="auto" my="0" w="100%" mb="2%" />
+          <Image src={img} mx="auto" my="0" w="100%" mb="3%" />
 
-          <Box fontSize={"150%"}>{title}</Box>
-          <Box>{exp}</Box>
-
-          <Box bg="red.200">{price}</Box>
+          <Box fontSize={"150%"} mb="3%">
+            {title}
+          </Box>
+          <Box mb="4%" fontSize={"120%"}>
+            {price} KRW
+          </Box>
+          <Box>
+            <Flex justifyContent={"center"}>
+              <Button colorScheme={"blue"} variant="outline" mx="2%" w="30%">
+                구매하기
+              </Button>
+              <Button colorScheme={"blue"} variant="outline" mx="2%" w="30%">
+                취소
+              </Button>
+            </Flex>
+          </Box>
         </Box>
       </Box>
     </>

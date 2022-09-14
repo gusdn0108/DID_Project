@@ -15,10 +15,11 @@ const Otp = {
     clientId: 'db4b4f6666bb7ad62368fe39fa68b94',
     redirectUri: 'http://localhost:4001/api/oauth/getCode',
     client_secret: '12e4f803a3a3933b0ece3170cf1288e',
+    giveUserInfo: 'http://localhost:4001/api/oauth/giveUserInfo',
 };
 
 router.get('/DIDLogin', async (req, res) => {
-    const url = `http://localhost:8080/login?clientId=${Otp.clientId}&redirectUri=${Otp.redirectUri}&response_type=code`;
+    const url = `http://localhost:8080/login?clientId=${Otp.clientId}&redirectUri=${Otp.redirectUri}&response_type=code&giveUserInfo=${Otp.giveUserInfo}`;
     res.redirect(url);
 });
 

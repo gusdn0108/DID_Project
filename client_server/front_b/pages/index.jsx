@@ -10,17 +10,24 @@ const Home = ({ userId, email, point, setPoint }) => {
   const [product1, product2, product3, product4] = [
     34900, 39000, 52900, 449000,
   ];
-  const [title1, title2, title3, titl4] = [
-    "다낭 5일",
-    "싱가포르 5일",
-    "몽골 5일",
-    "서유럽 12일",
+  const [title1, title2, title3, title4] = [
+    "다낭 - 4박 5일",
+    "싱가포르 - 4박 5일",
+    "몽골 - 4박 5일",
+    "서유럽 - 11박 12일",
   ];
   const [img1, img2, img3, img4] = [
     "https://image.hanatour.com/usr/cms/resize/250_0/2019/01/18/10000/0b0544c8-cbbe-4e27-a994-dacbb55e3b15.jpg",
     "https://image.hanatour.com/usr/cms/resize/250_0/2021/12/13/10000/2c56ad37-6385-42ba-9822-d0e88efb0b77.jpg",
     "https://image.hanatour.com/usr/cms/resize/250_0/2022/06/23/10000/a075696c-13ba-4cb4-81a5-24a04c4e5974.jpg",
     "https://image.hanatour.com/usr/cms/resize/250_0/2019/01/18/10000/0b0544c8-cbbe-4e27-a994-dacbb55e3b15.jpg",
+  ];
+
+  const [hash1, hash2, hash3, hash4] = [
+    "#시내4성 #자유시간 #호이안투어 #바나산 #쇼핑3회",
+    "싱가포르 자유여행 5일 #왕복항공권 #여행자보험 #라운지이용 #데이터유심",
+    "#초특가 #올레3코스 #대초원승마 #현대게스2박(4인1실)",
+    "",
   ];
   const setUnderLiner = (e) => {
     setClicked(e.target.id);
@@ -208,7 +215,11 @@ const Home = ({ userId, email, point, setPoint }) => {
               </Text>
             </Box>
 
-            <Box w="23.5%" onClick={() => purchase(product2)} id="product2">
+            <Box
+              w="23.5%"
+              onClick={() => toPurchase(product2, title2, img2)}
+              id="product2"
+            >
               <Image src={img2} w="100%" mb="5%" h="60%" />
               <Text textAlign="left" fontSize="115%" mb="0.25rem">
                 싱가포르 자유여행 5일 #왕복항공권
@@ -221,7 +232,11 @@ const Home = ({ userId, email, point, setPoint }) => {
               </Text>
             </Box>
 
-            <Box w="23.5%" onClick={() => purchase(product3)} id="product3">
+            <Box
+              w="23.5%"
+              onClick={() => toPurchase(product3, title3, img3)}
+              id="product3"
+            >
               <Image src={img3} w="100%" mb="5%" h="60%" />
               <Text textAlign="left" fontSize="115%" mb="0.25rem">
                 [타임세일] 몽골/테렐지 4~5일 #초특가{" "}
@@ -234,13 +249,17 @@ const Home = ({ userId, email, point, setPoint }) => {
               </Text>
             </Box>
 
-            <Box w="23.5%" onClick={() => purchase(product4)} id="product4">
+            <Box
+              w="23.5%"
+              onClick={() => toPurchase(product4, title4, img4)}
+              id="product4"
+            >
               <Image src={img4} w="100%" mb="5%" h="60%" />
               <Text textAlign="left" fontSize="115%" mb="0.25rem">
                 [출발확정]서유럽 6국 12일
               </Text>
               <Text textAlign="left" fontSize="95%" mb="1rem">
-                #시내호텔 1박 #에펠탑/세느강 유람선{" "}
+                #시내호텔 1박 #에펠탑/세느강 #유람선{" "}
               </Text>
               <Text textAlign="left" fontSize="150%">
                 {product4.toLocaleString()}원~

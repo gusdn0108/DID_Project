@@ -24,6 +24,7 @@ const userAppRegister = ({
   restAPI,
   redirectUri,
   hash,
+  giveUserInfo,
 }) => {
   // const setArray = (k) => {
   //   const newArray = isAgreed;
@@ -43,13 +44,14 @@ const userAppRegister = ({
   const didRegister = async () => {
     const codeUrl = location.href;
     const email = codeUrl.split("?")[1].split("&")[0].split("=")[1];
-    // 모든 체크 박스에 체크가 되어있다면 < 이 부분 처리를 못하겠음
+
     console.log(email);
     const response = await axios.post(`${backend}/oauth/app/userdidregister`, {
       restAPI,
       email,
       point: 50000,
       hash,
+      giveUserInfo,
     });
 
     if (response.data.status == true) {
@@ -121,6 +123,7 @@ export const getServerSideProps = async (ctx) => {
   const email = ctx.query.email;
   const redirectUri = ctx.query.redirectUri;
   const hash = ctx.query.hash;
+  const giveUserInfo = ctx.query.giveUserInfo;
 
   console.log(email);
   const response = await axios.get(
@@ -135,6 +138,7 @@ export const getServerSideProps = async (ctx) => {
       email,
       redirectUri,
       hash,
+      giveUserInfo,
     },
   };
 };

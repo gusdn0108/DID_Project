@@ -187,18 +187,13 @@ router.post('/SignUp', async (req, res) => {
     const { email, password, name, age, phone } = req.body;
 
     try {
-        const exDID = await Account.findOne({
-            where: {
-                email: email,
-            },
-        });
         const exLocal = await Auth.findOne({
             where: {
                 email,
             },
         });
 
-        if (exDID || exLocal) {
+        if (exLocal) {
             return res.status(403).send('이미 사용중인 메일입니다 ');
         }
 
