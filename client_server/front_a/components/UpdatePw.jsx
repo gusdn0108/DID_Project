@@ -1,6 +1,7 @@
 import { Button, Modal, Text, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, useDisclosure, ModalFooter, Input } from '@chakra-ui/react';
 import axios from 'axios';
 import { useState } from 'react';
+import { deleteCookie } from 'cookies-next';
 
 const updatePwModal = ({ user }) => {
   const [password, setPassword] = useState('');
@@ -11,7 +12,17 @@ const updatePwModal = ({ user }) => {
 
   const onClick = async (req, res) => {
     if (password === checkpassword) {
-      const response = await axios.post();
+      const response = await axios.post('http://localhost:4000/api/auth/updateUser', {
+        email: user.email,
+        password,
+      });
+      if (response.data.status) {
+        alert('비밀번호가 변경되었습니다.');
+        deleteCookie('user', { req, res, maxAge: 60 * 60 * 24 * 1000 });
+        location.href = 'http://localhost:3000';
+      } else {
+        alert('비밀번호 변경을 실패하였습니다.');
+      }
     }
   };
 

@@ -1,10 +1,9 @@
 const express = require('express');
 const nodeMailer = require('nodemailer');
-const bcrypt = require('bcryptjs');
-const axios = require('axios');
+const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const router = express.Router();
-const { Auth } = require('../models');
+const { Auth, Account } = require('../models');
 const { Op } = require('sequelize');
 const emailTemplate = require('../email/index');
 
@@ -68,15 +67,17 @@ router.post('/email', async (req, res) => {
     });
 });
 
+/** mobile 받아와야함 */
 router.post('/SignUp', async (req, res) => {
     const { email, password, nickName } = req.body;
 
     try {
-        const hash = await bcrypt.hash(password, 12);
+        const userHash = email + password;
+        const hash = crypto.createHash('sha256').update(userHash).digest('base64');
 
         await Auth.create({
             email: email,
-            password: hash,
+            userHash: hash,
             name: nickName,
             mobile: '01012345678',
             point: 50000,
@@ -106,7 +107,16 @@ router.post('/login', async (req, res) => {
         });
 
         if (_user) {
-            if (bcrypt.compareSync(userPw, _user.dataValues.password)) {
+            const userHash = userEmail + userPw;
+            const hash = crypto.createHash('sha256').update(userHash).digest('base64');
+
+            const confirmLogin = await Auth.findOne({
+                where: {
+                    email: userEmail,
+                    userHash: hash,
+                },
+            });
+            if (confirmLogin) {
                 delete _user.dataValues.password;
                 delete _user.dataValues.point;
 
@@ -147,13 +157,18 @@ router.post('/idCheck', async (req, res) => {
     const { email } = req.body;
 
     try {
-        const _email = await Auth.findOne({
+        const exDID = await Account.findOne({
             where: {
                 email: email,
             },
         });
+        const exLocal = await Auth.findOne({
+            where: {
+                email,
+            },
+        });
 
-        if (_email === null) {
+        if (!exDID && !exLocal) {
             res.json({
                 status: 1,
             });
@@ -163,7 +178,7 @@ router.post('/idCheck', async (req, res) => {
             });
         }
     } catch (e) {
-        console.log(e.messasge);
+        console.log(e.message);
         res.json({
             status: 0,
             msg: '다시 시도하여주십시오.',
@@ -221,66 +236,24 @@ router.post('/pointInquiry', async (req, res) => {
     }
 });
 
-router.post('/updatePoint', async (req, res) => {
-    const { email, usePoint } = req.body;
-    const havepoint = await Auth.findOne({
-        where: {
-            email: email,
-        },
-    });
-    try {
-        if (havepoint.point >= usePoint) {
-            await Auth.update(
-                {
-                    point: havepoint.point - usePoint,
-                },
-                {
-                    where: {
-                        email: email,
-                    },
-                },
-            );
-            res.json({
-                status: 1,
-                point: havepoint.point - usePoint,
-            });
-        }
-    } catch (e) {
-        console.log(e);
-        res.json({
-            status: 0,
-            error: '포인트 사용 실패',
-        });
-    }
-});
-
-/** client 유저 비밀번호를 변경하도록 수정해야함 */
 router.post('/updateUser', async (req, res) => {
-    const { email, password, oldPassword } = req.body;
-    const clientId = 'aaaa';
+    const { email, password } = req.body;
     try {
-        const _user = await Auth.findOne({
-            where: {
-                email: {
-                    [Op.eq]: email,
-                },
-            },
-        });
-        const Pwproof = bcrypt.compareSync(oldPassword, _user.dataValues.password);
-        if (Pwproof) {
-            const oldPw = _user.dataValues.password;
-            const hash = await bcrypt.hash(password, 12);
-            await axios.post('http://localhost:8000/api/Oauth/upDateRegister', { email, oldPw, clientId, hash });
-            await Auth.update({ password: hash }, { where: { email: email } });
+        const hash = crypto
+            .createHash('sha256')
+            .update(email + password)
+            .digest('base64');
 
-            res.json({
-                status: 1,
-            });
-        }
-    } catch (e) {
-        console.log(e);
+        await Auth.update({ userHash: hash }, { where: { email: email } });
         res.json({
-            status: 1,
+            status: true,
+            msg: '성공적으로 변경되었습니다.',
+        });
+    } catch (e) {
+        console.log(e.message);
+        res.json({
+            status: false,
+            msg: e.message,
         });
     }
 });

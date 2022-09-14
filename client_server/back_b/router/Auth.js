@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken');
 const router = express.Router();
 const { Auth, sequelize, UserInfo, Account } = require('../models');
 const { Op } = require('sequelize');
+const emailTemplate = require('../email/index');
 
 const generateRandom = (min, max) => {
     const ranNum = (Math.floor(Math.random() * (max - min + 1)) + min).toString();
@@ -19,28 +20,22 @@ const generateRandom = (min, max) => {
 };
 
 router.post('/email', async (req, res) => {
-    const { email, name } = req.body;
+    const { email } = req.body;
 
     try {
-        const exEmail = await Account.findOne({
-            where: {
-                email: email,
-            },
-        });
-
         const exLocalEmail = await Auth.findOne({
             where: {
                 email: email,
             },
         });
 
-        if (exEmail || exLocalEmail) {
+        if (exLocalEmail) {
             return res.status(403).send('이미 사용중인 메일입니다 ');
         }
     } catch (e) {
         console.log(e);
     }
-    // 중복 체크하고
+
     const number = generateRandom(111111, 999999);
     const mailPoster = nodeMailer.createTransport({
         service: 'Naver',
@@ -55,118 +50,7 @@ router.post('/email', async (req, res) => {
         from: 'gusdn6671@naver.com',
         to: email,
         subject: '인증번호 입력해주세요 ',
-        html: `<div 
-        style='
-        text-align: center; 
-        width: 60%; 
-        height: 50%;
-        margin: 15%;
-        padding: 20px;
-        border:2px solid #FFB6C1;
-        border-radius: 10px;
-        background-color:#FFFAFA;
-        '>
-
-        
-        <h2 style='
-        color:pink;
-        font-weight:bold;
-        '>아래 6자리 숫자를 화면에 입력해주세요.</h2> <br/>  
-        <div style='display: flex;
-            justify-content: space-between ;
-           '>
-           <div style='  width:5rem;
-           height:5rem;
-           border:2px solid #FFB6C1;
-           border-radius: 10px;
-           background-color:#FFFAFA;'>
-           <h1 style='  
-           text-align:center;
-           font-weight:bold;
-           font-size:47px;
-           color:#FFB6C1;'>
-           ${number[0]}
-           </h1>
-           
-        </div>
-        <div style='  width:5rem;
-           height:5rem;
-           border:2px solid #FFB6C1;
-           border-radius: 10px;
-           background-color:#FFFAFA;'>
-           <h1 style='  
-           text-align:center;
-           font-weight:bold;
-           font-size:47px;
-           color:#FFB6C1;'>
-           ${number[1]}
-           </h1>
-           
-        </div>
-        <div style='  width:5rem;
-           height:5rem;
-           border:2px solid #FFB6C1;
-           border-radius: 10px;
-           background-color:#FFFAFA;'>
-           <h1 style='  
-           text-align:center;
-           font-weight:bold;
-           font-size:47px;
-           color:#FFB6C1;'>
-           ${number[2]}
-           </h1>
-           
-        </div>
-
-        <div style='  width:5rem;
-           height:5rem;
-           border:2px solid #FFB6C1;
-           border-radius: 10px;
-           background-color:#FFFAFA;'>
-           <h1 style='  
-           text-align:center;
-           font-weight:bold;
-           font-size:47px;
-           color:#FFB6C1;'>
-           ${number[3]}
-           </h1>
-           
-        </div>
-
-        <div style='  width:5rem;
-           height:5rem;
-           border:2px solid #FFB6C1;
-           border-radius: 10px;
-           background-color:#FFFAFA;'>
-           <h1 style='  
-           text-align:center;
-           font-weight:bold;
-           font-size:47px;
-           color:#FFB6C1;'>
-           ${number[4]}
-           </h1>
-           
-        </div>
-
-        <div style='  width:5rem;
-           height:5rem;
-           border:2px solid #FFB6C1;
-           border-radius: 10px;
-           background-color:#FFFAFA;'>
-           <h1 style='  
-           text-align:center;
-           font-weight:bold;
-           font-size:47px;
-           color:#FFB6C1;'>
-           ${number[5]}
-           </h1>
-           
-        </div>
-
-   </div>
-
-
-</div> `,
+        html: emailTemplate(number),
     };
 
     mailPoster.sendMail(mailOptions, function (error, info) {
@@ -187,18 +71,13 @@ router.post('/SignUp', async (req, res) => {
     const { email, password, name, age, phone } = req.body;
 
     try {
-        const exDID = await Account.findOne({
-            where: {
-                email: email,
-            },
-        });
         const exLocal = await Auth.findOne({
             where: {
                 email,
             },
         });
 
-        if (exDID || exLocal) {
+        if (exLocal) {
             return res.status(403).send('이미 사용중인 메일입니다 ');
         }
 
@@ -207,7 +86,7 @@ router.post('/SignUp', async (req, res) => {
 
         await Auth.create({
             email: email,
-            password: hash,
+            userHash: hash,
             name,
             age,
             mobile: phone,
@@ -242,7 +121,7 @@ router.post('/login', async (req, res) => {
             const confirmLogin = await Auth.findOne({
                 where: {
                     email: userEmail,
-                    password: hash,
+                    userHash: hash,
                 },
             });
             if (confirmLogin) {
@@ -259,19 +138,18 @@ router.post('/login', async (req, res) => {
                 res.cookie('user', token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
                 res.json({
                     status: true,
-                    // userData: _user.dataValues,
                     token: token,
                 });
             } else {
                 res.json({
                     status: false,
-                    msg: '너 비밀번호 틀림 ',
+                    msg: '비밀번호가 일치하지 않습니다.',
                 });
             }
         } else {
             res.json({
                 status: false,
-                msg: '너 이메일이 틀림 ',
+                msg: '이메일이 일치하지 않습니다.',
             });
         }
     } catch (error) {
@@ -281,30 +159,6 @@ router.post('/login', async (req, res) => {
             msg: '관리자한태 문의바랍니다 ',
         });
     }
-});
-
-router.post('/idCheck', async (req, res) => {
-    const { email } = req.body;
-
-    try {
-        const _email = await Auth.findOne({
-            where: {
-                email: email,
-            },
-        });
-
-        if (_email === null) {
-            // 사용가능
-            res.json({
-                status: 1,
-            });
-        } else {
-            // 사용불가
-            res.json({
-                status: 2,
-            });
-        }
-    } catch (e) {}
 });
 
 router.post('/usePoint', async (req, res) => {
@@ -340,8 +194,6 @@ router.post('/usePoint', async (req, res) => {
 });
 
 router.post('/pointInquiry', async (req, res) => {
-    // 사용자 가져와야함
-    console.log('연결????');
     try {
         const _user = await Auth.findOne({
             where: {
@@ -350,7 +202,6 @@ router.post('/pointInquiry', async (req, res) => {
                 },
             },
         });
-        // 데이터베이스에 있는 사용자 포인트 가져오기
         const getPoint = _user.dataValues.point;
         res.json({
             status: true,
@@ -361,70 +212,15 @@ router.post('/pointInquiry', async (req, res) => {
     }
 });
 
-router.post('/updatePoint', async (req, res) => {
-    const { email, usePoint } = req.body;
-    const havepoint = await Auth.findOne({
-        where: {
-            email: email,
-        },
-    });
-    console.log(havepoint.point);
-    console.log('123');
-    try {
-        if (havepoint.point >= usePoint) {
-            // havepoint.point - point***
-            await Auth.update(
-                {
-                    point: havepoint.point - usePoint,
-                },
-                {
-                    where: {
-                        email: email,
-                    },
-                },
-            );
-            res.json({
-                status: 1,
-                point: havepoint.point - usePoint,
-            });
-        }
-    } catch (e) {
-        console.log(e);
-        res.json({
-            status: 0,
-            error: '으악',
-        });
-    }
-});
-
 router.post('/updateUser', async (req, res) => {
-    const { email, password, oldPassword } = req.body;
+    const { email, password } = req.body;
     try {
-        const _user = await Auth.findOne({
-            where: {
-                email: {
-                    [Op.eq]: email,
-                },
-            },
-        });
+        const hash = crypto
+            .createHash('sha256')
+            .update(email + password)
+            .digest('base64');
 
-        const userHash = email + oldPassword;
-        const hash = crypto.createHash('sha256').update(userHash).digest('base64');
-        console.log(hash);
-
-        const userInfo = await Auth.findOne({
-            where: {
-                email,
-                password: hash,
-            },
-        });
-
-        if (!userInfo) throw new Error('비밀번호를 확인해주세요.');
-
-        const newUserHash = email + password;
-        const newHash = crypto.createHash('sha256').update(newUserHash).digest('base64');
-
-        await Auth.update({ password: newHash }, { where: { email: email } });
+        await Auth.update({ userHash: hash }, { where: { email: email } });
         res.json({
             status: true,
             msg: '성공적으로 변경되었습니다.',

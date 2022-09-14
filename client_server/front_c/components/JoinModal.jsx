@@ -126,7 +126,7 @@ const JoinModal = ({ joinIsOpen, joinOnClose }) => {
   const onClick = async () => {
     const body = {
       email: email + domain,
-      userPw: password,
+      password: password,
       userName: nickname,
     };
 

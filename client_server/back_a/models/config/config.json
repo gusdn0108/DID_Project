@@ -1,7 +1,7 @@
 {
     "development": {
-        "username": "ivy",
-        "password": "GOODDAY",
+        "username": "ash991213",
+        "password": "ash991213",
         "database": "A_Local_DB",
         "host": "127.0.0.1",
         "dialect": "mysql"
