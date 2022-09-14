@@ -26,7 +26,6 @@ export const generateHash = (appName:string, email:string) => {
     return appCodes;
 };
 
-
 export const responseObject = (status:boolean, msg:string) => {
     const response = {
         status: status,
@@ -46,6 +45,20 @@ export const infoStringToBool = (getUserInfo:any) => {
         }
     }
     return getInfoBool;
+}
+
+export const boolToNum = (infoArray:any) => {
+    let reqVP : any = []
+    for ( let i = 0; i < infoArray.length; i++) {
+        if(infoArray[i] == true) {
+            reqVP.push(1)
+        }
+        else {
+            reqVP.push(0)
+        }
+    }
+
+    return reqVP;
 }
 
 export const noWhiteSpace = (uri : any) => {
@@ -76,8 +89,6 @@ export const insertNewUri = async ( restAPI : string, uris : any ) => {
         })
     }
 }
-
-
 
 export const getUserinfo = async (restAPI:string, hash : string) => {
     const getUserInfo = await DataNeeded.findOne({
@@ -144,4 +155,16 @@ export const filterNotNeeded = ( infos : any) => {
         }
     }
     return infos
+}
+
+export const makeRawVP = (VP :any) => {
+    let rawVP = [
+        {att : 'gender', value : VP.gender},
+        {att : 'name', value : VP.name},
+        {att : 'age', value: VP.age},
+        {att : 'addr', value : VP.addr},
+        {att : 'mobile', value : VP.mobile},
+        {att : 'email', value : VP.email}
+    ]
+    return rawVP;
 }

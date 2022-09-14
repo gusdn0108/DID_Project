@@ -6,6 +6,7 @@ const crypto = require('crypto');
 const { response } = require('express');
 const { filterNull } = require('./utils');
 const { Account, UserInfo } = require('../models');
+
 const router = express.Router();
 
 const baseUrl = 'http://localhost:8000';
@@ -22,8 +23,13 @@ router.get('/DIDLogin', async (req, res) => {
 });
 
 router.get('/getCode', async (req, res) => {
-    const { email, hash } = req.query;
+    const { email, hash1 } = req.query;
     const url = 'http://localhost:8000/oauth/login/codeAuthorize';
+    console.log(hash1);
+    console.log(decodeURIComponent(hash1));
+
+    //const hash = hash1.replace(/ /g, '+');
+    const hash = decodeURIComponent(hash1);
 
     const Data = {
         grant_type: 'authorization_code',
@@ -48,7 +54,7 @@ router.get('/getCode', async (req, res) => {
         const url = 'http://localhost:8000/oauth/login/codeAuthorize2';
         const Header = {
             headers: {
-                Authorization: `Bearer ${access_token}`,
+                Authorization: access_token,
             },
         };
 
@@ -127,6 +133,26 @@ router.post('/giveUserinfo', async (req, res) => {
         };
 
         res.json(response);
+    } catch (e) {
+        console.log(e.message);
+        const response = {
+            status: false,
+            msg: e.message,
+        };
+        res.json(response);
+    }
+});
+
+router.get('/getoauthPoint', async (req, res) => {
+    const { email } = req.query;
+    try {
+        const response = await axios.get(`${baseUrl}/oauth/app/getPoint?email=${email}&restAPI=${Otp.clientId}`);
+        if (response.data.status == false) throw new Error(response.data.msg);
+
+        res.json({
+            status: true,
+            point: response.data.point,
+        });
     } catch (e) {
         console.log(e.message);
         const response = {

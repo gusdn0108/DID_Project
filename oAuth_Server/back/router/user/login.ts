@@ -10,8 +10,9 @@ import TotalPoint from '../../models/user/totalPoint.model';
 import { frontend } from './utils';
 import { ifError } from 'assert';
 import RedirectURI from '../../models/webSite/redirectURI.model';
-import { getUserinfo, infoStringToBool, refineVP, responseObject } from '../app/utils';
+import { boolToNum, getUserinfo, infoStringToBool, makeRawVP, refineVP, responseObject } from '../app/utils';
 import App from '../../models/webSite/app.model';
+import { info } from 'console';
 
 const router = express.Router();
 
@@ -61,10 +62,8 @@ router.post('/authorize', async (req: Request, res: Response) => {
         }
 
         if (result) {
-            // redirecturi가 여기 오면 됨
-            // res.header('Access_control_allow_origin', 'http://localhost:3001');
-            res.header('Content-Type', 'application/x-www-form-urlencoded');
-            res.redirect(`${reURL}?email=${email}&hash=${hash}`);
+            const sentHash = encodeURIComponent(hash)
+            res.redirect(`${reURL}?email=${email}&hash1=${sentHash}`);
         }
         
     }
@@ -77,6 +76,7 @@ router.post('/authorize', async (req: Request, res: Response) => {
 router.post('/codeAuthorize', async (req: Request, res: Response)=> {
     // accessToken을 검증해줘야 한다.
     const MAKE_ACCESS_TOKEN = req.body;
+    
     const EXPIRES_IN = 43199;
     try {
 
@@ -102,16 +102,17 @@ router.post('/codeAuthorize', async (req: Request, res: Response)=> {
                 exp: EXPIRES_IN,
             },
             'asdf',
-        );
+        )
 
         const response = {
             status: true,
             ACCESS_TOKEN,
         };
+
         res.json(response);
     } catch (e: any) {
         console.log(e.message);
-        res.json(responseObject(false, 'ACCESSTOKEN 생성 에러'))
+        res.json(responseObject(false, e.message))
     }
 })
 
@@ -120,17 +121,29 @@ router.get('/codeAuthorize2', async (req: Request, res: Response) => {
     const bearer_req: string[] = bearer_token.split(' ');
 
     try {
-        if(bearer_req[0] !== 'Bearer') {
-            throw new Error ('잘못된 토큰 입니다.')
-        }
-        const decoded_token = Buffer.from(bearer_req[1], 'base64').toString('utf-8');
+        const decoded_token = Buffer.from(bearer_token, 'base64').toString('utf-8');
 
         const decode1 = decoded_token.split('}');
         const decode2 = JSON.parse(decode1[1] + '}}').MAKE_ACCESS_TOKEN;
 
         if (decode2.grant_type == 'authorization_code') {
 
-            const rawVP = await getUserinfo(decode2.restAPI, decode2.hash)
+            const getUserInfo = await DataNeeded.findOne({
+                where : {
+                  restAPI : decode2.restAPI,
+                }
+            })
+        
+            const infoArray = [getUserInfo.gender, getUserInfo.name, getUserInfo.age,
+                getUserInfo.addr, getUserInfo.mobile, getUserInfo.email]
+        
+            const reqVP = boolToNum(infoArray)
+            
+            const contract = await deployed();
+            const VP = await contract.methods.getVP(decode2.hash, reqVP).call();
+
+            const rawVP = makeRawVP(VP)
+            
             const refinedVP = refineVP(rawVP)
 
             const response = {
@@ -147,133 +160,41 @@ router.get('/codeAuthorize2', async (req: Request, res: Response) => {
     }
 });
 
-// router.post('/codeAuthorize', async (req: Request, res: Response) => {
-//     console.log('connect codeAuthorize');
-//     console.log('codeAuthorize', req.body);
-//     const { code, restAPI, hash, email, reURL, DID_ACCESS, REFRESH_ACCESS } = req.body;
-
-//     const getRestAPI: any = await DataNeeded.findOne({
-//         where: {
-//             restAPI: {
-//                 [Op.eq]: restAPI,
-//             },
-//         },
-//     });
-
-//     try {
-//         if (code) {
-//             const contract = await deployed();
-//             const VP = await contract.methods.getVP(hash, getRestAPI).call();
-
-//             // 객체로 가져와야 함
-
-//             let user = {};
-//             console.log('1');
-//             Object.entries(getRestAPI.dataValues)
-//                 .filter((v) => v[1] === true)
-//                 .map((v: any) => {
-//                     user = {
-//                         ...user,
-//                         [v[0]]: VP[v[0]],
-//                     };
-//                 });
-
-//             user = {
-//                 ...user,
-//                 hashId: hash,
-//                 email,
-//             };
-
-//             let ACCESS_TOKEN;
-
-//             console.log('if out');
-//             if (DID_ACCESS !== undefined) {
-//                 console.log('if 1');
-//                 ACCESS_TOKEN = jwt.sign(
-//                     {
-//                         user,
-//                     },
-//                     process.env.SECRET_KEY as string,
-//                 );
-//                 res.cookie('user', ACCESS_TOKEN);
-//                 res.json({
-//                     ACCESS_TOKEN,
-//                 });
-//                 //  await axios.post('http://localhost:4001/api/oauth/getToken', ACCESS_TOKEN);
-//             } else if (REFRESH_ACCESS !== undefined) {
-//                 console.log('if 2');
-//                 const ACCESS_TOKEN = jwt.sign(
-//                     {
-//                         user,
-//                     },
-//                     process.env.SECRET_KEY as string,
-//                 );
-//                 const DID_ACCESS = jwt.sign(
-//                     {
-//                         hashId: hash,
-//                     },
-//                     process.env.SECRET_KEY as string,
-//                 );
-//                 res.cookie('user', ACCESS_TOKEN);
-//                 res.cookie('user2', DID_ACCESS);
-//                 res.json({
-//                     ACCESS_TOKEN,
-//                     DID_ACCESS,
-//                 });
-//                 //    await axios.post('http://localhost:4001/api/oauth/getToken', { ACCESS_TOKEN, DID_ACCESS });
-//             }
-//             console.log('if 3');
-//             ACCESS_TOKEN = jwt.sign(
-//                 {
-//                     user,
-//                 },
-//                 process.env.SECRET_KEY as string,
-//             );
-//             //  await axios.post('http://localhost:4001/api/oauth/getToken', { ACCESS_TOKEN });
-//             res.cookie('firstuser', ACCESS_TOKEN);
-//             res.json({
-//                 ACCESS_TOKEN,
-//             });
-//         }
-//     } catch (error) {
-//         console.log(error);
-//     }
-// });
-
 router.post('/localAuthorize', async (req: Request, res: Response) => {
     const { email, password } = req.body;
-    const userhash = email + password;
-    const hash = crypto.createHash('sha256').update(userhash).digest('base64');
+    
+    try {
+        const userhash = email + password;
+        const hash = crypto.createHash('sha256').update(userhash).digest('base64');
 
-        const dbUser = await VerifyId.findOne({
-            where:{
-                email: email,
-            },
-        });
+            const dbUser = await VerifyId.findOne({
+                where:{
+                    email: email,
+                },
+            });
 
-    if(!dbUser) throw new Error('id/pw를 확인해주세요')
+        if(!dbUser) throw new Error('id/pw를 확인해주세요')
 
-    const contract = await deployed();
-    const result = await contract.methods.getUser(hash).call();
+        const contract = await deployed();
+        const result = await contract.methods.getUser(hash).call();
 
-    if (result) {
-        let token = jwt.sign(
-            {
-                email: email,
-                hashId: hash,
-            },
-            process.env.SECRET_KEY as string,
-        );
-        res.cookie('user', token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
-        res.json({
-            status: true,
-            token: token,
-        });
-    } else {
-        res.json({
-            status: false,
-            msg: '일치하는 아이디가 없습니다',
-        });
+        if (result) {
+            let token = jwt.sign(
+                {
+                    email: email,
+                    hashId: hash,
+                },
+                process.env.SECRET_KEY as string,
+            );
+            res.cookie('user', token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
+            res.json({
+                status: true,
+                token: token,
+            });
+        }
+    }
+    catch(e) {
+        responseObject(false, e.message)
     }
 });
 
