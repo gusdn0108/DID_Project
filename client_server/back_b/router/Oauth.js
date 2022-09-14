@@ -12,10 +12,10 @@ const router = express.Router();
 const baseUrl = 'http://localhost:8000';
 
 const Otp = {
-    clientId: 'db4b4f6666bb7ad62368fe39fa68b94',
-    redirectUri: 'http://localhost:4001/api/oauth/getCode',
-    client_secret: '12e4f803a3a3933b0ece3170cf1288e',
-    giveUserInfo: 'http://localhost:4001/api/oauth/giveUserInfo',
+    clientId: process.env.CLIENT_ID,
+    redirectUri: process.env.REDIRECT_URI,
+    client_secret: process.env.CLIENT_SECRET,
+    giveUserInfo: process.env.GIVE_USER_INFO,
 };
 
 router.get('/DIDLogin', async (req, res) => {
@@ -68,21 +68,18 @@ router.get('/getCode', async (req, res) => {
             stringCookie += vpCookie[i].value + '&';
         }
 
-        const secret_key = 'test';
         const ACCESS_TOKEN = jwt.sign(
             {
                 hash,
                 stringCookie,
             },
-            secret_key,
+            process.env.SECRET_KEY,
         );
 
         const cookiOpt = { maxAge: 43199 };
         res.cookie('accessToken', ACCESS_TOKEN, cookiOpt);
         res.header('Access_control_allow_origin', 'http://localhost:3001');
         res.header('Content-Type', 'application/json');
-        //res.redirect(`http://localhost:8080/ether?accessToken=${ACCESS_TOKEN.split('.')[1]}`);
-        //res.redirect(`http://localhost:3001/login?accessToken=${ACCESS_TOKEN.split('.')[1]}`);
         const result = {
             redirectUri: `http://localhost:3001/login?accessToken=${ACCESS_TOKEN.split('.')[1]}`,
         };
@@ -118,7 +115,7 @@ router.post('/giveUserinfo', async (req, res) => {
                 mobile = vp[i].value;
             }
         }
-        console.log(email);
+        // 수정 요망
 
         const insertVP = await UserInfo.create({
             email,
