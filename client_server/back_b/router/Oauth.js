@@ -25,8 +25,11 @@ router.get('/DIDLogin', async (req, res) => {
 router.get('/getCode', async (req, res) => {
     const { email, hash1 } = req.query;
     const url = 'http://localhost:8000/oauth/login/codeAuthorize';
+    console.log(hash1);
+    console.log(decodeURIComponent(hash1));
 
-    const hash = hash1.replace(/ /g, '+');
+    //const hash = hash1.replace(/ /g, '+');
+    const hash = decodeURIComponent(hash1);
 
     const Data = {
         grant_type: 'authorization_code',

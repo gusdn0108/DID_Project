@@ -14,6 +14,7 @@ function MyApp({ Component, pageProps }) {
   const [userId, setUserid] = useState(undefined);
   const [email, setEmail] = useState(undefined);
   const [point, setPoint] = useState(0);
+  const [whichCookie, setWhichCookie] = useState("");
 
   const userCookie = getCookie("loginInfo");
   let userName = "";
@@ -96,9 +97,11 @@ function MyApp({ Component, pageProps }) {
     if (userCookie) {
       setLocalinfo();
       getPoint();
+      setWhichCookie("local");
     } else if (accessToken) {
       setDidUserInfo();
       getPoint();
+      setWhichCookie("oauth");
     }
   };
 
@@ -118,6 +121,7 @@ function MyApp({ Component, pageProps }) {
             name={name}
             mobile={mobile}
             point={point}
+            whichCookie={whichCookie}
             setPoint={setPoint}
           />
         </Layout>
