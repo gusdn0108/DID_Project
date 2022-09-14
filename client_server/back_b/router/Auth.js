@@ -226,7 +226,6 @@ router.post('/SignUp', async (req, res) => {
 
 router.post('/login', async (req, res) => {
     const { userEmail, userPw } = req.body;
-
     try {
         const _user = await Auth.findOne({
             where: {
@@ -237,11 +236,18 @@ router.post('/login', async (req, res) => {
         });
 
         if (_user) {
-            if (bcrypt.compareSync(userPw, _user.dataValues.password)) {
+            const userHash = userEmail + userPw;
+            const hash = crypto.createHash('sha256').update(userHash).digest('base64');
+
+            const confirmLogin = await Auth.findOne({
+                where: {
+                    email: userEmail,
+                    password: hash,
+                },
+            });
+            if (confirmLogin) {
                 delete _user.dataValues.password;
                 delete _user.dataValues.point;
-                delete _user.dataValues.uuid;
-                console.log(_user.dataValues);
 
                 let token = jwt.sign(
                     {
@@ -393,7 +399,6 @@ router.post('/updatePoint', async (req, res) => {
 
 router.post('/updateUser', async (req, res) => {
     const { email, password, oldPassword } = req.body;
-    const clientId = 'aaaa';
     try {
         const _user = await Auth.findOne({
             where: {
@@ -402,19 +407,34 @@ router.post('/updateUser', async (req, res) => {
                 },
             },
         });
-        const Pwproof = bcrypt.compareSync(oldPassword, _user.dataValues.password);
-        if (Pwproof) {
-            const oldPw = _user.dataValues.password;
-            const hash = await bcrypt.hash(password, 12);
-            await axios.post('http://localhost:8000/api/Oauth/upDateRegister', { email, oldPw, clientId, hash });
-            await Auth.update({ password: hash }, { where: { email: email } });
 
-            res.json({
-                status: 1,
-            });
-        }
+        const userHash = email + oldPassword;
+        const hash = crypto.createHash('sha256').update(userHash).digest('base64');
+        console.log(hash);
+
+        const userInfo = await Auth.findOne({
+            where: {
+                email,
+                password: hash,
+            },
+        });
+
+        if (!userInfo) throw new Error('비밀번호를 확인해주세요.');
+
+        const newUserHash = email + password;
+        const newHash = crypto.createHash('sha256').update(newUserHash).digest('base64');
+
+        await Auth.update({ password: newHash }, { where: { email: email } });
+        res.json({
+            status: true,
+            msg: '성공적으로 변경되었습니다.',
+        });
     } catch (e) {
-        console.log(e);
+        console.log(e.message);
+        res.json({
+            status: false,
+            msg: e.message,
+        });
     }
 });
 

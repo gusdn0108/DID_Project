@@ -14,7 +14,7 @@ import {
 } from "@chakra-ui/react";
 import axios from "axios";
 import { frontend, backend, oauth } from "../utils/ip.js";
-import { getCookie, setCookie } from "cookies-next";
+import { deleteCookie, getCookie, setCookie } from "cookies-next";
 import Link from "next/link.js";
 
 const LoginModal = ({ isOpen, onClose }) => {
@@ -32,6 +32,7 @@ const LoginModal = ({ isOpen, onClose }) => {
 				res,
 				maxAge: 60 * 60 * 24 * 1000,
 			});
+			deleteCookie("accessToken", { path: "/", domain: `localhost` });
 			location.href = `${frontend}`;
 		} catch (e) {
 			alert("Email/Password를 확인해주세요");
