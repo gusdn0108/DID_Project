@@ -38,10 +38,10 @@ router.post('/authorize', async (req: Request, res: Response) => {
         const contract = await deployed();
         const result = await contract.methods.getUser(hash).call();
 
-        console.log(result);
+        console.log(result)
 
-        if ((result[0] == '' && result[2] == 0) || email !== result[5]) {
-            res.json(responseObject(false, 'id/pw를 확인해주세요'));
+        if((result[0] =='' && result[2] == 0)|| email !== result[5]) {
+            res.json(responseObject(false, 'id/pw를 확인해주세요'))
             return;
         }
 

@@ -87,6 +87,7 @@ const register = () => {
         verifyArray[3] +
         verifyArray[4] +
         verifyArray[5];
+      console.log(verfifyNumber);
 
       setVerifyNum(verfifyNumber);
       invalidation;

@@ -22,6 +22,10 @@ const LoginModal = ({ loginIsOpen, loginOnClose }) => {
     }
   };
 
+  const didLoginHandler = async () => {
+    location.href = 'http://localhost:4000/api/oauth/RedirectUrl';
+  };
+
   return (
     <>
       <Modal isOpen={loginIsOpen} onClose={loginOnClose}>
@@ -35,15 +39,7 @@ const LoginModal = ({ loginIsOpen, loginOnClose }) => {
           </ModalBody>
 
           <ModalFooter>
-            <Button
-              width="7rem"
-              colorScheme="teal"
-              variant="outline"
-              mr="7.2rem"
-              onClick={() => {
-                console.log('DID 로그인');
-              }}
-            >
+            <Button width="7rem" colorScheme="teal" variant="outline" mr="7.2rem" onClick={didLoginHandler}>
               DID 로그인
             </Button>
             <Button width="5rem" colorScheme="teal" mr={3} onClick={loginOnClose}>
