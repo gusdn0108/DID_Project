@@ -2,19 +2,30 @@ import { Box, Button, Flex, Text, Input, Image } from "@chakra-ui/react";
 
 import { useState } from "react";
 import axios from "axios";
-import { backend } from "../utils/ip.js";
+import { getCookie, deleteCookie } from "cookies-next";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 
-const Purchase = ({ userId, email }) => {
+const Purchase = ({ email, whichCookie, point }) => {
   const router = useRouter();
-  const productInfo = router.asPath;
 
   const [price, setPrice] = useState("");
   const [img, setImg] = useState("");
   const [title, setTitle] = useState("");
   const [exp, setExp] = useState("");
-  const [point, setPoint] = useState(0);
+
+  const [usePoint, setUsePoint] = useState(0);
+  const [token, setToken] = useState(false);
+  const [tokenData, setTokenData] = useState("");
+
+  if (whichCookie == "local") {
+    console.log("local");
+  } else if (whichCookie == "oauth") {
+    console.log("oauth");
+  }
+  const toMain = () => {
+    location.href = "/";
+  };
 
   const setProductInfo = () => {
     const productInfo = location.href.split("?")[1].split("&");
@@ -23,54 +34,83 @@ const Purchase = ({ userId, email }) => {
     setImg(productInfo[2].split("=")[1]);
   };
 
-  const buyItem = async () => {
-    const response = await axios.post(
-      "http://localhost:4000/api/auth/usePoint",
-      { email: email, price: formattedPrice }
+  const getPage = () => {
+    document.domain = "localhost";
+    window.open(
+      `http://localhost:8080/payment?email=${email}&point=${price}`,
+      "",
+      "width=800, height=600"
     );
   };
 
   const getPoint = async () => {
     const response = await axios.post(
-      "http://localhost:4000/api/auth/pointInquiry",
-      { email }
+      "http://localhost:4001/api/auth/pointInquiry",
+      { email: email }
     );
     if (response.data.status) {
-      setPoint(response.data.point);
+      setUsePoint(response.data.point);
     }
   };
 
-  const purchase = async (price) => {
-    if (!email) {
-      alert("로그인 후 이용 가능합니다.");
-      return;
-    }
-
+  const buyItem = async () => {
     const returnValue = confirm(
-      `선택하신 상품 가격은 ${price}원입니다. 구매하시겠습니까? \n 남은 포인트: ${point}원`
+      `선택하신 상품 가격은 ${price}원입니다. 
+      구매하시겠습니까? \n 남은 포인트: ${usePoint}원`
     );
-    if (returnValue == true) {
-      try {
-        const response = await axios.post(`${backend}/api/auth/usePoint`, {
-          email,
-          price,
-        });
-        if (response.data.status == true) {
-          alert(response.data.msg);
-          setPoint(point - price);
-        } else {
-          alert("잔액이 부족합니다");
-        }
-      } catch (e) {
-        alert(e.message);
+    if (returnValue !== false) {
+      const response = await axios.post(
+        "http://localhost:4001/api/auth/usePoint",
+        { email, price }
+      );
+      if (response.data.status) {
+        getPoint();
+        alert("구매 완료되었습니다");
+      } else {
+        alert("구매에 실패하였습니다.");
       }
+    }
+  };
+
+  const didBuyItem = async (req, res) => {
+    const Cookie = getCookie("item");
+
+    const payPoint = JSON.parse(
+      Buffer.from(Cookie.split(".")[1], "base64").toString("utf-8")
+    ).pointInfo;
+
+    const response = await axios.post(
+      "http://localhost:8000/Oauth/point/usePoint",
+      {
+        token: Cookie,
+        payPoint,
+      }
+    );
+
+    if (!response.data.isError) {
+      alert(response.data.value);
+      deleteCookie("item", { req, res, maxAge: 60 * 60 * 24 * 1000 });
+      window.location.reload();
     } else {
-      return;
+      alert(response.data.error);
     }
   };
 
   useEffect(() => {
+    getPoint();
     setProductInfo();
+    if (!token) {
+      if (getCookie("item")) {
+        setTokenData(
+          JSON.parse(
+            Buffer.from(getCookie("item").split(".")[1], "base64").toString(
+              "utf-8"
+            )
+          ).pointInfo
+        );
+        setToken(true);
+      }
+    }
   }, []);
 
   return (
@@ -97,15 +137,40 @@ const Purchase = ({ userId, email }) => {
           </Box>
           <Box>
             <Flex justifyContent={"center"}>
-              <Button colorScheme={"blue"} variant="outline" mx="2%" w="30%">
+              <Button
+                colorScheme={"blue"}
+                variant="outline"
+                mx="2%"
+                w="30%"
+                onClick={buyItem}
+              >
                 구매하기
               </Button>
-              <Button colorScheme={"blue"} variant="outline" mx="2%" w="30%">
+              <Button
+                colorScheme={"blue"}
+                variant="outline"
+                mx="2%"
+                w="30%"
+                onClick={toMain}
+              >
                 취소
               </Button>
             </Flex>
           </Box>
           {email}
+          {whichCookie == "local" ? (
+            <>
+              <Box>oauth 로그인 전용</Box>
+            </>
+          ) : (
+            <>
+              {token == false ? (
+                <Button onClick={getPage}>다른 사이트 포인트 사용</Button>
+              ) : (
+                <Button onClick={didBuyItem}>구매</Button>
+              )}
+            </>
+          )}
         </Box>
       </Box>
     </>
