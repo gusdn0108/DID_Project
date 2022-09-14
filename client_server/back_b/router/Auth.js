@@ -183,7 +183,7 @@ router.post('/usePoint', async (req, res) => {
         } else {
             res.json({
                 status: false,
-                msg: '금액 모자릅니다  ',
+                msg: '금액 모자릅니다',
             });
         }
     } catch (error) {
@@ -192,12 +192,12 @@ router.post('/usePoint', async (req, res) => {
 });
 
 router.post('/pointInquiry', async (req, res) => {
+    const { email } = req.body;
+    console.log(email);
     try {
         const _user = await Auth.findOne({
             where: {
-                email: {
-                    [Op.eq]: req.body.email,
-                },
+                email,
             },
         });
         const getPoint = _user.dataValues.point;

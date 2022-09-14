@@ -6,6 +6,7 @@ const { Account, UserInfo } = require('../models');
 require('dotenv').config();
 
 const router = express.Router();
+require('dotenv').config();
 
 const baseUrl = 'http://localhost:8000';
 

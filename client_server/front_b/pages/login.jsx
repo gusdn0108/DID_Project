@@ -1,16 +1,21 @@
 import { useEffect } from "react";
-import { setCookie } from "cookies-next";
+import { deleteCookie, setCookie, getCookie } from "cookies-next";
 import { useRouter } from "next/router";
 import { Box, Flex, Text } from "@chakra-ui/react";
 
 const Login = () => {
   const router = useRouter();
+  const userInfo = getCookie("userInfo", { path: "/", domain: `localhost` });
   const setCookieAndMove = () => {
     if (location.href.split("?")[1] == undefined) {
       location.href = "/";
       return;
     }
     const cookie = location.href.split("?")[1].split("=")[1];
+    if (userInfo !== undefined) {
+      deleteCookie(userInfo);
+    }
+
     setCookie("accessToken", cookie, {
       maxAge: 60 * 60 * 24 * 1000,
     });

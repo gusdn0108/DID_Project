@@ -45,7 +45,6 @@ const userAppRegister = ({
     const codeUrl = location.href;
     const email = codeUrl.split("?")[1].split("&")[0].split("=")[1];
 
-    console.log(email);
     const response = await axios.post(`${backend}/oauth/app/userdidregister`, {
       restAPI,
       email,
