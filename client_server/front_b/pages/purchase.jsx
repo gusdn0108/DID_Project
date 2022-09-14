@@ -17,6 +17,7 @@ const Purchase = ({ email, whichCookie, point }) => {
   const [usePoint, setUsePoint] = useState(0);
   const [token, setToken] = useState(false);
   const [tokenData, setTokenData] = useState("");
+  const [userCookie, setUserCookie] = useState(whichCookie);
 
   if (whichCookie == "local") {
     console.log("local");
@@ -99,6 +100,7 @@ const Purchase = ({ email, whichCookie, point }) => {
   useEffect(() => {
     getPoint();
     setProductInfo();
+    setUserCookie(whichCookie);
     if (!token) {
       if (getCookie("item")) {
         setTokenData(
@@ -115,7 +117,7 @@ const Purchase = ({ email, whichCookie, point }) => {
 
   return (
     <>
-      <Box w="65%" h="40rem" mx="auto" my="0" px="5%" py="5%">
+      <Box w="65%" h="42rem" mx="auto" my="0" px="5%" py="6%">
         <Box
           w="55%"
           border="1px"
@@ -127,45 +129,48 @@ const Purchase = ({ email, whichCookie, point }) => {
           textAlign={"center"}
           boxShadow="xs"
         >
-          <Image src={img} mx="auto" my="0" w="100%" mb="3%" />
+          <Image src={img} mx="auto" my="0" w="100%" mb="4%" />
 
-          <Box fontSize={"150%"} mb="3%">
+          <Box fontSize={"150%"} mb="4%">
             {title}
           </Box>
           <Box mb="4%" fontSize={"120%"}>
             {price} KRW
           </Box>
           <Box>
-            <Flex justifyContent={"center"}>
-              <Button
-                colorScheme={"blue"}
-                variant="outline"
-                mx="2%"
-                w="30%"
-                onClick={buyItem}
-              >
-                구매하기
-              </Button>
-              <Button
-                colorScheme={"blue"}
-                variant="outline"
-                mx="2%"
-                w="30%"
-                onClick={toMain}
-              >
-                취소
-              </Button>
-            </Flex>
+            {userCookie == "local" ? (
+              <Flex justifyContent={"center"} mb="3%">
+                <Button
+                  colorScheme={"blue"}
+                  variant="outline"
+                  mx="2%"
+                  w="30%"
+                  onClick={buyItem}
+                >
+                  구매하기
+                </Button>
+                <Button
+                  colorScheme={"blue"}
+                  variant="outline"
+                  mx="2%"
+                  w="30%"
+                  onClick={toMain}
+                >
+                  취소
+                </Button>
+              </Flex>
+            ) : (
+              ""
+            )}
           </Box>
-          {email}
-          {whichCookie == "local" ? (
-            <>
-              <Box>oauth 로그인 전용</Box>
-            </>
+          {userCookie == "local" ? (
+            ""
           ) : (
             <>
               {token == false ? (
-                <Button onClick={getPage}>다른 사이트 포인트 사용</Button>
+                <Button onClick={getPage} mt="2%">
+                  다른 사이트 포인트 사용
+                </Button>
               ) : (
                 <Button onClick={didBuyItem}>구매</Button>
               )}
