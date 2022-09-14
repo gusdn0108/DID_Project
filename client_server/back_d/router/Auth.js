@@ -179,7 +179,6 @@ router.post('/email', async (req, res) => {
 
 router.post('/SignUp', async (req, res) => {
     const { email, password, nickName } = req.body;
-    console.log(email, password, nickName);
 
     try {
         const exEmail = await Auth.findOne({
@@ -189,7 +188,7 @@ router.post('/SignUp', async (req, res) => {
         });
         const exUserName = await Auth.findOne({
             where: {
-                userName: nickName,
+                name: nickName,
             },
         });
 
@@ -198,12 +197,13 @@ router.post('/SignUp', async (req, res) => {
         }
 
         const hash = await bcrypt.hash(password, 12);
-        console.log('asdf??', hash);
         await Auth.create({
             email: email,
             password: hash,
-            username: nickName,
+            name: nickName,
             point: 50000,
+            age: 12,
+            mobile: 12345678,
         });
 
         res.status(201).json({
@@ -266,7 +266,6 @@ router.post('/login', async (req, res) => {
         });
     }
 });
-
 
 router.post('/updatePoint', async (req, res) => {
     const { email, usePoint } = req.body;

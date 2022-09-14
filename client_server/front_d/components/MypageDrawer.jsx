@@ -1,20 +1,32 @@
 import { DrawerFooter, Center, Box, Drawer, Badge, Divider, Text, Button, DrawerBody, useDisclosure, DrawerHeader, DrawerOverlay, DrawerContent, DrawerCloseButton, Image } from '@chakra-ui/react';
-
 import { StarIcon } from '@chakra-ui/icons';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 
-function SizeExample() {
+function SizeExample({ user }) {
+	const { email, name } = user;
 	const { isOpen, onOpen, onClose } = useDisclosure();
+
+	const [point, setPoint] = useState(0);
 	const [did, setDid] = useState(false);
 
-	const handleClick = (newSize) => {
+	const handleClick = () => {
 		onOpen();
 	};
 
+	useEffect(() => {
+		(async function () {
+			const response = await axios.post('http://localhost:4003/api/auth/pointInquiry', { email });
+			if (response.data.status) {
+				setPoint(response.data.point);
+			}
+		})();
+	}, []);
+
 	return (
 		<>
-			<Button w='10rem' colorScheme='yellow' variant='outline' ml='2rem' onClick={() => handleClick('sm')}>
-				MY PROFILE
+			<Button w='6rem' colorScheme='yellow' variant='outline' ml='0.5rem' onClick={() => handleClick('sm')}>
+				PROFILE
 			</Button>
 
 			<Drawer onClose={onClose} isOpen={isOpen} size='sm'>
@@ -23,15 +35,15 @@ function SizeExample() {
 					<DrawerCloseButton />
 					<DrawerHeader>
 						<Text fontSize='2rem' fontWeight='semibold' textAlign='center' mt='2rem'>
-							WELCOME USER 🥳
+							WELCOME USER {name} 🥳
 						</Text>
 						<Divider />
 					</DrawerHeader>
 					<DrawerBody mt='2rem'>
-						<Text fontWeight='bold'> ID : </Text>
+						<Text fontWeight='bold'> ID : {email}</Text>
 						<Text fontWeight='bold' mt='0.2rem'>
 							{' '}
-							POINT : ???
+							POINT : {point}
 						</Text>
 						<Text fontWeight='bold' mt='0.2rem'>
 							{' '}

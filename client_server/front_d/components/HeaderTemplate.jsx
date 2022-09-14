@@ -1,10 +1,23 @@
 import HeaderTemplate from './styles/HeaderStyle';
-import { Button, Flex, Box, Center, Text } from '@chakra-ui/react';
+import { Button, Flex, Center, Text, useDisclosure } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import MypageDrawer from '../components/MypageDrawer.jsx';
+import MypageDrawer from './MypageDrawer.jsx';
+import JoinModal from './JoinModal.jsx';
+import LoginModal from './LoginModal.jsx';
+import { deleteCookie } from 'cookies-next';
 
-export default function Home() {
+export default function Home({ user }) {
+	const [isLogin, setIsLogin] = useState(false);
+
+	const { isOpen: loginIsOpen, onOpen: loginOnOpen, onClose: loginOnClose } = useDisclosure();
+	const { isOpen: joinIsOpen, onOpen: joinOnOpen, onClose: joinOnClose } = useDisclosure();
+
+	useEffect(() => {
+		if (user) {
+			setIsLogin(true);
+		}
+	}, []);
+
 	return (
 		<>
 			<HeaderTemplate>
@@ -36,9 +49,37 @@ export default function Home() {
 						</Center>
 					</Flex>
 					<Center flex={1} mr='2rem'>
-						<MypageDrawer/>
+						{isLogin ? (
+							<>
+								<Button
+									onClick={(req, res) => {
+										deleteCookie('user', { req, res, maxAge: 60 * 60 * 24 * 1000 });
+										setIsLogin(false);
+										window.location.replace('/');
+									}}
+									colorScheme='yellow'
+									variant='outline'
+									w='6rem'
+									mr='0.5rem'
+								>
+									LOGOUT
+								</Button>
+								<MypageDrawer user={user} />
+							</>
+						) : (
+							<>
+								<Button onClick={joinOnOpen} colorScheme='yellow' variant='outline' w='5rem' mr='0.5rem'>
+									JOIN
+								</Button>
+								<Button onClick={loginOnOpen} colorScheme='yellow' variant='outline' w='5rem' ml='0.5rem'>
+									LOGIN
+								</Button>
+							</>
+						)}
 					</Center>
 				</Flex>
+				<JoinModal joinIsOpen={joinIsOpen} joinOnClose={joinOnClose} />
+				<LoginModal loginIsOpen={loginIsOpen} loginOnClose={loginOnClose} />
 			</HeaderTemplate>
 		</>
 	);

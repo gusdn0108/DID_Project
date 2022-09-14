@@ -1,9 +1,9 @@
-import { Box, Stack, Center, Flex, Text, Button } from '@chakra-ui/react';
+import { Box, Stack, Center, Flex, Text, Button, useDisclosure } from '@chakra-ui/react';
 import MainCarousel from '../components/Carousel';
 import ItemList from '../components/ItemList';
 import { property1, property2, property3, property4 } from '../property';
 
-export default function Home() {
+export default function Home({ user }) {
 	return (
 		<>
 			<Center w='100%' h='40rem' mt='-3.3rem'>
@@ -73,16 +73,16 @@ export default function Home() {
 					</Box>
 					<Box w='100%' h='140rem'>
 						<Center mt='3rem'>
-							<ItemList property={property1} />
+							<ItemList property={property1} user={user} />
 						</Center>
 						<Center mt='4rem'>
-							<ItemList property={property2} />
+							<ItemList property={property2} user={user} />
 						</Center>
 						<Center mt='4rem'>
-							<ItemList property={property3} />
+							<ItemList property={property3} user={user} />
 						</Center>
 						<Center mt='4rem'>
-							<ItemList property={property4} />
+							<ItemList property={property4} user={user} />
 						</Center>
 					</Box>
 				</Box>
