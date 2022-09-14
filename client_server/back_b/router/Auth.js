@@ -1,10 +1,8 @@
 const express = require('express');
 const nodeMailer = require('nodemailer');
-const crypto = require('crypto');
-const axios = require('axios');
 const jwt = require('jsonwebtoken');
 const router = express.Router();
-const { Auth, sequelize, UserInfo, Account } = require('../models');
+const { Auth } = require('../models');
 const { Op } = require('sequelize');
 const emailTemplate = require('../email/index');
 

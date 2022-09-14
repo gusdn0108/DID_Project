@@ -18,7 +18,7 @@ router.post('/authorize', async (req: Request, res: Response) => {
     const userhash = email + password;
     const hash = crypto.createHash('sha256').update(userhash).digest('base64');
 
-    try{
+    try {
         const checkRedirectUri = await RedirectURI.findOne({
             where: {
                 restAPI: restAPI,
@@ -31,8 +31,8 @@ router.post('/authorize', async (req: Request, res: Response) => {
         const contract = await deployed();
         const result = await contract.methods.getUser(hash).call();
 
-        if((result[0] =='' && result[2] == 0)|| email !== result[5]) {
-            res.json(responseObject(false, 'id/pw를 확인해주세요'))
+        if ((result[0] == '' && result[2] == 0) || email !== result[5]) {
+            res.json(responseObject(false, 'id/pw를 확인해주세요'));
             return;
         }
 
@@ -43,13 +43,13 @@ router.post('/authorize', async (req: Request, res: Response) => {
             },
         });
 
-        if(!isRegistered) {
+        if (!isRegistered) {
             res.header('Access-Control-Allow-Origin', 'http://localhost:8080');
             const response = {
                 status: 'first',
-                registerUri : `http://${frontend}/userAppRegister?email=${email}&restAPI=${restAPI}&redirectUri=${reURL}&hash=${hash}&giveUserInfo=${giveUserInfo}`
-            }
-            res.json(response)
+                registerUri: `http://${frontend}/userAppRegister?email=${email}&restAPI=${restAPI}&redirectUri=${reURL}&hash=${hash}&giveUserInfo=${giveUserInfo}`,
+            };
+            res.json(response);
             return;
         }
 
@@ -179,7 +179,7 @@ router.post('/localAuthorize', async (req: Request, res: Response) => {
             });
         }
     } catch (e) {
-        responseObject(false, e.message);
+        res.json(responseObject(false, e.message));
     }
 });
 

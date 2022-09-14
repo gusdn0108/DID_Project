@@ -1,7 +1,7 @@
 import { Button, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, Lorem, ModalFooter, Input } from '@chakra-ui/react';
 import axios from 'axios';
 import { useState } from 'react';
-import { setCookie } from 'cookies-next';
+import { setCookie, deleteCookie, getCookie } from 'cookies-next';
 
 const LoginModal = ({ loginIsOpen, loginOnClose }) => {
   const [email, setEmail] = useState('');
@@ -15,7 +15,11 @@ const LoginModal = ({ loginIsOpen, loginOnClose }) => {
 
     if (response.data.status) {
       const payload = response.data.token.split('.')[1];
+      if (getCookie('accessToken')) {
+        deleteCookie('accessToken', { req, res, maxAge: 60 * 60 * 24 * 1000 });
+      }
       setCookie('user', payload, { req, res, maxAge: 60 * 60 * 24 * 1000 });
+
       window.location.replace('/');
     } else {
       alert(response.data.msg);
