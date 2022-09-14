@@ -47,6 +47,7 @@ const mypage = ({ userId, email }) => {
       alert(response.data.msg);
       return;
     }
+
     if (response.data.status == true) {
       alert(`비밀 번호가 변경되었습니다. 다시 로그인 해주세요.`);
       deleteCookie("loginInfo", { path: "/", domain: `localhost` });

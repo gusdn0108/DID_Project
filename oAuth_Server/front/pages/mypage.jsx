@@ -55,14 +55,13 @@ const Mypage = ({ appList, hashId, email }) => {
 
   const showAppList = myAppList?.map((v, k) => {
     return (
-      <Box p="5%" key={k}>
+      <Box p="5%" key={k} fontSize="110%">
         <Flex justifyContent={"space-around"}>
           <Text px="5%">
             <Link href={`/appinfo?appName=${v.appName}&RestAPI=${v.restAPI}`}>
               {v.appName}
             </Link>
           </Text>
-          <Text>{v.restAPI}</Text>
         </Flex>
       </Box>
     );
@@ -84,8 +83,6 @@ const Mypage = ({ appList, hashId, email }) => {
   };
 
   const getUserInfo = async () => {
-    console.log(hashId);
-
     const response = await axios.post(
       "http://localhost:8000/Oauth/user/searchUser",
       { hashId: hashId }
@@ -198,24 +195,38 @@ const Mypage = ({ appList, hashId, email }) => {
   };
 
   return (
-    <Center w="100%">
-      <Box w="40%" m="0 5%" h="20rem" mx="auto" bg="red" pt="5rem">
+    <Center w="100%" pt="5%" px="5%">
+      <Box w="40%" h="20rem" mx="auto" pt="5rem">
         <Flex mx="auto" my="0" justifyContent={"center"} mb="10%">
           <Box w="40%" mx="auto" my="0">
-            <Text>어플리케이션 등록</Text>
-            <Button onClick={onOpen}>어플리케이션 생성</Button>
-            <AppModal isOpen={isOpen} onClose={closeAndUpdate} email={email} />
+            <Text textAlign={"center"} fontSize={"175%"} mb="1.25rem">
+              어플리케이션 등록
+            </Text>
+            <Flex justifyContent={"center"}>
+              <Button onClick={onOpen} colorScheme="yellow" variant="outline">
+                어플리케이션 생성
+              </Button>
+              <AppModal
+                isOpen={isOpen}
+                onClose={closeAndUpdate}
+                email={email}
+                display="block"
+              />
+            </Flex>
           </Box>
         </Flex>
-        <Flex>
-          <Box mx="auto" my="0" justifyContent={"center"}>
-            <Text>내 어플리케이션</Text>
 
-            <Box>{showAppList}</Box>
+        <Divider />
+
+        <Flex>
+          <Box mx="auto" my="3%" justifyContent={"center"}>
+            <Text fontSize={"180%"}>내 어플리케이션</Text>
+
+            {showAppList}
           </Box>
         </Flex>
       </Box>
-      <Box w="40%" m="0 5%" h="20rem" pt="5rem">
+      <Box w="40%" m="0 5%" h="20rem" pt="5rem" px="6%">
         {pwCheck === false ? (
           <>
             <Center>
@@ -243,10 +254,11 @@ const Mypage = ({ appList, hashId, email }) => {
             <Center>
               <Button
                 colorScheme="yellow"
-                mb="2rem"
+                mb="1rem"
                 variant="outline"
                 mt="2rem"
                 onClick={checkPwdfunction}
+                w="30%"
               >
                 {" "}
                 확인
@@ -265,6 +277,7 @@ const Mypage = ({ appList, hashId, email }) => {
                 }}
                 colorScheme="yellow"
                 variant="outline"
+                w="30%"
               >
                 LOGOUT
               </Button>
@@ -273,7 +286,7 @@ const Mypage = ({ appList, hashId, email }) => {
         ) : (
           <>
             <FormControl mt="3">
-              <Text fontSize={"180%"} px="35%">
+              <Text fontSize={"175%"} px="25%" mb="3%">
                 회원정보수정
               </Text>
               <FormLabel fontSize={"140%"} px="2%" mb="3%">
@@ -384,7 +397,7 @@ const Mypage = ({ appList, hashId, email }) => {
             )}
             <Divider />
 
-            <Text fontSize={"180%"} px="35%" pt="4rem">
+            <Text fontSize={"175%"} px="25%" pt="4rem">
               비밀 번호 수정
             </Text>
 

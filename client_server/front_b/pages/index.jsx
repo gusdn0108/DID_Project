@@ -1,12 +1,8 @@
 import { Box, Button, Flex, Text, Input, Image } from "@chakra-ui/react";
-import { Search2Icon } from "@chakra-ui/icons";
 
 import { useState } from "react";
 import axios from "axios";
-
 import { backend } from "../utils/ip.js";
-import { useEffect } from "react";
-
 import MainCarousel from "../components/mainPage/Carousel.jsx";
 
 const Home = ({ userId, email, point, setPoint }) => {
@@ -14,7 +10,18 @@ const Home = ({ userId, email, point, setPoint }) => {
   const [product1, product2, product3, product4] = [
     34900, 39000, 52900, 449000,
   ];
-
+  const [title1, title2, title3, titl4] = [
+    "다낭 5일",
+    "싱가포르 5일",
+    "몽골 5일",
+    "서유럽 12일",
+  ];
+  const [img1, img2, img3, img4] = [
+    "https://image.hanatour.com/usr/cms/resize/250_0/2019/01/18/10000/0b0544c8-cbbe-4e27-a994-dacbb55e3b15.jpg",
+    "https://image.hanatour.com/usr/cms/resize/250_0/2021/12/13/10000/2c56ad37-6385-42ba-9822-d0e88efb0b77.jpg",
+    "https://image.hanatour.com/usr/cms/resize/250_0/2022/06/23/10000/a075696c-13ba-4cb4-81a5-24a04c4e5974.jpg",
+    "https://image.hanatour.com/usr/cms/resize/250_0/2019/01/18/10000/0b0544c8-cbbe-4e27-a994-dacbb55e3b15.jpg",
+  ];
   const setUnderLiner = (e) => {
     setClicked(e.target.id);
   };
@@ -46,6 +53,10 @@ const Home = ({ userId, email, point, setPoint }) => {
     } else {
       return;
     }
+  };
+
+  const toPurchase = (product, title, img) => {
+    location.href = `/purchase?product=${product}&title=${title}&img=${img}`;
   };
 
   return (
@@ -179,13 +190,13 @@ const Home = ({ userId, email, point, setPoint }) => {
           </Text>
 
           <Flex w="100%" justifyContent="space-between" textAlign="center">
-            <Box w="23.5%" onClick={() => purchase(product1)} id="product1">
-              <Image
-                src="https://image.hanatour.com/usr/cms/resize/250_0/2019/01/18/10000/0b0544c8-cbbe-4e27-a994-dacbb55e3b15.jpg"
-                w="100%"
-                mb="5%"
-                h="60%"
-              />
+            <Box
+              w="23.5%"
+              id="product1"
+              onClick={() => toPurchase(product1, title1, img1)}
+            >
+              <Image src={img1} w="100%" mb="5%" h="60%" />
+
               <Text textAlign="left" fontSize="115%" mb="0.25rem">
                 다낭 5일 #시내4성 #자유시간
               </Text>
@@ -198,12 +209,7 @@ const Home = ({ userId, email, point, setPoint }) => {
             </Box>
 
             <Box w="23.5%" onClick={() => purchase(product2)} id="product2">
-              <Image
-                src="https://image.hanatour.com/usr/cms/resize/250_0/2021/12/13/10000/2c56ad37-6385-42ba-9822-d0e88efb0b77.jpg"
-                w="100%"
-                mb="5%"
-                h="60%"
-              />
+              <Image src={img2} w="100%" mb="5%" h="60%" />
               <Text textAlign="left" fontSize="115%" mb="0.25rem">
                 싱가포르 자유여행 5일 #왕복항공권
               </Text>
@@ -216,12 +222,7 @@ const Home = ({ userId, email, point, setPoint }) => {
             </Box>
 
             <Box w="23.5%" onClick={() => purchase(product3)} id="product3">
-              <Image
-                src="https://image.hanatour.com/usr/cms/resize/250_0/2022/06/23/10000/a075696c-13ba-4cb4-81a5-24a04c4e5974.jpg"
-                w="100%"
-                mb="5%"
-                h="60%"
-              />
+              <Image src={img3} w="100%" mb="5%" h="60%" />
               <Text textAlign="left" fontSize="115%" mb="0.25rem">
                 [타임세일] 몽골/테렐지 4~5일 #초특가{" "}
               </Text>
@@ -234,12 +235,7 @@ const Home = ({ userId, email, point, setPoint }) => {
             </Box>
 
             <Box w="23.5%" onClick={() => purchase(product4)} id="product4">
-              <Image
-                src="https://image.hanatour.com/usr/cms/resize/250_0/2019/01/18/10000/0b0544c8-cbbe-4e27-a994-dacbb55e3b15.jpg"
-                w="100%"
-                mb="5%"
-                h="60%"
-              />
+              <Image src={img4} w="100%" mb="5%" h="60%" />
               <Text textAlign="left" fontSize="115%" mb="0.25rem">
                 [출발확정]서유럽 6국 12일
               </Text>
