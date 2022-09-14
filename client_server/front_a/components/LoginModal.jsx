@@ -16,11 +16,14 @@ const LoginModal = ({ loginIsOpen, loginOnClose }) => {
     if (response.data.status) {
       const payload = response.data.token.split('.')[1];
       setCookie('user', payload, { req, res, maxAge: 60 * 60 * 24 * 1000 });
-
       window.location.replace('/');
     } else {
       alert(response.data.msg);
     }
+  };
+
+  const didLoginHandler = async () => {
+    location.href = 'http://localhost:4000/api/oauth/RedirectUrl';
   };
 
   return (
@@ -36,15 +39,7 @@ const LoginModal = ({ loginIsOpen, loginOnClose }) => {
           </ModalBody>
 
           <ModalFooter>
-            <Button
-              width="7rem"
-              colorScheme="teal"
-              variant="outline"
-              mr="7.2rem"
-              onClick={() => {
-                console.log('DID 로그인');
-              }}
-            >
+            <Button width="7rem" colorScheme="teal" variant="outline" mr="7.2rem" onClick={didLoginHandler}>
               DID 로그인
             </Button>
             <Button width="5rem" colorScheme="teal" mr={3} onClick={loginOnClose}>
