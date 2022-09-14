@@ -19,8 +19,6 @@ function MyApp({ Component, pageProps }) {
   const userCookie = getCookie("loginInfo");
   let userName = "";
   let userEmail = "";
-  // let restAPI = "db4b4f6666bb7ad62368fe39fa68b94";
-  // 이것도 상수면 영 별로다.. 그냥 db에 애만 따로 저장할까..
 
   if (userCookie) {
     userName = JSON.parse(
