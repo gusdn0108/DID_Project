@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken');
 const router = express.Router();
 const { Auth } = require('../models');
 const { Op } = require('sequelize');
+const emailTemplate = require('../email/index');
 
 const generateRandom = (min, max) => {
     const ranNum = (Math.floor(Math.random() * (max - min + 1)) + min).toString();
@@ -19,7 +20,7 @@ const generateRandom = (min, max) => {
 };
 
 router.post('/email', async (req, res) => {
-    const { email, nickName } = req.body;
+    const { email } = req.body;
 
     try {
         const exEmail = await Auth.findOne({
@@ -34,7 +35,7 @@ router.post('/email', async (req, res) => {
     } catch (e) {
         console.log(e);
     }
-    // 중복 체크하고
+
     const number = generateRandom(111111, 999999);
     const mailPoster = nodeMailer.createTransport({
         service: 'Naver',
@@ -45,122 +46,12 @@ router.post('/email', async (req, res) => {
             pass: process.env.EMAIL_PASSWORD,
         },
     });
+
     let mailOptions = {
         from: 'gusdn6671@naver.com',
         to: email,
-        subject: '인증번호 입력해주세요 ',
-        html: `<div 
-        style='
-        text-align: center; 
-        width: 60%; 
-        height: 50%;
-        margin: 15%;
-        padding: 20px;
-        border:2px solid #FFB6C1;
-        border-radius: 10px;
-        background-color:#FFFAFA;
-        '>
-
-        
-        <h2 style='
-        color:pink;
-        font-weight:bold;
-        '>아래 6자리 숫자를 화면에 입력해주세요.</h2> <br/>  
-        <div style='display: flex;
-            justify-content: space-between ;
-           '>
-           <div style='  width:5rem;
-           height:5rem;
-           border:2px solid #FFB6C1;
-           border-radius: 10px;
-           background-color:#FFFAFA;'>
-           <h1 style='  
-           text-align:center;
-           font-weight:bold;
-           font-size:47px;
-           color:#FFB6C1;'>
-           ${number[0]}
-           </h1>
-           
-        </div>
-        <div style='  width:5rem;
-           height:5rem;
-           border:2px solid #FFB6C1;
-           border-radius: 10px;
-           background-color:#FFFAFA;'>
-           <h1 style='  
-           text-align:center;
-           font-weight:bold;
-           font-size:47px;
-           color:#FFB6C1;'>
-           ${number[1]}
-           </h1>
-           
-        </div>
-        <div style='  width:5rem;
-           height:5rem;
-           border:2px solid #FFB6C1;
-           border-radius: 10px;
-           background-color:#FFFAFA;'>
-           <h1 style='  
-           text-align:center;
-           font-weight:bold;
-           font-size:47px;
-           color:#FFB6C1;'>
-           ${number[2]}
-           </h1>
-           
-        </div>
-
-        <div style='  width:5rem;
-           height:5rem;
-           border:2px solid #FFB6C1;
-           border-radius: 10px;
-           background-color:#FFFAFA;'>
-           <h1 style='  
-           text-align:center;
-           font-weight:bold;
-           font-size:47px;
-           color:#FFB6C1;'>
-           ${number[3]}
-           </h1>
-           
-        </div>
-
-        <div style='  width:5rem;
-           height:5rem;
-           border:2px solid #FFB6C1;
-           border-radius: 10px;
-           background-color:#FFFAFA;'>
-           <h1 style='  
-           text-align:center;
-           font-weight:bold;
-           font-size:47px;
-           color:#FFB6C1;'>
-           ${number[4]}
-           </h1>
-           
-        </div>
-
-        <div style='  width:5rem;
-           height:5rem;
-           border:2px solid #FFB6C1;
-           border-radius: 10px;
-           background-color:#FFFAFA;'>
-           <h1 style='  
-           text-align:center;
-           font-weight:bold;
-           font-size:47px;
-           color:#FFB6C1;'>
-           ${number[5]}
-           </h1>
-           
-        </div>
-
-   </div>
-
-
-</div> `,
+        subject: '인증번호 입력해주세요',
+        html: emailTemplate(number),
     };
 
     mailPoster.sendMail(mailOptions, function (error, info) {
@@ -181,16 +72,6 @@ router.post('/SignUp', async (req, res) => {
     const { email, password, nickName } = req.body;
 
     try {
-        const exEmail = await Auth.findOne({
-            where: {
-                email: email,
-            },
-        });
-
-        if (exEmail) {
-            return res.status(403).send('이미 사용중인 메일입니다 ');
-        }
-
         const hash = await bcrypt.hash(password, 12);
 
         await Auth.create({
@@ -206,6 +87,9 @@ router.post('/SignUp', async (req, res) => {
         });
     } catch (error) {
         console.log(error);
+        res.json({
+            status: 0,
+        });
     }
 });
 
@@ -225,9 +109,6 @@ router.post('/login', async (req, res) => {
             if (bcrypt.compareSync(userPw, _user.dataValues.password)) {
                 delete _user.dataValues.password;
                 delete _user.dataValues.point;
-                delete _user.dataValues.uuid;
-
-                console.log(_user.dataValues);
 
                 let token = jwt.sign(
                     {
@@ -239,19 +120,18 @@ router.post('/login', async (req, res) => {
                 res.cookie('user', token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
                 res.json({
                     status: true,
-                    // userData: _user.dataValues,
                     token: token,
                 });
             } else {
                 res.json({
                     status: false,
-                    msg: '너 비밀번호 틀림 ',
+                    msg: '비밀번호가 일치하지 않습니다.',
                 });
             }
         } else {
             res.json({
                 status: false,
-                msg: '너 이메일이 틀림 ',
+                msg: '이메일이 일치하지 않습니다.',
             });
         }
     } catch (error) {
@@ -274,25 +154,26 @@ router.post('/idCheck', async (req, res) => {
         });
 
         if (_email === null) {
-            // 사용가능
             res.json({
                 status: 1,
             });
         } else {
-            // 사용불가
             res.json({
                 status: 2,
             });
         }
     } catch (e) {
         console.log(e.messasge);
+        res.json({
+            status: 0,
+            msg: '다시 시도하여주십시오.',
+        });
     }
 });
 
 router.post('/usePoint', async (req, res) => {
     const price = req.body.price;
     try {
-        // 사용자 이메일가져오기
         const _user = await Auth.findOne({
             where: {
                 email: {
@@ -322,8 +203,6 @@ router.post('/usePoint', async (req, res) => {
 });
 
 router.post('/pointInquiry', async (req, res) => {
-    // 사용자 가져와야함
-    console.log('연결????');
     try {
         const _user = await Auth.findOne({
             where: {
@@ -332,7 +211,6 @@ router.post('/pointInquiry', async (req, res) => {
                 },
             },
         });
-        // 데이터베이스에 있는 사용자 포인트 가져오기
         const getPoint = _user.dataValues.point;
         res.json({
             status: true,
@@ -350,10 +228,8 @@ router.post('/updatePoint', async (req, res) => {
             email: email,
         },
     });
-    console.log(havepoint.point);
     try {
         if (havepoint.point >= usePoint) {
-            // havepoint.point - point***
             await Auth.update(
                 {
                     point: havepoint.point - usePoint,
@@ -373,11 +249,12 @@ router.post('/updatePoint', async (req, res) => {
         console.log(e);
         res.json({
             status: 0,
-            error: '으악',
+            error: '포인트 사용 실패',
         });
     }
 });
 
+/** client 유저 비밀번호를 변경하도록 수정해야함 */
 router.post('/updateUser', async (req, res) => {
     const { email, password, oldPassword } = req.body;
     const clientId = 'aaaa';
@@ -402,6 +279,9 @@ router.post('/updateUser', async (req, res) => {
         }
     } catch (e) {
         console.log(e);
+        res.json({
+            status: 1,
+        });
     }
 });
 

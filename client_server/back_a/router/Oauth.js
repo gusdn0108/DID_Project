@@ -21,11 +21,8 @@ router.get('/RedirectUrl', async (req, res) => {
 });
 
 router.post('/getCode', async (req, res) => {
-    console.log('asdf???')
-    console.log(req.body)
-
-
-
+    console.log('asdf???');
+    console.log(req.body);
 
     // const RestAPI = userOTP.clientId;
 

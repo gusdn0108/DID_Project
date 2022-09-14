@@ -10,7 +10,6 @@ import App from '../../models/webSite/app.model';
 import DataNeeded from '../../models/webSite/dataNeeded.model';
 import RedirectURI from '../../models/webSite/redirectURI.model';
 
-
 const router = express.Router();
 
 router.post('/oAuthRegister', async (req: Request, res: Response) => {
@@ -35,12 +34,9 @@ router.post('/oAuthRegister', async (req: Request, res: Response) => {
         });
         const result = await contract.methods.isRegistered(hash).call();
 
-        const restAPI = '1';
-
         if (result) {
             await VerifyId.create({
                 email,
-                restAPI,
             });
             res.json({
                 status: true,
@@ -97,14 +93,13 @@ router.post('/upDateUser', async (req: Request, res: Response) => {
 
         const contract = await deployed();
         const checkUser = await contract.methods.isRegistered(hashId).call();
-        console.log(checkUser) //false 뜸
+        console.log(checkUser); //false 뜸
         if (checkUser) {
-
             await contract.methods.updateUser(hashId, DATA).send({
                 from: '0x7b6283591c09b1a738a46Acc0BBFbb5943EDb4F4',
                 gas: 10000000,
             });
-            
+
             const result = await contract.methods.getUser(hashId).call();
 
             console.log(result);
@@ -130,7 +125,6 @@ router.post('/upDateUser', async (req: Request, res: Response) => {
 
 router.post('/searchUser', async (req: Request, res: Response) => {
     const { hashId } = req.body;
-    
 
     try {
         const contract = await deployed();
@@ -154,31 +148,27 @@ router.post('/searchUser', async (req: Request, res: Response) => {
     }
 });
 
-
 router.post('/deleteUser2', async (req: Request, res: Response) => {
-    const {hashId} = req.body
+    const { hashId } = req.body;
     const t = await sequelize.transaction();
 
-    
-    const sucess = await VerifyId.destroy({ where: { hashId: hashId } })
+    const sucess = await VerifyId.destroy({ where: { hashId: hashId } });
     try {
         const deploy = await deployed();
 
         await deploy.methods.deleteUser(hashId).send({
             from: '0x7b6283591c09b1a738a46Acc0BBFbb5943EDb4F4',
             gas: 10000000,
-        })
-    
-        transaction : t
-    
+        });
 
-    await t.commit();
-    
-    }catch(err){
+        transaction: t;
+
+        await t.commit();
+    } catch (err) {
         await t.rollback();
     }
     const deploy = await deployed();
-    
+
     const checkUser = await deploy.methods.isRegistered(hashId).call();
 
     if (checkUser) throw new Error('회원 탈퇴 처리 실패');
@@ -187,9 +177,7 @@ router.post('/deleteUser2', async (req: Request, res: Response) => {
         status: true,
         msg: '회원탈퇴가 완료되었습니다.',
     });
-
-})
-
+});
 
 router.post('/deleteUser', async (req: Request, res: Response) => {
     const { hashId, email } = req.body;
@@ -208,31 +196,31 @@ router.post('/deleteUser', async (req: Request, res: Response) => {
 
         if (checkUser) throw new Error('회원 탈퇴 처리 실패');
 
-        await TotalPoint.destroy({where : {email:email}})
+        await TotalPoint.destroy({ where: { email: email } });
 
         const deleteApp = await App.findAll({
-            where : { owner : email }
-        })
+            where: { owner: email },
+        });
 
-        for(let i = 0; i<deleteApp.length; i++) {
+        for (let i = 0; i < deleteApp.length; i++) {
             await DataNeeded.destroy({
-                where : {
-                    restAPI:deleteApp[i].restAPI
-                }
-            })
+                where: {
+                    restAPI: deleteApp[i].restAPI,
+                },
+            });
 
             await RedirectURI.destroy({
-                where : {
-                    restAPI:deleteApp[i].restAPI
-                }
-            }) 
+                where: {
+                    restAPI: deleteApp[i].restAPI,
+                },
+            });
         }
 
         await App.destroy({
-            where : {
-                owner : email
-            }
-        })
+            where: {
+                owner: email,
+            },
+        });
 
         res.json(responseObject(true, '회원 탈퇴가 완료되었습니다.'));
     } catch (e) {
