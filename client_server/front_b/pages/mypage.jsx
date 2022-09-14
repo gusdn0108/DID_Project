@@ -13,10 +13,13 @@ import {
 } from "@chakra-ui/react";
 import axios from "axios";
 import { backend, frontend } from "../utils/ip";
+import { getCookie } from "cookies-next";
 
 const mypage = ({ userId, email, point }) => {
   const [tryDid, setTryDid] = useState(false);
   const [pw, setPw] = useState(undefined);
+
+  const accessToken = getCookie("accessToken");
 
   const didRegister = () => {
     setTryDid(!tryDid);
@@ -57,7 +60,7 @@ const mypage = ({ userId, email, point }) => {
             fontSize={"125%"}
             justifyContent="center"
           >
-            <Box fontSize={"125%"} px="10%" mb="5%">
+            <Box fontSize={"100%"} px="10%" mb="5%">
               <Text mb="2%" px="5%">
                 {email}님, 안녕하세요.
               </Text>
@@ -66,12 +69,15 @@ const mypage = ({ userId, email, point }) => {
                 point : {point}
               </Text>
             </Box>
-
-            <Flex justifyContent={"center"}>
-              <Button mx="1%" w="25%" onClick={changePw}>
-                비밀번호 변경
-              </Button>
-            </Flex>
+            {accessToken ? (
+              ""
+            ) : (
+              <Flex justifyContent={"center"}>
+                <Button mx="1%" w="25%" onClick={changePw}>
+                  비밀번호 변경
+                </Button>
+              </Flex>
+            )}
           </Box>
         </>
       ) : (
