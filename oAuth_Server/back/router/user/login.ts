@@ -1,18 +1,14 @@
-import express, { Request, response, Response } from 'express';
-import { Op } from 'sequelize';
+import express, { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
-import axios from 'axios';
 import crypto from 'crypto';
 import deployed from '../../web3';
 import VerifyId from '../../models/user/verifyId.model';
 import DataNeeded from '../../models/webSite/dataNeeded.model';
 import TotalPoint from '../../models/user/totalPoint.model';
 import { frontend } from './utils';
-import { ifError } from 'assert';
 import RedirectURI from '../../models/webSite/redirectURI.model';
-import { boolToNum, getUserinfo, infoStringToBool, makeRawVP, refineVP, responseObject } from '../app/utils';
+import { boolToNum, makeRawVP, refineVP, responseObject } from '../app/utils';
 import App from '../../models/webSite/app.model';
-import { info } from 'console';
 
 const router = express.Router();
 
@@ -21,11 +17,8 @@ router.post('/authorize', async (req: Request, res: Response) => {
 
     const userhash = email + password;
     const hash = crypto.createHash('sha256').update(userhash).digest('base64');
-    // 개인적으로 서버 검증 이전에 hash값이 이렇게 왔다갔다 하는게 좋아보이진 않아보이는데..
-    // 가능한 다른 방법이 생각나지 않는다. 나중에 생각나면 수정해볼 예정
 
-    try {
-        // 맞는 redirectUri인지 확인, 존재하는 restAPI인지도 이 과정에서 확인 가능
+    try{
         const checkRedirectUri = await RedirectURI.findOne({
             where: {
                 restAPI: restAPI,
@@ -37,8 +30,6 @@ router.post('/authorize', async (req: Request, res: Response) => {
 
         const contract = await deployed();
         const result = await contract.methods.getUser(hash).call();
-
-        console.log(result)
 
         if((result[0] =='' && result[2] == 0)|| email !== result[5]) {
             res.json(responseObject(false, 'id/pw를 확인해주세요'))
@@ -52,8 +43,7 @@ router.post('/authorize', async (req: Request, res: Response) => {
             },
         });
 
-        if (!isRegistered) {
-            // const response =
+        if(!isRegistered) {
             res.header('Access-Control-Allow-Origin', 'http://localhost:8080');
             const response = {
                 status: 'first',
