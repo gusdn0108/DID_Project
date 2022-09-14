@@ -73,11 +73,10 @@ export const noWhiteSpace = (uri : any) => {
 export const filterNull = (uris:any) => {
     const newRedirectUri = []
     for( let i = 0; i < uris.length; i++) {
-        if(uris[i] !== null) {
+        if(uris[i] !== null && uris[i] !== '') {
             newRedirectUri.push(uris[i])
         }
     }
-
     return newRedirectUri;
 }
 

@@ -21,7 +21,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookiePaser());
 app.use('/api', router);
-dotenv.config();
+
 sequelize
     .sync({ force: false })
     .then(() => {

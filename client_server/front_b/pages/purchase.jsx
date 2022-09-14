@@ -6,7 +6,7 @@ import { backend } from "../utils/ip.js";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 
-const Purchase = ({ userId, email, point, setPoint }) => {
+const Purchase = ({ userId, email }) => {
   const router = useRouter();
   const productInfo = router.asPath;
 
@@ -14,12 +14,30 @@ const Purchase = ({ userId, email, point, setPoint }) => {
   const [img, setImg] = useState("");
   const [title, setTitle] = useState("");
   const [exp, setExp] = useState("");
+  const [point, setPoint] = useState(0);
 
   const setProductInfo = () => {
     const productInfo = location.href.split("?")[1].split("&");
     setPrice(productInfo[0].split("=")[1].toLocaleString());
     setTitle(decodeURI(productInfo[1].split("=")[1]));
     setImg(productInfo[2].split("=")[1]);
+  };
+
+  const buyItem = async () => {
+    const response = await axios.post(
+      "http://localhost:4000/api/auth/usePoint",
+      { email: email, price: formattedPrice }
+    );
+  };
+
+  const getPoint = async () => {
+    const response = await axios.post(
+      "http://localhost:4000/api/auth/pointInquiry",
+      { email }
+    );
+    if (response.data.status) {
+      setPoint(response.data.point);
+    }
   };
 
   const purchase = async (price) => {
@@ -87,6 +105,7 @@ const Purchase = ({ userId, email, point, setPoint }) => {
               </Button>
             </Flex>
           </Box>
+          {email}
         </Box>
       </Box>
     </>

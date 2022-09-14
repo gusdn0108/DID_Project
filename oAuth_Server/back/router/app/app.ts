@@ -162,15 +162,25 @@ router.post('/updateRedirect', async (req: Request, res: Response) => {
     const uri = noWhiteSpace(uris)
 
     try {
+        const getre = await RedirectURI.findAll({
+            where : {
+                restAPI
+            }
+        }) 
         const oldRedirectURI = await RedirectURI.destroy({
             where : {
                 restAPI
             }
         })
-
         const newRedirectUri = filterNull(uri)
 
         insertNewUri(restAPI, newRedirectUri)
+
+        const deleteNull = await RedirectURI.destroy({
+            where : {
+                redirectURI : ' '
+            }
+        })
 
         res.json(responseObject(true, '리다이렉트 url 수정이 완료되었습니다.'));
     } catch (e) {

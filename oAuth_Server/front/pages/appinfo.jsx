@@ -39,7 +39,7 @@ const AppInfo = ({ email }) => {
     const response = await axios.post(`${backend}/oauth/app/appinfo`, {
       restAPI: router.query.RestAPI,
     });
-    console.log(response.data.result);
+
     setappRestAPI(response.data.result.restAPI);
     setAppSecret(response.data.result.client_secret);
 
