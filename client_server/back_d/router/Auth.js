@@ -128,7 +128,7 @@ router.post('/login', async (req, res) => {
                     process.env.SECRET_KEY,
                 );
 
-                res.cookie('user', token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
+                res.cookie('userInfo', token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
                 res.json({
                     status: true,
                     token: token,
