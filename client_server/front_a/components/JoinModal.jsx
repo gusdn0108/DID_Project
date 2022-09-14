@@ -25,11 +25,7 @@ const JoinModal = ({ joinIsOpen, joinOnClose }) => {
         } else {
           let id = e.target.value + domain;
 
-          console.log('이메일 변경');
-
           const response = await axios.post('http://localhost:4000/api/auth/idCheck', { email: id });
-
-          console.log(response.data);
 
           if (response.data.status === 1) {
             setEmailCheck('true');
@@ -50,11 +46,7 @@ const JoinModal = ({ joinIsOpen, joinOnClose }) => {
         } else {
           let id = email + e.target.value;
 
-          console.log('도메인 변경');
-
           const response = await axios.post('http://localhost:4000/api/auth/idCheck', { email: id });
-
-          console.log(response.data);
 
           if (response.data.status === 1) {
             setEmailCheck('true');
@@ -94,7 +86,6 @@ const JoinModal = ({ joinIsOpen, joinOnClose }) => {
       setEmailNum(response.data.number);
       setEmailCheck('');
     }
-
     console.log(response.data.number);
   };
 

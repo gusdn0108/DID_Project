@@ -1,10 +1,84 @@
 import { Center, Box, Badge, Stack, Text, Flex, Image, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, Button, useDisclosure, Divider } from '@chakra-ui/react';
 import { StarIcon } from '@chakra-ui/icons';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import { getCookie, deleteCookie } from 'cookies-next';
 
-const BuyItemModal = ({ bookInfo }) => {
-	console.log(bookInfo);
-
+const BuyItemModal = ({ bookInfo, user }) => {
 	const { isOpen, onOpen, onClose } = useDisclosure();
+	const [login, setLogin] = useState(false);
+	const [point, setPoint] = useState(0);
+
+	const [did, setDid] = useState(false);
+	const [token, setToken] = useState(false);
+	const [tokenData, setTokenData] = useState('');
+
+	const buyItem = async () => {
+		const response = await axios.post('http://localhost:4003/api/auth/usePoint', { email: user.email, price: bookInfo.formattedPrice });
+		if (response.data.status) {
+			getPoint();
+			alert('구매 완료되었습니다');
+			location.href = 'http://localhost:3003';
+		} else {
+			alert('구매에 실패하였습니다.');
+		}
+	};
+
+	const getPoint = async () => {
+		const response = await axios.post('http://localhost:4003/api/auth/pointInquiry', { email: user.email });
+		if (response.data.status) {
+			setPoint(response.data.point);
+		}
+	};
+
+	// OAuth의 페이지 요청하는 함수
+	const getPage = () => {
+		document.domain = 'localhost';
+		window.open(`http://localhost:8080/payment?email=${user.email}&point=${bookInfo.formattedPrice}`, '', 'width=800, height=600');
+	};
+
+	// OAuth에 포인트를 차감 요청할 함수
+	const didBuyItem = async (req, res) => {
+		const Cookie = getCookie('item');
+
+		const payPoint = JSON.parse(Buffer.from(Cookie.split('.')[1], 'base64').toString('utf-8')).pointInfo;
+
+		const response = await axios.post('http://localhost:8000/Oauth/point/usePoint', {
+			token: Cookie,
+			payPoint,
+		});
+
+		if (!response.data.isError) {
+			alert(response.data.value);
+			deleteCookie('item', { req, res, maxAge: 60 * 60 * 24 * 1000 });
+			window.location.reload();
+		} else {
+			alert(response.data.error);
+		}
+	};
+
+	const showUsePoint = () => {
+		let point = 0;
+		Object.entries(tokenData).forEach((v) => {
+			point += Number(v[1]);
+		});
+		return point;
+	};
+
+	useEffect(() => {
+		if (user) {
+			getPoint();
+			setLogin(true);
+			setDid(true);
+		}
+
+		if (!token) {
+			if (getCookie('item')) {
+				setTokenData(JSON.parse(Buffer.from(getCookie('item').split('.')[1], 'base64').toString('utf-8')).pointInfo);
+				setToken(true);
+			}
+		}
+	}, []);
 
 	return (
 		<>
@@ -65,49 +139,34 @@ const BuyItemModal = ({ bookInfo }) => {
 									</Text>
 									<Box w='100%' h='5rem' pt='7rem'>
 										<Text fontSize='1.5rem' fontWeight='semibold' textAlign='end' mr='2rem'>
-											보유중인 포인트 : ???
+											보유중인 포인트 : {point} P
 										</Text>
-										<Button w='14rem' mt='0.5rem' mb='0.5rem' colorScheme='yellow' variant='outline' ml='19rem'>
-											구매하기
+										<Button w='14rem' mt='0.5rem' mb='0.5rem' colorScheme='yellow' variant='outline' ml='19rem' onClick={buyItem}>
+											구매
 										</Button>
 									</Box>
 								</Box>
+								<Divider />
 								<Box w='100%' h='12rem'>
-									<Flex>
-										<Box w='33%' h='12rem'>
-											<Text textAlign='center' fontSize='1.2rem' fontWeight='semibold'>
-												A 사이트 포인트 사용
+									{token ? (
+										<Box w='100%' h='5rem' pt='7rem'>
+											<Text fontSize='1.5rem' fontWeight='semibold' textAlign='right' mr='3.5rem'>
+												{user ? `총 사용 포인트 ${showUsePoint()} P` : '로그인 후 이용가능 합니다'}
 											</Text>
-											<Text textAlign='center' fontSize='1.2rem' fontWeight='semibold' mt='5rem'>
-												보유 포인트 : ????
-											</Text>
-											<Button w='10rem' mt='0.5rem' mb='0.5rem' colorScheme='yellow' variant='outline' ml='0.8rem'>
-												구매하기
+											<Button w='14rem' mt='0.5rem' mb='0.5rem' colorScheme='yellow' variant='outline' ml='19rem' onClick={didBuyItem}>
+												구매
 											</Button>
 										</Box>
-										<Box w='33%' h='12rem'>
-											<Text textAlign='center' fontSize='1.2rem' fontWeight='semibold'>
-												B 사이트 포인트 사용
+									) : (
+										<Box w='100%' h='5rem' pt='7rem'>
+											<Text fontSize='1.5rem' fontWeight='semibold' textAlign='right' mr='3.5rem'>
+												포인트 조회하기
 											</Text>
-											<Text textAlign='center' fontSize='1.2rem' fontWeight='semibold' mt='5rem'>
-												보유 포인트 : ????
-											</Text>
-											<Button w='10rem' mt='0.5rem' mb='0.5rem' colorScheme='yellow' variant='outline' ml='0.8rem'>
-												구매하기
+											<Button w='14rem' mt='0.5rem' mb='0.5rem' colorScheme='yellow' variant='outline' ml='19rem' onClick={getPage}>
+												조회
 											</Button>
 										</Box>
-										<Box w='33%' h='12rem'>
-											<Text textAlign='center' fontSize='1.2rem' fontWeight='semibold'>
-												C 사이트 포인트 사용
-											</Text>
-											<Text textAlign='center' fontSize='1.2rem' fontWeight='semibold' mt='5rem'>
-												보유 포인트 : ????
-											</Text>
-											<Button w='10rem' mt='0.5rem' mb='0.5rem' colorScheme='yellow' variant='outline' ml='0.8rem'>
-												구매하기
-											</Button>
-										</Box>
-									</Flex>
+									)}
 								</Box>
 							</Box>
 						</Flex>

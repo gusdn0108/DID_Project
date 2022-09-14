@@ -1,8 +1,8 @@
 {
     "development": {
-        "username": "ivy",
-        "password": "GOODDAY",
-        "database": "C_Local_DB",
+        "username": "ash991213",
+        "password": "ash991213",
+        "database": "B_Local_DB",
         "host": "127.0.0.1",
         "dialect": "mysql"
     },
