@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const router = express.Router();
 const { Auth } = require('../models');
 const { Op } = require('sequelize');
+const crypto = require('crypto');
 const emailTemplate = require('../email/index');
 
 const generateRandom = (min, max) => {
@@ -66,7 +67,7 @@ router.post('/email', async (req, res) => {
 });
 
 router.post('/SignUp', async (req, res) => {
-    const { email, password, name, age, phone } = req.body;
+    const { email, password, name, phone } = req.body;
 
     try {
         const exLocal = await Auth.findOne({
@@ -86,7 +87,6 @@ router.post('/SignUp', async (req, res) => {
             email: email,
             userHash: hash,
             name,
-            age,
             mobile: phone,
             point: 50000,
         });

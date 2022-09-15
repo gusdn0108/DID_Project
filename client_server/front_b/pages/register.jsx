@@ -182,14 +182,6 @@ const register = () => {
                 mb="6%"
                 onChange={getPhone}
               />
-
-              <FormLabel>나이</FormLabel>
-              <Input
-                placeholder="나이를 입력해주세요"
-                size="sm"
-                mb="8%"
-                onChange={getAge}
-              />
             </>
           ) : (
             ""
