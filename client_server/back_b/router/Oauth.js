@@ -3,10 +3,11 @@ const axios = require('axios');
 const jwt = require('jsonwebtoken');
 const { filterNull } = require('./utils');
 const { Account, UserInfo } = require('../models');
+const crypto = require('crypto')
 require('dotenv').config();
 
 const router = express.Router();
-require('dotenv').config();
+
 
 const baseUrl = 'http://localhost:8000';
 
