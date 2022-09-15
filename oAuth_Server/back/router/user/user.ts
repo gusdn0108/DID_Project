@@ -94,10 +94,12 @@ router.post('/upDateUser', async (req: Request, res: Response) => {
         const checkUser = await contract.methods.isRegistered(hashId).call();
         console.log(checkUser); //false 뜸
         if (checkUser) {
+            console.log('asdf1')
             await contract.methods.updateUser(hashId, DATA).send({
                 from: '0x81AE44dbde9B84C07392a2d0D0AB4aBaF9D84A07',
                 gas: 10000000,
             });
+            console.log('asdasdf')
 
             const result = await contract.methods.getUser(hashId).call();
 

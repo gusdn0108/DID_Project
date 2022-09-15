@@ -19,12 +19,12 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
-            age: {
-                type: DataTypes.INTEGER,
-                allowNull: false,
-            },
             mobile: {
                 type: DataTypes.STRING,
+                allowNull: false,
+            },
+            age: {
+                type: DataTypes.INTEGER,
                 allowNull: false,
             },
         },
