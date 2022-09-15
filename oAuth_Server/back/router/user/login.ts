@@ -26,7 +26,7 @@ router.post('/authorize', async (req: Request, res: Response) => {
             },
         });
 
-        if (!checkRedirectUri) throw new Error('존재하지 않는 어플리케이션 혹은 redirect Uri');
+        // if (!checkRedirectUri) throw new Error('존재하지 않는 어플리케이션 혹은 redirect Uri');
 
         const contract = await deployed();
         const result = await contract.methods.getUser(hash).call();
@@ -163,6 +163,11 @@ router.post('/localAuthorize', async (req: Request, res: Response) => {
 
         const contract = await deployed();
         const result = await contract.methods.getUser(hash).call();
+
+        if((result[0] =='' && result[2] == 0)|| email !== result[5]) {
+            res.json(responseObject(false, 'id/pw를 확인해주세요'))
+            return;
+        }
 
         if (result) {
             let token = jwt.sign(

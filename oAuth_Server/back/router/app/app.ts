@@ -206,6 +206,7 @@ router.get('/giveUserInfo', async (req:Request, res : Response) => {
             }
         })
         // 이 둘은 join으로 묶을 수 있을 것 같다.
+        console.log(infoReq)
 
         if(!infoReq) {
             throw new Error('비정상적인 접근입니다.')
@@ -231,7 +232,7 @@ router.get('/giveUserInfo', async (req:Request, res : Response) => {
 
 router.post('/userdidregister', async (req, res) => {
     const { restAPI, email, point, hash, giveUserInfo } = req.body
-
+    console.log(hash)
     try{
         const ifUser = await TotalPoint.findOne({
             where : {
