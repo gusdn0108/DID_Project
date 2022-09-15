@@ -124,10 +124,12 @@ export const getServerSideProps = async (ctx) => {
   const hash = ctx.query.hash;
   const giveUserInfo = ctx.query.giveUserInfo;
 
-  console.log(email);
+  console.log(restAPI);
+
   const response = await axios.get(
     `${backend}/oauth/app/giveUserInfo?restAPI=${restAPI}`
   );
+  console.log(response.data);
 
   return {
     props: {

@@ -237,21 +237,23 @@ const AppInfo = ({ email }) => {
               <Box
                 textAlign={"center"}
                 w="100%"
-                mb="2%"
+                mb="3%"
                 borderColor="gray.400"
                 border={"1px"}
               >
-                <Box fontSize={"175%"}>Redirect URI 관리</Box>
+                <Box fontSize={"175%"} mt="2%">
+                  Redirect URI 관리
+                </Box>
                 <Text mb="1.5%">
                   리다이렉트 url은 최대 5개까지 등록할 수 있습니다.
                 </Text>
 
                 <Box mb="2%">{uris}</Box>
 
-                <Box mb="0.25%">
+                <Box mb="1%">
                   <Text>uri 수정 후, 수정 완료 버튼을 눌려주세요.</Text>
                 </Box>
-                <Button onClick={modifyRed} mb="0.25%">
+                <Button onClick={modifyRed} mb="2%">
                   수정 완료
                 </Button>
               </Box>
