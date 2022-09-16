@@ -1,35 +1,32 @@
-import useWeb3 from '../hooks/useWeb3';
 import { ChakraProvider } from '@chakra-ui/react';
-import HeaderTemplate from '../components/HeaderTemplate.jsx';
+import Header from '../components/HeaderTemplate.jsx';
 import { useState, useEffect } from 'react';
 import { getCookie } from 'cookies-next';
 
-function App({ Component, pageProps }) {
-  const [web3, account] = useWeb3(undefined);
+function MyApp({ Component, pageProps }) {
   const [user, setUser] = useState(undefined);
 
-  const Cookie = getCookie('user');
-
   let userInfo;
+  let didUserInfo;
 
-  if (Cookie) {
-    userInfo = JSON.parse(Buffer.from(Cookie, 'base64').toString('utf-8'));
+  if (getCookie('userInfo_D')) {
+    userInfo = JSON.parse(Buffer.from(getCookie('userInfo_D'), 'base64').toString('utf-8'));
+  } else if (getCookie('accessToken')) {
+    didUserInfo = JSON.parse(Buffer.from(getCookie('accessToken'), 'base64').toString('utf-8'));
   }
 
   useEffect(() => {
-    if (user === undefined) {
+    if (user === {}) {
       setUser(userInfo);
     }
-  });
-
-  if (!account) return <>메타마스크 연결이 필요합니다.</>;
+  }, [user]);
 
   return (
     <ChakraProvider>
-      <HeaderTemplate user={user} />
-      <Component {...pageProps} user={user} />
+      <Header user={userInfo} did={didUserInfo} />
+      <Component {...pageProps} user={userInfo} did={didUserInfo} />
     </ChakraProvider>
   );
 }
 
-export default App;
+export default MyApp;
