@@ -18,6 +18,7 @@ router.post('/oAuthRegister', async (req: Request, res: Response) => {
         const userHash = email + password;
 
         const hash = crypto.createHash('sha256').update(userHash).digest('base64');
+
         const DATA = {
             email,
             gender,
@@ -92,7 +93,7 @@ router.post('/upDateUser', async (req: Request, res: Response) => {
 
         const contract = await deployed();
         const checkUser = await contract.methods.isRegistered(hashId).call();
-        console.log(checkUser); //false 뜸
+        console.log(checkUser);
         if (checkUser) {
             await contract.methods.updateUser(hashId, DATA).send({
                 from: '0x7b6283591c09b1a738a46Acc0BBFbb5943EDb4F4',
