@@ -13,14 +13,14 @@ const updatePwModal = ({ user }) => {
 
   const onClick = async (req, res) => {
     if (password === checkpassword) {
-      const response = await axios.post('http://localhost:4002/api/auth/updateUser', {
+      const response = await axios.post('http://localhost:4003/api/auth/updateUser', {
         email: user.email,
         password,
       });
       if (response.data.status) {
         alert('비밀번호가 변경되었습니다.');
         deleteCookie('user', { req, res, maxAge: 60 * 60 * 24 * 1000 });
-        location.href = 'http://localhost:3002';
+        location.href = 'http://localhost:3003';
       } else {
         alert('비밀번호 변경을 실패하였습니다.');
       }
@@ -57,7 +57,7 @@ const updatePwModal = ({ user }) => {
 
   return (
     <>
-      <Button mt="0.5rem" colorScheme="blue" variant="outline" onClick={onOpen}>
+      <Button mt="0.5rem" colorScheme="yellow" variant="outline" onClick={onOpen}>
         비밀번호 변경하기
       </Button>
 
@@ -74,10 +74,10 @@ const updatePwModal = ({ user }) => {
           </ModalBody>
 
           <ModalFooter>
-            <Button width="5rem" colorScheme="blue" mr={3} onClick={onClose}>
+            <Button width="5rem" colorScheme="yellow" mr={3} onClick={onClose}>
               취소
             </Button>
-            <Button width="5rem" colorScheme="blue" variant="outline" onClick={onClick}>
+            <Button width="5rem" colorScheme="yellow" variant="outline" onClick={onClick}>
               변경
             </Button>
           </ModalFooter>

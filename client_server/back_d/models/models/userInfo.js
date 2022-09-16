@@ -14,6 +14,10 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
+            age: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+            },
         },
         {
             timestamps: false,
