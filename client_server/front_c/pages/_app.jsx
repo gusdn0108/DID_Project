@@ -6,12 +6,13 @@ import { getCookie } from 'cookies-next';
 function MyApp({ Component, pageProps }) {
   const [user, setUser] = useState(undefined);
 
-  const Cookie = getCookie('user');
-
   let userInfo;
+  let didUserInfo;
 
-  if (Cookie) {
-    userInfo = JSON.parse(Buffer.from(Cookie, 'base64').toString('utf-8'));
+  if (getCookie('userInfo_C')) {
+    userInfo = JSON.parse(Buffer.from(getCookie('userInfo_C'), 'base64').toString('utf-8'));
+  } else if (getCookie('accessToken')) {
+    didUserInfo = JSON.parse(Buffer.from(getCookie('accessToken'), 'base64').toString('utf-8'));
   }
 
   useEffect(() => {
@@ -22,8 +23,8 @@ function MyApp({ Component, pageProps }) {
 
   return (
     <ChakraProvider>
-      <Header user={userInfo} />
-      <Component {...pageProps} user={userInfo} />
+      <Header user={userInfo} did={didUserInfo} />
+      <Component {...pageProps} user={userInfo} did={didUserInfo} />
     </ChakraProvider>
   );
 }
