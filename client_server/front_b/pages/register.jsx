@@ -139,7 +139,7 @@ const register = () => {
                   placeholder="email을 입력해주세요"
                   id="userEmail"
                   size="sm"
-                  mb="5%"
+                  mb="6%"
                 />
                 <Select
                   placeholder="Select Domain"
@@ -161,7 +161,7 @@ const register = () => {
                 id="password"
                 size="sm"
               />
-              <FormHelperText mb="6%">
+              <FormHelperText mb="6%" fontSize={"75%"}>
                 {psError == true
                   ? "사용 가능한 비밀번호입니다."
                   : "비밀번호는 영문자, 숫자, 특수문자 포함 8~15자여야 합니다."}
@@ -181,14 +181,6 @@ const register = () => {
                 size="sm"
                 mb="6%"
                 onChange={getPhone}
-              />
-
-              <FormLabel>나이</FormLabel>
-              <Input
-                placeholder="나이를 입력해주세요"
-                size="sm"
-                mb="8%"
-                onChange={getAge}
               />
             </>
           ) : (

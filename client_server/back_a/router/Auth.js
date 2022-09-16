@@ -238,6 +238,7 @@ router.post('/pointInquiry', async (req, res) => {
 
 router.post('/updateUser', async (req, res) => {
     const { email, password } = req.body;
+
     try {
         const hash = crypto
             .createHash('sha256')

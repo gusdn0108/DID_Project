@@ -4,8 +4,8 @@ const jwt = require('jsonwebtoken');
 const router = express.Router();
 const { Auth } = require('../models');
 const { Op } = require('sequelize');
+const crypto = require('crypto');
 const emailTemplate = require('../email/index');
-const crypto = require('crypto')
 
 const generateRandom = (min, max) => {
     const ranNum = (Math.floor(Math.random() * (max - min + 1)) + min).toString();
@@ -67,7 +67,7 @@ router.post('/email', async (req, res) => {
 });
 
 router.post('/SignUp', async (req, res) => {
-    const { email, password, name, age, phone } = req.body;
+    const { email, password, name, phone } = req.body;
 
     try {
         const exLocal = await Auth.findOne({
@@ -87,7 +87,6 @@ router.post('/SignUp', async (req, res) => {
             email: email,
             userHash: hash,
             name,
-            age,
             mobile: phone,
             point: 50000,
         });
@@ -194,7 +193,6 @@ router.post('/usePoint', async (req, res) => {
 
 router.post('/pointInquiry', async (req, res) => {
     const { email } = req.body;
-    console.log(email);
     try {
         const _user = await Auth.findOne({
             where: {
@@ -202,12 +200,17 @@ router.post('/pointInquiry', async (req, res) => {
             },
         });
         const getPoint = _user.dataValues.point;
+
         res.json({
             status: true,
             point: getPoint,
         });
     } catch (error) {
         console.log(error);
+        res.json({
+            status: false,
+            msg: '구매 실패 - 서버 에러',
+        });
     }
 });
 

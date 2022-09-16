@@ -1,16 +1,14 @@
 import { ChakraProvider } from "@chakra-ui/react";
-import { Search2icon } from "@chakra-ui/icons";
 import Layout from "../components/Layout.jsx";
 
 import { useState, useEffect } from "react";
 
 import { CookiesProvider } from "react-cookie";
 import { getCookie } from "cookies-next";
-import { backend, oauthBack } from "../utils/ip";
+import { backend } from "../utils/ip";
 import axios from "axios";
 
 function MyApp({ Component, pageProps }) {
-  // const [cookies, setCookie, removeCookie ] = useCookies(['loginInfo'])
   const [userId, setUserid] = useState(undefined);
   const [email, setEmail] = useState(undefined);
   const [point, setPoint] = useState(0);
