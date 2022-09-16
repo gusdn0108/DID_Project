@@ -4,10 +4,19 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import UpdatePw from '../components/UpdatePw.jsx';
 
-const MypageDrawer = ({ MypageIsOpen, MypageOnClose, user }) => {
-  const { email, username } = user;
+const MypageDrawer = ({ MypageIsOpen, MypageOnClose, user, did }) => {
+  let email;
+  let username;
+
+  if (user !== undefined) {
+    email = user.email;
+    username = user.name;
+  } else if (did !== undefined) {
+    email = did.stringCookie.email;
+    username = did.stringCookie.name;
+  }
+
   const [point, setPoint] = useState(0);
-  const [did, setDid] = useState(false);
 
   useEffect(() => {
     (async function () {
@@ -39,10 +48,7 @@ const MypageDrawer = ({ MypageIsOpen, MypageOnClose, user }) => {
               POINT : {point} 포인트
             </Text>
           </Center>
-          <Center>
-            <UpdatePw user={user} />
-          </Center>
-
+          <Center>{user ? <UpdatePw user={user} /> : null}</Center>
           <Center mt="1rem">
             <Text fontSize="2rem" fontWeight="bold">
               TODAY BEST

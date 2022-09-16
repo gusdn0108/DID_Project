@@ -7,6 +7,7 @@ const updatePwModal = ({ user }) => {
   const [password, setPassword] = useState('');
   const [checkpassword, setCheckpassword] = useState('');
   const [pwcheck, setPwCheck] = useState('');
+  const [pwcompare, setPwCompare] = useState('');
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -26,18 +27,32 @@ const updatePwModal = ({ user }) => {
     }
   };
 
-  const changePw = (e) => {
+  const changePw = (e, type) => {
     const passwordCd = /^(?=.*[a-zA-Z])(?=.*[\~\․\!\@\#\$\%\^\&\*\(\)\_\-\+\=\[\]\|\\\;\:\\'\"\<\>\,\.\?\/])(?=.*[0-9]).{9,21}$/;
 
-    setPassword(e.target.value);
+    switch (type) {
+      case '1':
+        setPassword(e.target.value);
 
-    if (passwordCd.test(e.target.value)) {
-      setPwCheck(true);
-    } else {
-      setPwCheck(false);
+        if (passwordCd.test(e.target.value)) {
+          setPwCheck(true);
+        } else {
+          setPwCheck(false);
+        }
+
+        if (e.target.value === '') setPwCheck('');
+        break;
+      case '2':
+        if (e.target.value === password) {
+          setPwCompare(true);
+        } else {
+          setPwCompare(false);
+        }
+
+        if (e.target.value === '') setPwCompare('');
+
+        setCheckpassword(e.target.value);
     }
-
-    if (e.target.value === '') setPwCheck('');
   };
 
   return (
@@ -52,9 +67,10 @@ const updatePwModal = ({ user }) => {
           <ModalHeader>비밀번호 변경</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Input variant="flushed" placeholder="비밀번호를 입력해주세요" type="password" onChange={changePw} />
+            <Input variant="flushed" placeholder="비밀번호를 입력해주세요" type="password" onChange={(e) => changePw(e, '1')} />
             {pwcheck === '' ? null : !pwcheck ? <Text style={{ color: 'red', fontSize: '12px' }}>영문자, 특수문자, 숫자를 포함하여 9~21자리로 구성해주세요.</Text> : <Text style={{ color: 'green', fontSize: '12px' }}>사용 가능한 비밀번호입니다.</Text>}
-            <Input variant="flushed" placeholder="비밀번호를 다시 입력해주세요" type="password" onChange={(e) => setCheckpassword(e.target.value)} />
+            <Input variant="flushed" placeholder="비밀번호를 다시 입력해주세요" type="password" onChange={(e) => changePw(e, '2')} />
+            {pwcompare === '' ? null : !pwcompare ? <Text style={{ color: 'red', fontSize: '12px' }}>비밀번호가 일치하지 않습니다.</Text> : <Text style={{ color: 'green', fontSize: '12px' }}>비밀번호가 일치합니다.</Text>}
           </ModalBody>
 
           <ModalFooter>
