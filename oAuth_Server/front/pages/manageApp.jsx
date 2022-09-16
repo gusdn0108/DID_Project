@@ -173,6 +173,23 @@ const manageApp = ({ appList, email }) => {
     setmyAppList(response.data.myapp);
   };
 
+  const deleteApp = async () => {
+    const returnValue = confirm(
+      `어플리케이션을 삭제하면 복구가 불가능 합니다. 정말 삭제하시겠습니까?`
+    );
+
+    if (returnValue == true) {
+      const response = await axios.post(`${backend}/oauth/app/deleteApp`, {
+        restAPI: appRestAPI,
+        client_secret: appSecret,
+      });
+      alert(response.data.msg);
+      setWhichApp(null);
+      setShowInfo(false);
+      getMyApp();
+    }
+  };
+
   useEffect(() => {}, [isOpen, whichApp]);
 
   const closeAndUpdate = () => {
@@ -319,9 +336,19 @@ const manageApp = ({ appList, email }) => {
                     <Box mb="1%">
                       <Text>uri 수정 후, 수정 완료 버튼을 눌려주세요.</Text>
                     </Box>
-                    <Button onClick={modifyRed} m="5%">
-                      수정 완료
-                    </Button>
+                    <Box m="5%">
+                      <Button onClick={modifyRed} mx="1%">
+                        수정 완료
+                      </Button>
+                      <Button
+                        mx="1%"
+                        onClick={deleteApp}
+                        colorScheme="red"
+                        variant={"outline"}
+                      >
+                        어플리케이션 삭제
+                      </Button>
+                    </Box>
                   </Box>
                 </Box>
               )}

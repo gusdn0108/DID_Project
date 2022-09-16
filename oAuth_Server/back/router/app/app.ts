@@ -77,6 +77,52 @@ router.post('/getMyApp', async (req: Request, res: Response) => {
     }
 });
 
+router.post('/deleteApp', async (req: Request, res: Response) => {
+    const {restAPI, client_secret} = req.body
+    console.log(restAPI, client_secret)
+    try {
+
+        const targetApp = await App.findOne({
+            where : {
+                restAPI,
+                code : client_secret
+            }
+        })
+
+        if(!targetApp) {
+            throw new Error ('잘못된 삭제 요청입니다.')
+        }
+
+        Promise.all([DataNeeded.destroy({
+            where : {
+                restAPI,
+            }
+        }), TotalPoint.destroy({
+            where : {
+                restAPI
+            }
+        }), RedirectURI.destroy({
+            where : {
+                restAPI
+            }
+        })])
+        .then(() => {console.log('어플리케이션 정보 삭제 완료')})
+        .catch((e) => res.json(responseObject(false, e.message)))
+
+        await App.destroy({
+            where : {
+                restAPI
+            }
+        })
+        
+        res.json(responseObject(true, '어플리케이션이 삭제되었습니다'))
+    }
+    catch (e) {
+        console.log(e.message)
+        res.json(responseObject(false, e.message))
+    }
+})
+
 router.use('/appInfo', async (req: Request, res: Response) => {
     const { restAPI } = req.body;
 
