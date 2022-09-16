@@ -2,11 +2,21 @@ import { Image, Box, Badge, Button, Text, Drawer, Center, DrawerBody, DrawerFoot
 import { StarIcon } from '@chakra-ui/icons';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import UpdatePw from '../components/UpdatePw.jsx';
 
-const MypageDrawer = ({ MypageIsOpen, MypageOnClose, user }) => {
-  const { email, username } = user;
+const MypageDrawer = ({ MypageIsOpen, MypageOnClose, user, did }) => {
+  let email;
+  let username;
+
+  if (user !== undefined) {
+    email = user.email;
+    username = user.name;
+  } else if (did !== undefined) {
+    email = did.stringCookie.email;
+    username = did.stringCookie.name;
+  }
+
   const [point, setPoint] = useState(0);
-  const [did, setDid] = useState(false);
 
   useEffect(() => {
     (async function () {
@@ -30,25 +40,18 @@ const MypageDrawer = ({ MypageIsOpen, MypageOnClose, user }) => {
           </DrawerHeader>
 
           <DrawerBody mt="1rem">
-            <Text fontWeight="bold"> ID : {email}</Text>
-            <Text fontWeight="bold" mt="0.2rem">
-              {' '}
-              POINT : {point} 포인트
-            </Text>
-            <Text fontWeight="bold" mt="0.2rem">
-              {' '}
-              DID 등록 여부 :{' '}
-              {did ? (
-                <Badge colorScheme="green">등록</Badge>
-              ) : (
-                <>
-                  <Badge colorScheme="red">미등록</Badge>
-                  <Button ml="1rem" colorScheme="blue" variant="outline" size="xs">
-                    DID 등록하기
-                  </Button>
-                </>
-              )}
-            </Text>
+            <Center>
+              <Text fontWeight="bold"> ID : {email}</Text>
+            </Center>
+            <Center>
+              {user ? (
+                <Text fontWeight="bold" mt="0.2rem">
+                  {' '}
+                  POINT : {point} 포인트
+                </Text>
+              ) : null}
+            </Center>
+            <Center>{user ? <UpdatePw user={user} /> : null}</Center>
 
             <Center mt="1.8rem">
               <Text fontSize="2rem" fontWeight="bold">

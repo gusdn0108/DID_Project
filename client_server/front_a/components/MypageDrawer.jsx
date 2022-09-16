@@ -43,10 +43,12 @@ const MypageDrawer = ({ MypageIsOpen, MypageOnClose, user, did }) => {
             <Text fontWeight="bold"> ID : {email}</Text>
           </Center>
           <Center>
-            <Text fontWeight="bold" mt="0.2rem">
-              {' '}
-              POINT : {point} 포인트
-            </Text>
+            {user ? (
+              <Text fontWeight="bold" mt="0.2rem">
+                {' '}
+                POINT : {point} 포인트
+              </Text>
+            ) : null}
           </Center>
           <Center>{user ? <UpdatePw user={user} /> : null}</Center>
           <Center mt="1rem">

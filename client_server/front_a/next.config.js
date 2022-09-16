@@ -1,5 +1,5 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
+export const nextConfig = {
   reactStrictMode: false,
   swcMinify: true,
   images: {
@@ -7,4 +7,28 @@ const nextConfig = {
   },
 };
 
-module.exports = nextConfig;
+const securityHeaders = [
+  {
+    key: 'Referrer-Policy',
+    value: 'origin-when-cross-origin',
+  },
+  {
+    key: 'Access-Control-Allow-Origin',
+    value: '*',
+  },
+  {
+    key: 'Access-Control-Allow-Headers',
+    value: '*',
+  },
+];
+
+export const login = {
+  async headers() {
+    return [
+      {
+        source: '/login',
+        headers: securityHeaders,
+      },
+    ];
+  },
+};
