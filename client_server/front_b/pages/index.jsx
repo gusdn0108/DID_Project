@@ -189,7 +189,6 @@ const Home = ({ userId, email, point, setPoint }) => {
         </Flex>
       </Box>
 
-      {/* 여기부터 상품들.. 구매하면 클릭 되도록 */}
       <Box w="100%" h="40rem" pt="8rem" mx="auto" my="0">
         <Box w="85%" mx="auto" my="0" px="6.5rem">
           <Text fontSize="1.75rem" fontWeight="600" mb="1.5rem">
