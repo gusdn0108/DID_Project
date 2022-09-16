@@ -18,7 +18,7 @@ const LoginModal = ({ loginIsOpen, loginOnClose }) => {
       if (getCookie('accessToken')) {
         deleteCookie('accessToken', { req, res, maxAge: 60 * 60 * 24 * 1000 });
       }
-      setCookie('user', payload, { req, res, maxAge: 60 * 60 * 24 * 1000 });
+      setCookie('userInfo_A', payload, { req, res, maxAge: 60 * 60 * 24 * 1000 });
 
       window.location.replace('/');
     } else {
@@ -27,7 +27,7 @@ const LoginModal = ({ loginIsOpen, loginOnClose }) => {
   };
 
   const didLoginHandler = async () => {
-    location.href = 'http://localhost:4000/api/oauth/RedirectUrl';
+    location.href = 'http://localhost:4000/api/oauth/DIDLogin';
   };
 
   return (
