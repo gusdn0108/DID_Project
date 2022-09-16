@@ -6,7 +6,6 @@ const { Auth } = require('../models');
 const { Op } = require('sequelize');
 const crypto = require('crypto');
 const emailTemplate = require('../email/index');
-const crypto = require('crypto');
 
 const generateRandom = (min, max) => {
     const ranNum = (Math.floor(Math.random() * (max - min + 1)) + min).toString();
