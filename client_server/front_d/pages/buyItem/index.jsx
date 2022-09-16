@@ -77,7 +77,7 @@ const BuyItem = ({ user }) => {
     if (user) {
       getPoint();
       setLogin(true);
-      // setDid(true);
+      //setDid(true);
     }
 
     if (!token) {

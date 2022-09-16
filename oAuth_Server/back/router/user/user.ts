@@ -30,7 +30,7 @@ router.post('/oAuthRegister', async (req: Request, res: Response) => {
 
         const contract = await deployed();
         await contract.methods.registerUser(hash, DATA).send({
-            from: '0x7b6283591c09b1a738a46Acc0BBFbb5943EDb4F4',
+            from: process.env.WALLET_ADDRESS,
         });
         const result = await contract.methods.isRegistered(hash).call();
 
@@ -62,7 +62,7 @@ router.post('/upDatePassword', async (req: Request, res: Response) => {
 
         const contract = await deployed();
         await contract.methods.updatePassword(hashId, newHash).send({
-            from: '0x7b6283591c09b1a738a46Acc0BBFbb5943EDb4F4',
+            from: process.env.WALLET_ADDRESS,
         });
 
         res.json({
@@ -93,16 +93,13 @@ router.post('/upDateUser', async (req: Request, res: Response) => {
 
         const contract = await deployed();
         const checkUser = await contract.methods.isRegistered(hashId).call();
-        console.log(checkUser);
         if (checkUser) {
             await contract.methods.updateUser(hashId, DATA).send({
-                from: '0x7b6283591c09b1a738a46Acc0BBFbb5943EDb4F4',
+                from: process.env.WALLET_ADDRESS,
                 gas: 10000000,
             });
 
             const result = await contract.methods.getUser(hashId).call();
-
-            console.log(result);
 
             res.json({
                 status: true,
@@ -157,7 +154,7 @@ router.post('/deleteUser2', async (req: Request, res: Response) => {
         const deploy = await deployed();
 
         await deploy.methods.deleteUser(hashId).send({
-            from: '0x7b6283591c09b1a738a46Acc0BBFbb5943EDb4F4',
+            from: process.env.WALLET_ADDRESS,
             gas: 10000000,
         });
 
@@ -188,7 +185,7 @@ router.post('/deleteUser', async (req: Request, res: Response) => {
         const contract = await deployed();
 
         await contract.methods.deleteUser(hashId).send({
-            from: '0x7b6283591c09b1a738a46Acc0BBFbb5943EDb4F4',
+            from: process.env.WALLET_ADDRESS,
             gas: 10000000,
         });
 

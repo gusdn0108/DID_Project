@@ -19,11 +19,6 @@ const Purchase = ({ email, whichCookie, point }) => {
   const [tokenData, setTokenData] = useState("");
   const [userCookie, setUserCookie] = useState(whichCookie);
 
-  if (whichCookie == "local") {
-    console.log("local");
-  } else if (whichCookie == "oauth") {
-    console.log("oauth");
-  }
   const toMain = () => {
     location.href = "/";
   };
@@ -45,12 +40,14 @@ const Purchase = ({ email, whichCookie, point }) => {
   };
 
   const getPoint = async () => {
-    const response = await axios.post(
-      "http://localhost:4001/api/auth/pointInquiry",
-      { email: email }
-    );
-    if (response.data.status) {
-      setUsePoint(response.data.point);
+    if (userCookie == "local") {
+      const response = await axios.post(
+        "http://localhost:4001/api/auth/pointInquiry",
+        { email: email }
+      );
+      if (response.data.status) {
+        setUsePoint(response.data.point);
+      }
     }
   };
 
@@ -113,11 +110,11 @@ const Purchase = ({ email, whichCookie, point }) => {
         setToken(true);
       }
     }
-  }, []);
+  });
 
   return (
     <>
-      <Box w="65%" h="42rem" mx="auto" my="0" px="5%" py="6%">
+      <Box w="65%" h="41rem" mx="auto" my="0" px="5%" py="6%">
         <Box
           w="55%"
           border="1px"
@@ -131,15 +128,15 @@ const Purchase = ({ email, whichCookie, point }) => {
         >
           <Image src={img} mx="auto" my="0" w="100%" mb="4%" />
 
-          <Box fontSize={"150%"} mb="4%">
+          <Box fontSize={"150%"} mb="3%">
             {title}
           </Box>
-          <Box mb="4%" fontSize={"120%"}>
+          <Box mb="8%" fontSize={"120%"}>
             {price} KRW
           </Box>
           <Box>
             {userCookie == "local" ? (
-              <Flex justifyContent={"center"} mb="3%">
+              <Flex justifyContent={"center"} mb="2%">
                 <Button
                   colorScheme={"blue"}
                   variant="outline"

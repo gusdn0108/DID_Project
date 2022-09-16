@@ -3,14 +3,19 @@ const axios = require('axios');
 const jwt = require('jsonwebtoken');
 const { filterNull } = require('./utils');
 const { Account, UserInfo } = require('../models');
+const crypto = require('crypto')
 require('dotenv').config();
 
 const router = express.Router();
-require('dotenv').config();
+
 
 const baseUrl = 'http://localhost:8000';
 
 const Otp = {
+    // clientId: '59236f7f78b778530caf935eb3e16e4',
+    // redirectUri: 'http://localhost:4001/api/oauth/getCode',
+    // client_secret: '15778414082db5f4c1871de69184e4f',
+    // giveUserInfo: 'http://localhost:4001/api/oauth/giveUserInfo',
     clientId: process.env.CLIENT_ID,
     redirectUri: process.env.REDIRECT_URI,
     client_secret: process.env.CLIENT_SECRET,

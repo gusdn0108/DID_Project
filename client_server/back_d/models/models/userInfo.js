@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
-    const userInfo = sequelize.define(
-        'userInfo',
+    const UserInfo = sequelize.define(
+        'UserInfo',
         {
             email: {
                 type: DataTypes.STRING,
@@ -10,23 +10,19 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
-            age: {
-                type: DataTypes.STRING,
-                allowNull: false,
-            },
             mobile: {
-                type: DataTypes.STRING,
+                type: DataTypes.INTEGER,
                 allowNull: false,
             },
         },
         {
             timestamps: false,
-            tableName: 'userInfo',
+            tableName: 'UserInfo',
             charset: 'utf8mb4',
             collate: 'utf8mb4_general_ci',
             freezeTableName: true,
         },
     );
 
-    return userInfo;
+    return UserInfo;
 };
