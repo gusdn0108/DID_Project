@@ -4,8 +4,19 @@ import { Button, Divider, Stack, Flex, Box, Image, Text, Center } from '@chakra-
 import axios from 'axios';
 import { getCookie, deleteCookie } from 'cookies-next';
 
-const BuyItem = ({ user }) => {
+const BuyItem = ({ user, did }) => {
   const router = useRouter;
+
+  let email;
+  let username;
+
+  if (user !== undefined) {
+    email = user.email;
+    username = user.username;
+  } else if (did !== undefined) {
+    email = did.stringCookie.email;
+    username = did.stringCookie.name;
+  }
 
   const [imageUrl, setImageUrl] = useState('');
   const [title, setTitle] = useState('');
@@ -14,12 +25,12 @@ const BuyItem = ({ user }) => {
   const [login, setLogin] = useState(false);
   const [point, setPoint] = useState(0);
 
-  const [did, setDid] = useState(false);
+  const [checkDid, setCheckDid] = useState(false);
   const [token, setToken] = useState(false);
   const [tokenData, setTokenData] = useState('');
 
   const buyItem = async () => {
-    const response = await axios.post('http://localhost:4003/api/auth/usePoint', { email: user.email, price: formattedPrice });
+    const response = await axios.post('http://localhost:4003/api/auth/usePoint', { email: email, price: formattedPrice });
     if (response.data.status) {
       getPoint();
       alert('구매 완료되었습니다');
@@ -29,7 +40,7 @@ const BuyItem = ({ user }) => {
   };
 
   const getPoint = async () => {
-    const response = await axios.post('http://localhost:4003/api/auth/pointInquiry', { email: user.email });
+    const response = await axios.post('http://localhost:4003/api/auth/pointInquiry', { email: email });
     if (response.data.status) {
       setPoint(response.data.point);
     }
@@ -38,7 +49,7 @@ const BuyItem = ({ user }) => {
   // OAuth의 페이지 요청하는 함수
   const getPage = () => {
     document.domain = 'localhost';
-    window.open(`http://localhost:8080/payment?email=${user.email}&point=${formattedPrice}`, '', 'width=800, height=600');
+    window.open(`http://localhost:8080/payment?email=${email}&point=${formattedPrice}`, '', 'width=800, height=600');
   };
 
   // OAuth에 포인트를 차감 요청할 함수
@@ -77,7 +88,10 @@ const BuyItem = ({ user }) => {
     if (user) {
       getPoint();
       setLogin(true);
-      //setDid(true);
+    }
+
+    if (did) {
+      setCheckDid(true);
     }
 
     if (!token) {
@@ -109,7 +123,7 @@ const BuyItem = ({ user }) => {
                   판매가 : {formattedPrice} P
                 </Text>
               </Center>
-              {did ? (
+              {checkDid ? (
                 <Center>
                   <Text fontSize="1.5rem" fontWeight="bold" pl="20rem" pt="11rem" pb="1rem">
                     로컬 회원만 이용 가능합니다.
@@ -125,7 +139,7 @@ const BuyItem = ({ user }) => {
                   <Text fontSize="1.5rem" fontWeight="bold" textAlign="right" pt="5rem">
                     {login ? `${user.name}님 보유 포인트 : ${point} P` : null}
                   </Text>
-                  <Button w="15rem" colorScheme="yellow" variant="outline" ml="24rem" mt="0.5rem" mb="1rem" onClick={buyItem} disabled={formattedPrice <= point ? false : true}>
+                  <Button w="15rem" colorScheme="teal" variant="outline" ml="24rem" mt="0.5rem" mb="1rem" onClick={buyItem} disabled={formattedPrice <= point ? false : true}>
                     구매
                   </Button>
                   {login && formattedPrice >= point ? (
@@ -139,7 +153,7 @@ const BuyItem = ({ user }) => {
               )}
             </Box>
             <Box w="40rem" flex={2} pl="0.5rem" pt="1rem" borderBottom="1px solid rgba(0, 0, 0, 0.1);">
-              {did ? (
+              {checkDid ? (
                 <>
                   <Text textAlign="center" fontSize="1.5rem" fontWeight="bold">
                     다른 사이트 포인트 사용
@@ -147,18 +161,18 @@ const BuyItem = ({ user }) => {
                   {token ? (
                     <>
                       <Text textAlign="right" fontSize="1.5rem" fontWeight="bold" pt="6rem" pr="0.5rem">
-                        {user ? `총 사용 포인트 ${showUsePoint()} P` : '로그인 후 이용가능 합니다'}
+                        {checkDid ? `총 사용 포인트 ${showUsePoint()} P` : '로그인 후 이용가능 합니다'}
                       </Text>
-                      <Button w="15rem" colorScheme="yellow" variant="outline" ml="24rem" onClick={didBuyItem} mb="1rem">
+                      <Button w="15rem" colorScheme="teal" variant="outline" ml="24rem" onClick={didBuyItem} mb="1rem">
                         구매
                       </Button>
                     </>
                   ) : (
                     <>
                       <Text textAlign="right" fontSize="1.5rem" fontWeight="bold" pt="6rem" pr="0.5rem">
-                        {user ? `${user.name}님 포인트 조회하기 ` : '로그인 후 이용가능 합니다'}
+                        {checkDid ? `${username}님 포인트 조회하기 ` : '로그인 후 이용가능 합니다'}
                       </Text>
-                      <Button w="15rem" colorScheme="yellow" variant="outline" ml="24rem" onClick={getPage} mb="1rem" disabled={user ? false : true}>
+                      <Button w="15rem" colorScheme="teal" variant="outline" ml="24rem" onClick={getPage} mb="1rem" disabled={checkDid ? false : true}>
                         조회
                       </Button>
                     </>
