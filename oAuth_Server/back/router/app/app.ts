@@ -40,8 +40,8 @@ router.post('/apiDistribution', async (req: Request, res: Response) => {
         await DataNeeded.create({
             restAPI: restAPI,
             owner: email,
-            email: false,
-            name: false,
+            email: true,
+            name: true,
             gender: false,
             age: false,
             addr: false,
