@@ -26,16 +26,9 @@ const userAppRegister = ({
   hash,
   giveUserInfo,
 }) => {
-  // const setArray = (k) => {
-  //   const newArray = isAgreed;
-  //   newArray[k] = !newArray[k];
-  //   setIsAgreed(isAgreed);
-  //   console.log(isAgreed);
-  // };
-
   const attributes = getUserInfo.map((v, k) => {
     return (
-      <Box key={k}>
+      <Box key={k} mb="5%">
         <Flex>- {v.att}</Flex>
       </Box>
     );
@@ -67,11 +60,11 @@ const userAppRegister = ({
         w="35%"
         mx="auto"
         my="10%"
-        h="30rem"
+        h="40%"
         px="5%"
         py="6%"
       >
-        <Flex h="10%" alignItems={"center"} pb="15%">
+        <Flex h="10%" alignItems={"center"} pb="12%">
           <Img
             src="https://k.kakaocdn.net/14/dn/btqmdPkHR5M/DrrBuObYWlfrBaNkokh3J0/o.jpg"
             w="15%"
@@ -89,13 +82,13 @@ const userAppRegister = ({
           </Box>
         </Flex>
 
-        <Divider orientation="horizontal" mb="1.5%" />
+        <Divider orientation="horizontal" my="4%" />
 
         <Flex h="20%" fontWeight={"800"}>
           <Checkbox>약관 동의하기</Checkbox>
         </Flex>
 
-        <Divider orientation="horizontal" mb="1.5%" />
+        <Divider orientation="horizontal" my="4%" />
 
         <Box py="2%">
           <Flex justifyContent={"space-around"} py="2%">
@@ -107,8 +100,10 @@ const userAppRegister = ({
           <Flex py="2%">
             <Box>{attributes}</Box>
           </Flex>
-          <Flex>
-            <Button onClick={didRegister}>동의하고 계속하기</Button>
+          <Flex justifyContent={"center"}>
+            <Button onClick={didRegister} mt="5%">
+              동의하고 계속하기
+            </Button>
           </Flex>
         </Box>
       </Box>
@@ -124,12 +119,9 @@ export const getServerSideProps = async (ctx) => {
   const hash = ctx.query.hash;
   const giveUserInfo = ctx.query.giveUserInfo;
 
-  console.log(restAPI);
-
   const response = await axios.get(
     `${backend}/oauth/app/giveUserInfo?restAPI=${restAPI}`
   );
-  console.log(response.data);
 
   return {
     props: {

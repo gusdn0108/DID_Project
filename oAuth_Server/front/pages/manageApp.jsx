@@ -3,42 +3,20 @@ import {
   Flex,
   Text,
   Divider,
-  Spinner,
   useDisclosure,
   Center,
-  FormLabel,
   Button,
-  FormControl,
-  FormHelperText,
-  Radio,
-  Stack,
-  Input,
-  Select,
-  RadioGroup,
-  useTagStyles,
-  Heading,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { backend, frontend } from "../utils/ip.js";
-import { getCookie } from "cookies-next";
-import crypto from "crypto";
 import AppModal from "../components/appModal.jsx";
 import { deleteCookie } from "cookies-next";
 import Link from "next/link";
 
-const manageApp = ({ appList, hashId, email }) => {
+const manageApp = ({ appList, email }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [myAppList, setmyAppList] = useState(appList);
-  const [name, setName] = useState("");
-  const [gender, setGender] = useState("");
-  const [age, setAge] = useState("");
-  const [addr, setAddr] = useState("");
-  const [mobile, setMobile] = useState("");
-  const [password, setPassword] = useState("");
-  const [pwCheck, setPwCheck] = useState(false); //뒤에 비밀번호 수정
-  const [pwdCheck, setPwdCheck] = useState(""); //첫번째 비밀번호입력란
-  const [loading, setLoading] = useState(true); //로딩바
 
   const showAppList = myAppList?.map((v, k) => {
     return (
@@ -70,8 +48,8 @@ const manageApp = ({ appList, hashId, email }) => {
   };
 
   return (
-    <Box bg="#160627" h="100%">
-      <Center w="100%" pt="5%" px="5%" h="100%">
+    <Box bg="#160627" h="100rem">
+      <Center w="100%" py="5%" px="5%" h="100%">
         <Box w="40%" h="100%" mx="auto" pt="5rem">
           <Flex mx="auto" my="0" justifyContent={"center"} mb="10%">
             <Box w="40%" mx="auto" my="0">

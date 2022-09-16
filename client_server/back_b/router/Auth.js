@@ -4,7 +4,6 @@ const jwt = require('jsonwebtoken');
 const router = express.Router();
 const { Auth } = require('../models');
 const { Op } = require('sequelize');
-const crypto = require('crypto');
 const emailTemplate = require('../email/index');
 const crypto = require('crypto');
 
