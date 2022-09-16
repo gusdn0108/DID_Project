@@ -193,7 +193,6 @@ router.post('/usePoint', async (req, res) => {
 
 router.post('/pointInquiry', async (req, res) => {
     const { email } = req.body;
-    console.log(email);
     try {
         const _user = await Auth.findOne({
             where: {
@@ -201,12 +200,17 @@ router.post('/pointInquiry', async (req, res) => {
             },
         });
         const getPoint = _user.dataValues.point;
+
         res.json({
             status: true,
             point: getPoint,
         });
     } catch (error) {
         console.log(error);
+        res.json({
+            status: false,
+            msg: '구매 실패 - 서버 에러',
+        });
     }
 });
 

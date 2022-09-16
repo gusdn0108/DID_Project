@@ -21,6 +21,14 @@ const Header = ({ email }) => {
     location.href = `${frontend}`;
   };
 
+  const toRegister = () => {
+    location.href = "/register";
+  };
+
+  const toMain = () => {
+    location.href = "/";
+  };
+
   return (
     <Box>
       <Box pt="2rem">
@@ -34,18 +42,16 @@ const Header = ({ email }) => {
           z-index="10"
         >
           <Box bg="white">
-            <Link href="/">
-              <Button
-                size="sm"
-                variant="ghost"
-                fontSize="2xl"
-                pl="5rem"
-                mr="3rem"
-                ml="1rem"
-              >
-                Kyungil Tour
-              </Button>
-            </Link>
+            <Button
+              size="sm"
+              variant="ghost"
+              fontSize="2xl"
+              mx="5rem"
+              p="1rem"
+              onClick={toMain}
+            >
+              Kyungil Tour
+            </Button>
             <Input
               type="text"
               w="28rem"
@@ -76,8 +82,14 @@ const Header = ({ email }) => {
                   login
                 </Button>
                 <LoginModal isOpen={isOpen} onClose={onClose} />
-                <Button colorScheme="gray" w="6rem" mx="1rem" my="0.25rem">
-                  <Link href="/register">join</Link>
+                <Button
+                  colorScheme="gray"
+                  w="6rem"
+                  mx="1rem"
+                  my="0.25rem"
+                  onClick={toRegister}
+                >
+                  join
                 </Button>
               </>
             )}

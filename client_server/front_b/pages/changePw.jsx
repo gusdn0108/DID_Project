@@ -1,23 +1,18 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   Box,
   Button,
-  Flex,
-  Text,
   Input,
   FormControl,
-  FormLabel,
-  FormErrorMessage,
   FormHelperText,
-  useLatestRef,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { backend, frontend } from "../utils/ip";
 import { deleteCookie } from "cookies-next";
 import { pwdCheck } from "../utils/regiCheck.js";
 
-const mypage = ({ userId, email }) => {
-  const [oldPassword, setOldPassword] = useState(undefined);
+const mypage = ({ email }) => {
+  const [newPassword, setNewPassword] = useState(undefined);
   const [password, setPassword] = useState(undefined);
   const [psError, setpsError] = useState(false);
 
@@ -26,8 +21,8 @@ const mypage = ({ userId, email }) => {
     setpsError(pwdCheck(password));
   };
 
-  const getOldPw = (e) => {
-    setOldPassword(e.target.value);
+  const getNewPw = (e) => {
+    setNewPassword(e.target.value);
   };
 
   const changePw = async () => {
@@ -37,10 +32,15 @@ const mypage = ({ userId, email }) => {
       );
       return;
     }
+
+    if (newPassword !== password) {
+      alert("비밀번호를 확인해주세요.");
+      return;
+    }
+
     const response = await axios.post(`${backend}/api/auth/updateUser`, {
       email,
       password,
-      oldPassword,
     });
 
     if (response.data.status == false) {
@@ -58,7 +58,7 @@ const mypage = ({ userId, email }) => {
   return (
     <Box pt="6rem">
       <Box
-        w="25%"
+        w="30%"
         mx="auto"
         my="6%"
         fontSize={"125%"}
@@ -68,18 +68,8 @@ const mypage = ({ userId, email }) => {
         <FormControl mt="3">
           <Input
             type="password"
-            onChange={getOldPw}
-            placeholder="현재 패스워드를 입력해주세요."
-            border={"none"}
-            borderBottom="1px"
-            borderRadius={"0"}
-            mb="7%"
-          />
-
-          <Input
-            type="password"
             onChange={setpwdCheck}
-            placeholder="새로운 password을 입력해주세요"
+            placeholder="새로운 패스워드를 입력해주세요."
             border={"none"}
             borderBottom="1px"
             borderRadius={"0"}
@@ -87,11 +77,22 @@ const mypage = ({ userId, email }) => {
             mb="1%"
           />
 
-          <FormHelperText mb="6%" textAlign={"center"}>
+          <FormHelperText mb="7%" textAlign={"center"} fontSize="60%">
             {psError == true
               ? "사용 가능한 비밀번호입니다."
               : "비밀번호는 영문자, 숫자, 특수문자 포함 8~15자여야 합니다."}
           </FormHelperText>
+
+          <Input
+            type="password"
+            onChange={getNewPw}
+            placeholder="새 패스워드를 확인해주세요."
+            border={"none"}
+            borderBottom="1px"
+            borderRadius={"0"}
+            mb="9%"
+          />
+
           <Button onClick={changePw} float="right" mr="2%">
             변경하기
           </Button>
