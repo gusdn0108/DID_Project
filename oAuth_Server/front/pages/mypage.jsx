@@ -53,33 +53,12 @@ const Mypage = ({ appList, hashId, email }) => {
     setAge(e.target.value);
   };
 
-  const showAppList = myAppList?.map((v, k) => {
-    return (
-      <Box p="5%" key={k} fontSize="110%">
-        <Flex justifyContent={"space-around"}>
-          <Text px="5%">
-            <Link href={`/appinfo?appName=${v.appName}&RestAPI=${v.restAPI}`}>
-              {v.appName}
-            </Link>
-          </Text>
-        </Flex>
-      </Box>
-    );
-  });
-
   const udtdPassword = (e) => {
     setPwCheck(e.target.value);
   };
 
   const udtPassword = (e) => {
     setPwdCheck(e.target.value);
-  };
-  const getMyApp = async () => {
-    const response = await axios.post(`${backend}/oauth/app/getMyApp`, {
-      email: email,
-    });
-
-    setmyAppList(response.data.myapp);
   };
 
   const getUserInfo = async () => {
@@ -196,36 +175,6 @@ const Mypage = ({ appList, hashId, email }) => {
 
   return (
     <Center w="100%" pt="5%" px="5%">
-      <Box w="40%" h="20rem" mx="auto" pt="5rem">
-        <Flex mx="auto" my="0" justifyContent={"center"} mb="10%">
-          <Box w="40%" mx="auto" my="0">
-            <Text textAlign={"center"} fontSize={"175%"} mb="1.25rem">
-              어플리케이션 등록
-            </Text>
-            <Flex justifyContent={"center"}>
-              <Button onClick={onOpen} colorScheme="yellow" variant="outline">
-                어플리케이션 생성
-              </Button>
-              <AppModal
-                isOpen={isOpen}
-                onClose={closeAndUpdate}
-                email={email}
-                display="block"
-              />
-            </Flex>
-          </Box>
-        </Flex>
-
-        <Divider />
-
-        <Flex>
-          <Box mx="auto" my="3%" justifyContent={"center"}>
-            <Text fontSize={"180%"}>내 어플리케이션</Text>
-
-            {showAppList}
-          </Box>
-        </Flex>
-      </Box>
       <Box w="40%" m="0 5%" h="20rem" pt="5rem" px="6%">
         {pwCheck === false ? (
           <>
