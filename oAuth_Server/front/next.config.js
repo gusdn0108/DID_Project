@@ -4,8 +4,6 @@
 // 	swcMinify: true,
 // };
 
-// module.exports = nextConfig;
-
 const securityHeaders = [
   {
     key: "Referrer-Policy",
