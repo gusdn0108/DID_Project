@@ -86,7 +86,7 @@ export const getServerSideProps = async (ctx) => {
 
 	return {
 		props: {
-			getUserInfo: response.data.infos.filter(Boolean),
+			getUserInfo: response.data.infos?.filter(Boolean),
 			appName: response.data.appName,
 			restAPI,
 			email,
