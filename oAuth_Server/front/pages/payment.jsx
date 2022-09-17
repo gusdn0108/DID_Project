@@ -32,7 +32,7 @@ const payment = () => {
       return (
         <Flex
           w="100%"
-          mt="1rem"
+          mt="1.5rem"
           border="1px solid #fff"
           key={k}
           borderRadius="10px"
@@ -125,7 +125,7 @@ const payment = () => {
   }, []);
 
   return (
-    <Box h="100%" p="7%" bg="#160627">
+    <Box h="50rem" p="7%" bg="#160627">
       <Box w="70%" m="0 auto">
         <Center>
           <Text fontSize="2rem" fontWeight="semibold" color="white">

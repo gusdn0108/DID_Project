@@ -54,15 +54,18 @@ router.post('/oAuthRegister', async (req: Request, res: Response) => {
 });
 
 router.post('/upDatePassword', async (req: Request, res: Response) => {
-    const { hashId, email, pwCheck } = req.body;
+    const { hashId, email, newPw } = req.body;
+
+    console.log(hashId, email, newPw)
 
     try {
-        const newpasswordId = email + pwCheck;
+        const newpasswordId = email + newPw;
         const newHash = crypto.createHash('sha256').update(newpasswordId).digest('base64');
 
         const contract = await deployed();
         await contract.methods.updatePassword(hashId, newHash).send({
             from: process.env.WALLET_ADDRESS,
+            gas: 10000000
         });
 
         res.json({
@@ -180,7 +183,7 @@ router.post('/deleteUser', async (req: Request, res: Response) => {
     const { hashId, email } = req.body;
 
     try {
-        await VerifyId.destroy({ where: { email: email } });
+        
 
         const contract = await deployed();
 
@@ -192,8 +195,6 @@ router.post('/deleteUser', async (req: Request, res: Response) => {
         const checkUser = await contract.methods.isRegistered(hashId).call();
 
         if (checkUser) throw new Error('회원 탈퇴 처리 실패');
-
-        await TotalPoint.destroy({ where: { email: email } });
 
         const deleteApp = await App.findAll({
             where: { owner: email },
@@ -218,6 +219,10 @@ router.post('/deleteUser', async (req: Request, res: Response) => {
                 owner: email,
             },
         });
+
+        await TotalPoint.destroy({ where: { email: email } });
+
+        await VerifyId.destroy({ where: { email: email } });
 
         res.json(responseObject(true, '회원 탈퇴가 완료되었습니다.'));
     } catch (e) {

@@ -148,7 +148,6 @@ router.get('/codeAuthorize2', async (req: Request, res: Response) => {
 
 router.post('/localAuthorize', async (req: Request, res: Response) => {
     const { email, password } = req.body;
-    console.log(email, password)
     try {
         const userhash = email + password;
         const hash = crypto.createHash('sha256').update(userhash).digest('base64');

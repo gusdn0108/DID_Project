@@ -46,6 +46,7 @@ export default function Home() {
       //다했ㄷ으니 마이페이지로 쿠키와함께 화면전환
     } else {
       alert(response.data.msg);
+      setLoading(true);
     }
   };
 

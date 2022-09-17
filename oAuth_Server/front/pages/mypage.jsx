@@ -4,41 +4,43 @@ import {
   Text,
   Divider,
   Spinner,
-  useDisclosure,
   Center,
   FormLabel,
   Button,
   FormControl,
-  FormHelperText,
   Radio,
   Stack,
   Input,
-  Select,
   RadioGroup,
-  useTagStyles,
-  Heading,
+  FormHelperText,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { backend, frontend } from "../utils/ip.js";
 import { getCookie } from "cookies-next";
 import crypto from "crypto";
-import AppModal from "../components/appModal.jsx";
 import { deleteCookie } from "cookies-next";
-import Link from "next/link";
 
-const Mypage = ({ appList, hashId, email }) => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const [myAppList, setmyAppList] = useState(appList);
+const Mypage = ({ hashId, email }) => {
   const [name, setName] = useState("");
   const [gender, setGender] = useState("");
   const [age, setAge] = useState("");
   const [addr, setAddr] = useState("");
   const [mobile, setMobile] = useState("");
-  const [password, setPassword] = useState("");
   const [pwCheck, setPwCheck] = useState(false); //뒤에 비밀번호 수정
   const [pwdCheck, setPwdCheck] = useState(""); //첫번째 비밀번호입력란
+  const [newPw, setNewPw] = useState("");
+  const [confirmNewPw, setConfirmNewPw] = useState("");
   const [loading, setLoading] = useState(true); //로딩바
+  const [psError, setpsError] = useState(false);
+
+  const pwdFormCheck = (pwd) => {
+    const pwdForm = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,15}$/;
+    if (!pwdForm.test(pwd)) {
+      return false;
+    }
+    return true;
+  };
 
   const getAddress = (e) => {
     setAddr(e.target.value);
@@ -53,12 +55,13 @@ const Mypage = ({ appList, hashId, email }) => {
     setAge(e.target.value);
   };
 
-  const udtdPassword = (e) => {
-    setPwCheck(e.target.value);
+  const getNewPw = (e) => {
+    setNewPw(e.target.value);
+    setpsError(pwdFormCheck(newPw));
   };
 
-  const udtPassword = (e) => {
-    setPwdCheck(e.target.value);
+  const confirmPw = (e) => {
+    setConfirmNewPw(e.target.value);
   };
 
   const getUserInfo = async () => {
@@ -96,14 +99,24 @@ const Mypage = ({ appList, hashId, email }) => {
   const updatePassword = async (e) => {
     setLoading(false);
 
-    if (pwCheck !== pwdCheck) {
+    if (psError == false) {
+      alert(
+        "비밀번호는 영문자, 숫자, 특수문자 조합으로 8~15자리를 사용해주세요."
+      );
+      setLoading(true);
+      return;
+    }
+
+    if (confirmNewPw !== newPw) {
       alert("비밀번호가 일치하지 않습니다.");
+      setLoading(true);
+      return;
     }
 
     const body = {
       hashId,
       email,
-      pwCheck,
+      newPw,
     };
 
     const response = await axios.post(
@@ -113,11 +126,12 @@ const Mypage = ({ appList, hashId, email }) => {
 
     if (response.data.status == true) {
       alert(response.data.msg);
-      deleteCookie("user", { req, res, maxAge: 60 * 60 * 24 * 1000 });
+      deleteCookie("user", { path: "/", domain: `localhost` });
       window.location.replace("/");
     } else {
       alert(response.data.msg);
     }
+    setLoading(true);
   };
 
   const updateUser = async () => {
@@ -143,13 +157,16 @@ const Mypage = ({ appList, hashId, email }) => {
       setGender(response.data.gender);
       setAddr(response.data.addr);
       setMobile(response.data.mobile);
+      setLoading(true);
       alert(response.data.msg);
     } else {
+      setLoading(true);
       alert(response.data.msg);
     }
   };
 
   const deleteUser = async (req, res) => {
+    setLoading(false);
     const response = await axios.post(
       "http://localhost:8000/oauth/user/deleteUser",
       { hashId, email }
@@ -162,16 +179,12 @@ const Mypage = ({ appList, hashId, email }) => {
     } else {
       alert(response.data.msg);
     }
+    setLoading(true);
   };
 
   useEffect(() => {
     getUserInfo();
-  }, [isOpen]);
-
-  const closeAndUpdate = () => {
-    onClose();
-    getMyApp();
-  };
+  }, []);
 
   return (
     <Center w="100%" pt="5%" px="5%">
@@ -358,6 +371,7 @@ const Mypage = ({ appList, hashId, email }) => {
               placeholder="패스워드를 입력해주세요"
               id="password"
               size="md"
+              onChange={getNewPw}
             />
             <FormLabel fontSize={"140%"} px="2%" pt="2rem">
               비밀번호 확인
@@ -367,7 +381,13 @@ const Mypage = ({ appList, hashId, email }) => {
               placeholder="패스워드를 입력해주세요"
               id="password"
               size="md"
+              onChange={confirmPw}
             />
+            <Text my="4%" px="2%" color={psError == true ? "green" : "red"}>
+              {psError == true
+                ? "사용 가능한 비밀번호입니다."
+                : "비밀번호는 영문자, 숫자, 특수문자 포함 8~15자여야 합니다."}
+            </Text>
             {loading ? (
               <Center>
                 {" "}
@@ -427,30 +447,6 @@ const Mypage = ({ appList, hashId, email }) => {
       </Box>
     </Center>
   );
-};
-
-export const getServerSideProps = async (ctx) => {
-  const cookie = ctx.req ? ctx.req.headers.cookie : "";
-  const encodedCookie = cookie.split(";");
-
-  let cookieNeeded;
-
-  for (let i = 0; i < encodedCookie.length; i++) {
-    const tokenName = encodedCookie[i].split("=");
-    if (tokenName[0].trim() == "user") {
-      cookieNeeded = tokenName;
-    }
-  }
-
-  const email = JSON.parse(
-    Buffer.from(cookieNeeded[1], "base64").toString("utf-8")
-  ).email;
-
-  const response = await axios.post(`${backend}/oauth/app/getMyApp`, {
-    email: email,
-  });
-
-  return { props: { appList: response.data.myapp } };
 };
 
 export default Mypage;
