@@ -53,3 +53,5 @@ offscreen: { x: -300 },
 onscreen: { x: 0, rotate: [-2, 3, 5] },
 transition: { type: "spring", bounce: 1, duration: 4 },
 }
+
+정리하다 말았음 모르고 깃이그노어처리 못햇슴니다..
