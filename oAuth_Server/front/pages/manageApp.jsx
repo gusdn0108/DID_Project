@@ -336,7 +336,7 @@ const manageApp = ({ appList, email }) => {
                     <Box mb="1%">
                       <Text>uri 수정 후, 수정 완료 버튼을 눌려주세요.</Text>
                     </Box>
-                    <Box m="5%">
+                    <Box mx="5%" my="10%">
                       <Button onClick={modifyRed} mx="1%">
                         수정 완료
                       </Button>

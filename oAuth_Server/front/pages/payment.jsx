@@ -30,24 +30,30 @@ const payment = () => {
   const showList = () => {
     return payMenu.map((v, k) => {
       return (
-        <Flex w="100%" mt="1rem" border="1px solid #000" key={k}>
-          <Center w="15%" h="3rem">
+        <Flex
+          w="100%"
+          mt="1rem"
+          border="1px solid #fff"
+          key={k}
+          borderRadius="10px"
+        >
+          <Center w="15%" h="3rem" fontSize={"125%"}>
             {v.appName}
           </Center>
-          <Center w="80%" h="3rem" borderLeft="1px solid #000">
+          <Center w="77%" h="3rem" borderLeft="1px solid #fff">
             <Text
               w="50%"
               h="3rem"
-              pl="1rem"
-              pt="0.7rem"
               fontSize="1rem"
-              borderRight="1px solid #000"
+              borderRight="1px solid #fff"
+              textAlign={"center"}
+              lineHeight="3rem"
             >
               보유 Point : {v.point}
             </Text>
             <Text pl="1rem">사용 Point :</Text>
             <NumberInput
-              w="25%"
+              w="30%"
               min={0}
               max={v.point}
               ml="1rem"
@@ -119,57 +125,63 @@ const payment = () => {
   }, []);
 
   return (
-    <Box w="90%" h="100%" m="0 5%" mt="2rem">
-      <Center border="1px solid gray">
-        <Text fontSize="2rem" fontWeight="semibold">
-          OAuth 결제 모듈
+    <Box h="100%" p="7%" bg="#160627">
+      <Box w="70%" m="0 auto">
+        <Center>
+          <Text fontSize="2rem" fontWeight="semibold" color="white">
+            OAuth 결제 모듈
+          </Text>
+        </Center>
+        <Text
+          className="pointText"
+          fontSize="1.5rem"
+          fontWeight="semibold"
+          textAlign="center"
+          mt="1rem"
+          color="white"
+        >
+          결제할 포인트 : {point} P
         </Text>
-      </Center>
-      <Text
-        className="pointText"
-        fontSize="1.5rem"
-        fontWeight="semibold"
-        textAlign="center"
-        mt="1rem"
-      >
-        결제할 포인트 : {point} P
-      </Text>
-      <Divider mt="1rem" />
-      <Center w="100%" h="20%" mt="1rem">
-        <Flex direction="column" w="100%">
-          {showList()}
-          <Divider mt="2rem" />
-        </Flex>
-      </Center>
-      <Center mt="1rem">
-        <Text fontSize="1.5rem">구매하기</Text>
-      </Center>
-      <Center w="100%" h="7rem">
-        <Flex direction="column">
-          <Center w="100%">
-            <Text fontSize="1.2rem">입력 Point : {totalPayPrice()}</Text>
-            <Button
-              ml="2rem"
-              onClick={Pay}
-              disabled={totalPayPrice() === Number(point) ? false : true}
-            >
-              적용하기
-            </Button>
-          </Center>
-          <Center w="100%">
-            <Text
-              mt="0.2rem"
-              color={totalPayPrice() === Number(point) ? null : "red"}
-            >
-              {totalPayPrice() === 0
-                ? null
-                : totalPayPrice() === Number(point)
-                ? null
-                : "상품의 가격과 사용할 포인트를 맞춰 주십시오."}
-            </Text>
-          </Center>
-        </Flex>
-      </Center>
+        <Divider mt="1rem" />
+        <Center w="100%" h="20%" mt="1rem">
+          <Flex direction="column" w="100%" color="white">
+            {showList()}
+            <Divider mt="2rem" />
+          </Flex>
+        </Center>
+        <Center mt="1rem" color="white">
+          <Text fontSize="1.5rem">구매하기</Text>
+        </Center>
+        <Center w="100%" h="7rem">
+          <Flex direction="column">
+            <Center w="100%">
+              <Text fontSize="1.2rem" color="white">
+                입력 Point : {totalPayPrice()}
+              </Text>
+              <Button
+                ml="2rem"
+                onClick={Pay}
+                disabled={totalPayPrice() === Number(point) ? false : true}
+                bg="white"
+              >
+                적용하기
+              </Button>
+            </Center>
+            <Center w="100%">
+              <Text
+                mt="0.2rem"
+                color={totalPayPrice() === Number(point) ? null : "red"}
+              >
+                {totalPayPrice() === 0
+                  ? null
+                  : totalPayPrice() === Number(point)
+                  ? null
+                  : "상품의 가격과 사용할 포인트를 맞춰 주십시오."}
+              </Text>
+            </Center>
+          </Flex>
+        </Center>
+      </Box>
     </Box>
   );
 };
