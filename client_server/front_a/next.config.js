@@ -1,5 +1,5 @@
 /** @type {import('next').NextConfig} */
-export const nextConfig = {
+const nextConfig = {
   reactStrictMode: false,
   swcMinify: true,
   images: {
@@ -7,28 +7,30 @@ export const nextConfig = {
   },
 };
 
-const securityHeaders = [
-  {
-    key: 'Referrer-Policy',
-    value: 'origin-when-cross-origin',
-  },
-  {
-    key: 'Access-Control-Allow-Origin',
-    value: '*',
-  },
-  {
-    key: 'Access-Control-Allow-Headers',
-    value: '*',
-  },
-];
+// const securityHeaders = [
+//   {
+//     key: 'Referrer-Policy',
+//     value: 'origin-when-cross-origin',
+//   },
+//   {
+//     key: 'Access-Control-Allow-Origin',
+//     value: '*',
+//   },
+//   {
+//     key: 'Access-Control-Allow-Headers',
+//     value: '*',
+//   },
+// ];
 
-export const login = {
-  async headers() {
-    return [
-      {
-        source: '/login',
-        headers: securityHeaders,
-      },
-    ];
-  },
-};
+// export const login = {
+//   async headers() {
+//     return [
+//       {
+//         source: '/login',
+//         headers: securityHeaders,
+//       },
+//     ];
+//   },
+// };
+
+module.exports = nextConfig;

@@ -79,7 +79,7 @@ router.post('/getMyApp', async (req: Request, res: Response) => {
 
 router.post('/deleteApp', async (req: Request, res: Response) => {
     const {restAPI, client_secret} = req.body
-    console.log(restAPI, client_secret)
+
     try {
 
         const targetApp = await App.findOne({
@@ -251,7 +251,6 @@ router.get('/giveUserInfo', async (req: Request, res: Response) => {
             },
         });
         // 이 둘은 join으로 묶을 수 있을 것 같다.
-        console.log(infoReq)
 
         if (!infoReq) {
             throw new Error('비정상적인 접근입니다.');
