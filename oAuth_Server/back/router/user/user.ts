@@ -56,8 +56,6 @@ router.post('/oAuthRegister', async (req: Request, res: Response) => {
 router.post('/upDatePassword', async (req: Request, res: Response) => {
     const { hashId, email, newPw } = req.body;
 
-    console.log(hashId, email, newPw)
-
     try {
         const newpasswordId = email + newPw;
         const newHash = crypto.createHash('sha256').update(newpasswordId).digest('base64');
