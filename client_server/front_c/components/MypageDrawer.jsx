@@ -19,12 +19,14 @@ const MypageDrawer = ({ MypageIsOpen, MypageOnClose, user, did }) => {
   const [point, setPoint] = useState(0);
 
   useEffect(() => {
-    (async function () {
-      const response = await axios.post('http://localhost:4002/api/auth/pointInquiry', { email });
-      if (response.data.status) {
-        setPoint(response.data.point);
-      }
-    })();
+    if (user) {
+      (async function () {
+        const response = await axios.post('http://localhost:4002/api/auth/pointInquiry', { email });
+        if (response.data.status) {
+          setPoint(response.data.point);
+        }
+      })();
+    }
   }, []);
 
   return (

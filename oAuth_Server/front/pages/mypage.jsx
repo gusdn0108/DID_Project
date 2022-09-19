@@ -1,7 +1,6 @@
-import { Box, Image, Text, Divider, Spinner, Center, FormLabel, Button, FormControl, Radio, Stack, Input, RadioGroup } from '@chakra-ui/react';
+import { Box, Text, Divider, Spinner, Center, FormLabel, Button, FormControl, Input } from '@chakra-ui/react';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-
 import crypto from 'crypto';
 import { deleteCookie } from 'cookies-next';
 
@@ -153,7 +152,9 @@ const Mypage = ({ hashId, email }) => {
 	};
 
 	useEffect(() => {
-		getUserInfo();
+		if (hashId) {
+			getUserInfo();
+		}
 	}, []);
 
 	return (
@@ -210,7 +211,7 @@ const Mypage = ({ hashId, email }) => {
 							<FormLabel fontSize={'140%'} px='2%' mb='3%' color='white'>
 								이메일
 							</FormLabel>
-							<Input type='text' style={{ color: 'white' }} placeholder='email을 입력해주세요' id='userEmail' value={email} size='md' mb='5%' disabled />
+							<Input type='text' style={{ color: 'white' }} id='userEmail' value={email} size='md' mb='5%' disabled />
 
 							<FormLabel fontSize={'140%'} px='2%' color='white'>
 								이름
