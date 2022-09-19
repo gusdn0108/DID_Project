@@ -1,11 +1,9 @@
-import express, { Request, response, Response } from 'express';
-import crypto from 'crypto';
+import express, { Request, Response } from 'express';
 import App from '../../models/webSite/app.model';
 import DataNeeded from '../../models/webSite/dataNeeded.model';
 import RedirectURI from '../../models/webSite/redirectURI.model';
 import { makeRedirectUriList, generateHash, responseObject, infoStringToBool, noWhiteSpace, filterNull, insertNewUri, filterNotNeeded, getUserinfo, rawVP, refineVP } from './utils';
 import TotalPoint from '../../models/user/totalPoint.model';
-import deployed from '../../web3';
 import axios from 'axios';
 
 const router = express.Router();
@@ -250,7 +248,6 @@ router.get('/giveUserInfo', async (req: Request, res: Response) => {
                 restAPI,
             },
         });
-        // 이 둘은 join으로 묶을 수 있을 것 같다.
 
         if (!infoReq) {
             throw new Error('비정상적인 접근입니다.');
@@ -308,7 +305,6 @@ router.post('/userdidregister', async (req, res) => {
         }
 
         res.json(responseObject(true, '정상적으로 등록되었습니다. 다시 로그인해주세요.'));
-        // 문제가 없다면 로그인, 쿠키 생성을 위해 클라이언트 서버의 백엔드로 리다이렉트
     } catch (e) {
         console.log(e.message);
         res.json(responseObject(false, e.message));
