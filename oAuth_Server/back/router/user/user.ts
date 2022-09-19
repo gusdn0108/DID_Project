@@ -146,43 +146,10 @@ router.post('/searchUser', async (req: Request, res: Response) => {
     }
 });
 
-router.post('/deleteUser2', async (req: Request, res: Response) => {
-    const { hashId } = req.body;
-    const t = await sequelize.transaction();
-
-    const sucess = await VerifyId.destroy({ where: { hashId: hashId } });
-    try {
-        const deploy = await deployed();
-
-        await deploy.methods.deleteUser(hashId).send({
-            from: process.env.WALLET_ADDRESS,
-            gas: 10000000,
-        });
-
-        transaction: t;
-
-        await t.commit();
-    } catch (err) {
-        await t.rollback();
-    }
-    const deploy = await deployed();
-
-    const checkUser = await deploy.methods.isRegistered(hashId).call();
-
-    if (checkUser) throw new Error('회원 탈퇴 처리 실패');
-
-    res.json({
-        status: true,
-        msg: '회원탈퇴가 완료되었습니다.',
-    });
-});
-
 router.post('/deleteUser', async (req: Request, res: Response) => {
     const { hashId, email } = req.body;
 
     try {
-        
-
         const contract = await deployed();
 
         await contract.methods.deleteUser(hashId).send({
