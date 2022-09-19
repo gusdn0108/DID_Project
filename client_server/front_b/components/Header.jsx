@@ -105,7 +105,7 @@ const Header = ({ email }) => {
             </Text>
           </Box>
 
-          <Flex justifyContent="space-evenly" pr="4rem">
+          <Flex justifyContent="space-evenly" pr="4rem" cursor={"pointer"}>
             <Text p="0.75rem" marginX="0.125rem">
               해외여행
             </Text>
