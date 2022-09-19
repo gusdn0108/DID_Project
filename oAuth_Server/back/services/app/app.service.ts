@@ -236,7 +236,6 @@ const giveUserInfo = async (restAPI: any) => {
                 restAPI,
             },
         });
-        // 이 둘은 join으로 묶을 수 있을 것 같다.
 
         if (!infoReq) {
             throw new Error('비정상적인 접근입니다.');
@@ -289,8 +288,12 @@ const userdidregister = async(data:any) => {
             throw new Error('클라이언트 서버 에러');
         }
 
+<<<<<<< HEAD:oAuth_Server/back/services/app/app.service.ts
         response = responseObject(true, '정상적으로 등록되었습니다. 다시 로그인해주세요.');
         // 문제가 없다면 로그인, 쿠키 생성을 위해 클라이언트 서버의 백엔드로 리다이렉트
+=======
+        res.json(responseObject(true, '정상적으로 등록되었습니다. 다시 로그인해주세요.'));
+>>>>>>> aaac2fce0479a8f0b52afda91bd60d0db09e5d12:oAuth_Server/back/router/app/app.ts
     } catch (e) {
         response = responseObject(false, e.message);
     }
