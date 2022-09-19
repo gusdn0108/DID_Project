@@ -86,7 +86,7 @@ const register = () => {
 	};
 
 	const verifyAccount = async () => {
-		setLoading(false)
+		setLoading(false);
 		const verifier = document.querySelector('#verifier').value;
 		if (verifier == verifyNum) {
 			try {
@@ -105,21 +105,20 @@ const register = () => {
 		}
 	};
 
-
 	return (
-		<Box display='flex' justifyContent='center'>
+		<Box display='flex' justifyContent='center' bg='#160627' pt='12rem'>
 			<Box pt='3rem' display='flex' justifyContent='center' w='22%'>
 				<FormControl mt='3'>
-					<Text mb='8%' textAlign={'center'} fontSize='2rem'>
+					<Text mb='8%' textAlign={'center'} fontSize='2rem' color='#fff'>
 						회원 가입
 					</Text>
 					{sentEmail == false ? (
 						<>
-							<FormLabel fontSize={'140%'} px='2%' mb='3%'>
+							<FormLabel fontSize={'140%'} px='2%' mb='3%' color='#fff'>
 								이메일
 							</FormLabel>
 							<Flex justifyContent={'center'}>
-								<Input type='text' onChange={getEmail} placeholder='email을 입력해주세요' id='userEmail' size='md' mb='5%' />
+								<Input type='text' onChange={getEmail} placeholder='email을 입력해주세요' id='userEmail' size='md' mb='5%' style={{ color: 'white' }} />
 
 								<Select placeholder='Select Domain' size='md' id='domainSelector' onChange={domainSelect}>
 									<option value='@kakao.com'>@kakao.com</option>
@@ -177,19 +176,13 @@ const register = () => {
 						<>
 							<Input type='text' placeholder='발송된 6자리 숫자를 입력하세요' id='verifier' />
 							<FormHelperText>인증 번호는 3분간 유효합니다.</FormHelperText>
-							{loading ?
-								<Input type='submit' onClick={verifyAccount} /> :
+							{loading ? (
+								<Input type='submit' onClick={verifyAccount} />
+							) : (
 								<Center>
-									<Spinner
-										thickness='4px'
-										speed='0.65s'
-										emptyColor='gray.200'
-										color='blue.500'
-										size='md'
-									/>
+									<Spinner thickness='4px' speed='0.65s' emptyColor='gray.200' color='blue.500' size='md' />
 								</Center>
-							}
-
+							)}
 						</>
 					)}
 				</FormControl>
