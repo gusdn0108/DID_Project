@@ -7,17 +7,15 @@ let response: any;
 const email = async (email: string) => {
     const generateRandom = (min: number, max: number) => {
         const ranNum = (Math.floor(Math.random() * (max - min + 1)) + min).toString();
-
         const array = [];
         for (let i = 0; i < 6; i++) {
             array.push(ranNum[i]);
         }
         return array;
     };
-
     const number = generateRandom(111111, 999999);
-
     try {
+
         const mailPoster = nodeMailer.createTransport({
             service: 'Naver',
             host: 'smtp.naver.com',
@@ -35,20 +33,19 @@ const email = async (email: string) => {
             html: emailTemplate(number),
         };
 
-        mailPoster.sendMail(mailOptions, function (error: Error | null, info: SentMessageInfo) {
-            try {
+
+        const result = mailPoster.sendMail(mailOptions, function (error: Error | null, info: SentMessageInfo) {
                 console.log('Email sent: ' + info.response);
-                response = {
-                    status: true,
-                    number,
-                };
-            } catch (e) {
-                response = responseObject(false, e.message);
-            }
-        });
-    } catch (e) {}
+            })
+            response = {
+                status: true,
+                number,
+            };
+    } catch (e) {
+        response = responseObject(false, e.message);
+    }
     return response;
 };
 
-const verifyService = { email };
+const verifyService = {email};
 export default verifyService;

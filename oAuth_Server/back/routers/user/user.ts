@@ -1,12 +1,4 @@
 import express, { Request, Response } from 'express';
-import crypto from 'crypto';
-import deployed from '../../web3';
-import VerifyId from '../../models/user/verifyId.model';
-import { responseObject } from '../app/utils';
-import TotalPoint from '../../models/user/totalPoint.model';
-import App from '../../models/webSite/app.model';
-import DataNeeded from '../../models/webSite/dataNeeded.model';
-import RedirectURI from '../../models/webSite/redirectURI.model';
 import userService from '../../services/user/user.service';
 
 const router = express.Router();

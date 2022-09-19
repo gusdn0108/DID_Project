@@ -11,7 +11,6 @@ let response: any;
 
 const oAuthRegister = async (data: any) => {
     const { email, password, gender, name, age, addr, mobile } = data;
-
     try {
         const userHash = email + password;
         const hash = crypto.createHash('sha256').update(userHash).digest('base64');
@@ -24,11 +23,11 @@ const oAuthRegister = async (data: any) => {
             addr,
             mobile,
         };
-
         const contract = await deployed();
         await contract.methods.registerUser(hash, DATA).send({
             from: process.env.WALLET_ADDRESS,
         });
+
         const result = await contract.methods.isRegistered(hash).call();
         if (!result) throw new Error('회원 가입에 실패했습니다.');
 

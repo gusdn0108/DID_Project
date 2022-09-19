@@ -27,12 +27,12 @@ const apiDistribution = async (appName: string, email: string) => {
         await App.create({
             owner: email,
             appName,
-            restAPI: restAPI,
+            restAPI,
             code: client_secret,
         });
 
         await DataNeeded.create({
-            restAPI: restAPI,
+            restAPI,
             owner: email,
             email: true,
             name: true,
@@ -60,6 +60,7 @@ const getMyApp = async (email:string) => {
                 owner: email,
             },
         });
+        if(myAppName[0]===undefined) throw new Error('설정된 앱이 없습니다.')
         response = {
             status: true,
             myapp: myAppName,
@@ -79,7 +80,6 @@ const deleteApp = async (restAPI: string, client_secret: string) => {
                 code: client_secret,
             },
         });
-
         if (!targetApp) {
             throw new Error('잘못된 삭제 요청입니다.');
         }

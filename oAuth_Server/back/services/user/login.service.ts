@@ -1,18 +1,18 @@
-import { boolToNum, makeRawVP, refineVP, responseObject } from "../../routers/app/utils";
+import { boolToNum, makeRawVP, refineVP, responseObject } from '../../routers/app/utils';
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
-import RedirectURI from "../../models/webSite/redirectURI.model";
-import deployed from "../../web3";
-import TotalPoint from "../../models/user/totalPoint.model";
-import { frontend } from "../../routers/user/utils";
-import App from "../../models/webSite/app.model";
-import DataNeeded from "../../models/webSite/dataNeeded.model";
-import VerifyId from "../../models/user/verifyId.model";
+import RedirectURI from '../../models/webSite/redirectURI.model';
+import deployed from '../../web3';
+import TotalPoint from '../../models/user/totalPoint.model';
+import { frontend } from '../../routers/user/utils';
+import App from '../../models/webSite/app.model';
+import DataNeeded from '../../models/webSite/dataNeeded.model';
+import VerifyId from '../../models/user/verifyId.model';
 
 let response: any;
 
 const authorize = async (data: any) => {
-    const { email, password, restAPI, reURL, giveUserInfo } = data
+    const { email, password, restAPI, reURL, giveUserInfo } = data;
 
     const userhash = email + password;
     const hash = crypto.createHash('sha256').update(userhash).digest('base64');
@@ -49,22 +49,21 @@ const authorize = async (data: any) => {
             return { response, headerINfo };
         }
 
-        if(result) {
+        if (result) {
             const sentHash = encodeURIComponent(hash);
-            response ={
+            response = {
                 status: 'redirect',
-                redirectInfo: `${reURL}?email=${email}&hash1=${sentHash}`
-            }
+                redirectInfo: `${reURL}?email=${email}&hash1=${sentHash}`,
+            };
             return response;
         }
-
     } catch (e) {
         response = responseObject(false, '비정상적인 접근입니다.');
     }
     return response;
 };
 
-const codeAuthorize = async (MAKE_ACCESS_TOKEN:any) => {
+const codeAuthorize = async (MAKE_ACCESS_TOKEN: any) => {
     const EXPIRES_IN = 43199;
     try {
         if (MAKE_ACCESS_TOKEN.grant_type !== 'authorization_code') {
@@ -99,7 +98,7 @@ const codeAuthorize = async (MAKE_ACCESS_TOKEN:any) => {
     return response;
 };
 
-const codeAuthorize2 = async (bearer_token:any) => {
+const codeAuthorize2 = async (bearer_token: any) => {
     try {
         const decoded_token = Buffer.from(bearer_token, 'base64').toString('utf-8');
 
@@ -131,52 +130,53 @@ const codeAuthorize2 = async (bearer_token:any) => {
             };
         }
     } catch (e) {
-       response = responseObject(false, 'access token 검증 실패');
+        response = responseObject(false, 'access token 검증 실패');
     }
 };
 
 const localAuthorize = async (email: string, password: string) => {
     const userhash = email + password;
     let cookieInfo;
-    try{
-    const hash = crypto.createHash('sha256').update(userhash).digest('base64');
-    const dbUser = await VerifyId.findOne({
-        where: {
-            email: email,
-        },
-    });
-
-    if (!dbUser) throw new Error('id/pw를 확인해주세요');
-
-    const contract = await deployed();
-    const result = await contract.methods.getUser(hash).call();
-
-    if((result[0] =='' && result[2] == 0)|| email !== result[5]) {
-        response = responseObject(false, 'id/pw를 확인해주세요');
-        return;
-    }
-
-    if (result) {
-        let token = jwt.sign(
-            {
+    try {
+        const hash = crypto.createHash('sha256').update(userhash).digest('base64');
+        const dbUser = await VerifyId.findOne({
+            where: {
                 email: email,
-                hashId: hash,
             },
-            process.env.SECRET_KEY as string,
-        );
-    
-        cookieInfo = { key: 'user', value: token, options: { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 } };
-        response = {
-            status: true,
-            token: token,
-        };
-    }
-} catch (e) {
-    response = responseObject(false, e.message);
-};
-return {response, cookieInfo}
-};
+        });
+        console.log(dbUser);
 
+        if (!dbUser) throw new Error('id/pw를 확인해주세요');
+
+        const contract = await deployed();
+
+        const result = await contract.methods.getUser(hash).call();
+        console.log('result: ', result);
+
+        if ((result[0] == '' && result[2] == 0) || email !== result[5]) {
+            response = responseObject(false, 'id/pw를 확인해주세요');
+            return;
+        }
+        if (result) {
+            let token = jwt.sign(
+                {
+                    email: email,
+                    hashId: hash,
+                },
+                process.env.SECRET_KEY as string,
+            );
+
+            cookieInfo = { key: 'user', value: token, options: { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 } };
+            response = {
+                status: true,
+                token: token,
+            };
+        }
+    } catch (e) {
+        response = responseObject(false, e.message);
+    }
+    return { response, cookieInfo };
+};
 
 const loginService = {
     authorize,

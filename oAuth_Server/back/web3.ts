@@ -10,9 +10,7 @@ const deployed = async () => {
     const networkId = await web3.eth.net.getId();
     const abi = DID.abi;
     const CA = DID.networks[networkId].address;
-
     const deploy = new web3.eth.Contract(abi, CA);
-
     return deploy;
 };
 

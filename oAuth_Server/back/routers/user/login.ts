@@ -49,8 +49,8 @@ router.post('/localAuthorize', async (req: Request, res: Response) => {
         if(response.response.status ===false ) throw new Error(response.msg)
         const {key, value, options} = response.cookieInfo
         res.cookie(key, value, options)
-        res.json(response.response)
     } catch (e) {}
+    res.json(response.response)
 });
 
 export default router;
