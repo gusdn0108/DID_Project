@@ -169,6 +169,7 @@ const register = () => {
                   size="md"
                   id="domainSelector"
                   onChange={domainSelect}
+                  color="#fff"
                 >
                   <option value="@kakao.com">@kakao.com</option>
                   <option value="@naver.com">@naver.com</option>
@@ -176,7 +177,7 @@ const register = () => {
                 </Select>
               </Flex>
 
-              <FormLabel fontSize={"140%"} px="2%">
+              <FormLabel fontSize={"140%"} px="2%" color="#fff">
                 이름
               </FormLabel>
               <Input
@@ -185,9 +186,10 @@ const register = () => {
                 placeholder="이름을 입력해주세요"
                 size="md"
                 mb="5%"
+                style={{ color: "white" }}
               />
 
-              <FormLabel fontSize={"140%"} px="2%" mb="2%">
+              <FormLabel fontSize={"140%"} px="2%" mb="2%" color="#fff">
                 성별
               </FormLabel>
               <RadioGroup
@@ -198,13 +200,15 @@ const register = () => {
               >
                 <Stack direction="row">
                   <Radio value="m" mr="2%">
-                    남자
+                    <Text color="#fff">남자</Text>
                   </Radio>
-                  <Radio value="f">여자</Radio>
+                  <Radio value="f" color="#fff">
+                    <Text color="#fff">여자</Text>
+                  </Radio>
                 </Stack>
               </RadioGroup>
 
-              <FormLabel fontSize={"140%"} px="2%">
+              <FormLabel fontSize={"140%"} px="2%" color="#fff">
                 나이
               </FormLabel>
               <Input
@@ -212,9 +216,10 @@ const register = () => {
                 mb="5%"
                 size="md"
                 onChange={getAge}
+                style={{ color: "white" }}
               />
 
-              <FormLabel fontSize={"140%"} px="2%">
+              <FormLabel fontSize={"140%"} px="2%" color="#fff">
                 주소
               </FormLabel>
               <Input
@@ -222,9 +227,10 @@ const register = () => {
                 size="md"
                 placeholder="주소를 입력해주세요"
                 onChange={getAdr}
+                style={{ color: "white" }}
               />
 
-              <FormLabel fontSize={"140%"} px="2%">
+              <FormLabel fontSize={"140%"} px="2%" color="#fff">
                 전화번호
               </FormLabel>
               <Input
@@ -232,9 +238,10 @@ const register = () => {
                 size="md"
                 placeholder="전화번호를 입력해주세요"
                 onChange={getPhone}
+                style={{ color: "white" }}
               />
 
-              <FormLabel fontSize={"140%"} px="2%">
+              <FormLabel fontSize={"140%"} px="2%" color="#fff">
                 비밀번호
               </FormLabel>
               <Input
@@ -243,6 +250,7 @@ const register = () => {
                 placeholder="패스워드를 입력해주세요"
                 id="password"
                 size="md"
+                style={{ color: "white" }}
               />
               <FormHelperText mb="7%" px="2%">
                 {psError == true
@@ -263,25 +271,35 @@ const register = () => {
             />
           ) : (
             <>
-              <Input
-                type="text"
-                placeholder="발송된 6자리 숫자를 입력하세요"
-                id="verifier"
-              />
-              <FormHelperText>인증 번호는 3분간 유효합니다.</FormHelperText>
-              {loading ? (
-                <Input type="submit" onClick={verifyAccount} />
-              ) : (
-                <Center>
-                  <Spinner
-                    thickness="4px"
-                    speed="0.65s"
-                    emptyColor="gray.200"
-                    color="blue.500"
-                    size="md"
+              <Box h="30rem">
+                <Input
+                  type="text"
+                  placeholder="발송된 6자리 숫자를 입력하세요"
+                  id="verifier"
+                  style={{ color: "white" }}
+                />
+                <FormHelperText color="#fff">
+                  인증 번호는 3분간 유효합니다.
+                </FormHelperText>
+                {loading ? (
+                  <Input
+                    type="submit"
+                    onClick={verifyAccount}
+                    style={{ color: "white" }}
+                    mt="2%"
                   />
-                </Center>
-              )}
+                ) : (
+                  <Center>
+                    <Spinner
+                      thickness="4px"
+                      speed="0.65s"
+                      emptyColor="gray.200"
+                      color="blue.500"
+                      size="md"
+                    />
+                  </Center>
+                )}
+              </Box>
             </>
           )}
         </FormControl>
