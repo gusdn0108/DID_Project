@@ -102,15 +102,14 @@ const deleteApp = async (restAPI: string, client_secret: string) => {
             }),
         ]).then(() => {
             console.log('어플리케이션 정보 삭제 완료');
-        });
-        // .catch((e) => res.json(responseObject(false, e.message)))
+        }).catch((e: any) => response = responseObject(false, e.message));
 
-        // await App.destroy({
-        //     where : {
-        //         restAPI
-        //     }
-        // })
-        // res.json(responseObject(true, '어플리케이션이 삭제되었습니다'))
+        await App.destroy({
+            where : {
+                restAPI
+            }
+        })
+        response = responseObject(true, '어플리케이션이 삭제되었습니다');
     } catch (e) {
         response = responseObject(false, e.message);
     }

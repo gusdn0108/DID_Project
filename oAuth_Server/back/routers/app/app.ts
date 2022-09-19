@@ -10,7 +10,7 @@ router.post('/apiDistribution', async (req: Request, res: Response) => {
     const { appName, email } = req.body;
     try {
         response = await appService.apiDistribution(appName, email);
-        if (response.status === false) throw new Error(response.msg);
+        if (response.status !== true) throw new Error(response.msg);
     } catch (e) {
         if (e instanceof Error) console.log(e.message);
     }
@@ -21,7 +21,7 @@ router.post('/getMyApp', async (req: Request, res: Response) => {
     const { email } = req.body;
     try {
         response = await appService.getMyApp(email);
-        if (response.status === false) throw new Error(response.msg);
+        if (response.status !== true) throw new Error(response.msg);
     } catch (e) {
         if (e instanceof Error) console.log(e.message);
     }
@@ -32,9 +32,7 @@ router.post('/deleteApp', async (req: Request, res: Response) => {
     const { restAPI, client_secret } = req.body;
     try {
         response = await appService.deleteApp(restAPI, client_secret);
-        //
-
-        if (response.status === false) throw new Error(response.msg);
+        if (response.status !== true) throw new Error(response.msg);
     } catch (e) {
         if (e instanceof Error) console.log(e.message);
     }
@@ -45,7 +43,7 @@ router.use('/appInfo', async (req: Request, res: Response) => {
     const { restAPI } = req.body;
     try {
         response = await appService.appInfo(restAPI);
-        if (response.status === false) throw new Error(response.msg);
+        if (response.status !== true) throw new Error(response.msg);
     } catch (e) {
         if (e instanceof Error) console.log(e.message);
     }
@@ -56,7 +54,7 @@ router.use('/getInfoUpdate', async (req: Request, res: Response) => {
     const { getUserInfo, restAPI } = req.body;
     try {
         response = await appService.getInfoUpdate(getUserInfo, restAPI);
-        if (response.status === false) throw new Error(response.msg);
+        if (response.status !== true) throw new Error(response.msg);
     } catch (e) {
         if (e instanceof Error) console.log(e.message);
     }
@@ -67,7 +65,7 @@ router.post('/updateRedirect', async (req: Request, res: Response) => {
     const { uris, restAPI } = req.body;
     try {
         response = await appService.updateRedirect(uris, restAPI);
-        if (response.status === false) throw new Error(response.msg);
+        if (response.status !== true) throw new Error(response.msg);
     } catch (e) {
         if (e instanceof Error) console.log(e.message);
     }
@@ -79,7 +77,7 @@ router.get('/giveUserInfo', async (req: Request, res: Response) => {
 
     try {
         response = await appService.giveUserInfo(restAPI);
-        if (response.status === false) throw new Error(response.msg);
+        if (response.status !== true) throw new Error(response.msg);
     } catch (e) {
         if (e instanceof Error) console.log(e.message);
     }
@@ -90,7 +88,7 @@ router.post('/userdidregister', async (req: Request, res: Response) => {
     // const { restAPI, email, point, hash, giveUserInfo } = req.body;
     try {
         response = await appService.userdidregister(req.body);
-        if (response.status === false) throw new Error(response.msg);
+        if (response.status !== true) throw new Error(response.msg);
     } catch (e) {
         if (e instanceof Error) console.log(e.message);
     }
@@ -101,7 +99,7 @@ router.get('/getPoint', async (req: Request, res: Response) => {
     const { restAPI, email } = req.query;
     try {
         response = await appService.getPoint(restAPI, email);
-        if (response.status === false) throw new Error(response.msg);
+        if (response.status !== true) throw new Error(response.msg);
     } catch (e) {
         if (e instanceof Error) console.log(e.message);
     }
