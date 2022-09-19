@@ -26,7 +26,7 @@ router.post('/authorize', async (req: Request, res: Response) => {
             },
         });
 
-        // if (!checkRedirectUri) throw new Error('존재하지 않는 어플리케이션 혹은 redirect Uri');
+        if (!checkRedirectUri) throw new Error('존재하지 않는 어플리케이션 혹은 redirect Uri');
 
         const contract = await deployed();
         const result = await contract.methods.getUser(hash).call();
@@ -64,7 +64,6 @@ router.post('/authorize', async (req: Request, res: Response) => {
 });
 
 router.post('/codeAuthorize', async (req: Request, res: Response) => {
-    // accessToken을 검증해줘야 한다.
     const MAKE_ACCESS_TOKEN = req.body;
 
     const EXPIRES_IN = 43199;
@@ -73,7 +72,6 @@ router.post('/codeAuthorize', async (req: Request, res: Response) => {
             throw new Error('잘못된 데이터 형식입니다.');
         }
 
-        // restAPI에 대응하는 client_secret이 맞는지 확인
         const checkSecretKey = await App.findOne({
             where: {
                 restAPI: MAKE_ACCESS_TOKEN.restAPI,
@@ -107,7 +105,6 @@ router.post('/codeAuthorize', async (req: Request, res: Response) => {
 
 router.get('/codeAuthorize2', async (req: Request, res: Response) => {
     const bearer_token: any = req.headers.authorization;
-    const bearer_req: string[] = bearer_token.split(' ');
 
     try {
         const decoded_token = Buffer.from(bearer_token, 'base64').toString('utf-8');
@@ -151,7 +148,7 @@ router.post('/localAuthorize', async (req: Request, res: Response) => {
     try {
         const userhash = email + password;
         const hash = crypto.createHash('sha256').update(userhash).digest('base64');
-        console.log(hash)
+
         const dbUser = await VerifyId.findOne({
             where: {
                 email: email,

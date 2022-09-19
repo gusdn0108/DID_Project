@@ -1,3 +1,8 @@
+import crypto from 'crypto'
+import DataNeeded from '../../models/webSite/dataNeeded.model'
+import RedirectURI from '../../models/webSite/redirectURI.model'
+import deployed from '../../web3'
+
 export const makeRedirectUriList = (length:any) => {
     let tempRedirectUri = new Array(length)
     for( let i = 0; i < tempRedirectUri.length; i++) {
@@ -6,12 +11,6 @@ export const makeRedirectUriList = (length:any) => {
 
     return tempRedirectUri
 }
-
-import crypto from 'crypto'
-import App from '../../models/webSite/app.model'
-import DataNeeded from '../../models/webSite/dataNeeded.model'
-import RedirectURI from '../../models/webSite/redirectURI.model'
-import deployed from '../../web3'
 
 export const generateHash = (appName:string, email:string) => {
     const randomNum = Math.floor(Math.random() * 1000000);

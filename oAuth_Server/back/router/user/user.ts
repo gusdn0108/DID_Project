@@ -2,7 +2,6 @@ import express, { Request, Response } from 'express';
 import crypto from 'crypto';
 import deployed from '../../web3';
 import VerifyId from '../../models/user/verifyId.model';
-import sequelize from '../../models';
 import { responseObject } from '../app/utils';
 import TotalPoint from '../../models/user/totalPoint.model';
 import App from '../../models/webSite/app.model';
