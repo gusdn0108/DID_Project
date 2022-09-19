@@ -58,7 +58,7 @@ const main = () => {
 						</ItemsWrap>
 					</motion.div>
 				</Flex>
-				<Box background={'#160627'} h='calc(70vh)' borderTop='2px' borderColor='#160627'>
+				<Box background={'#160627'} h='calc(70vh)' borderTop='2px' borderColor='#160627' mt='2rem' ml='5rem'>
 					<Textanime text='DID 회원가입 하나로!' />
 					<Textanime2 text='쇼핑몰 여행 밀키트 DAPP 사이트를' />
 					<Textanime3 text='단 "한번의" 로그인으로 모두 이용하세요!' />

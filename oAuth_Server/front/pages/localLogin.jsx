@@ -37,13 +37,12 @@ export default function Home() {
 		<Box bg='#160627' w='100%' h='59rem'>
 			<Flex w='60%' mx='auto' pt='12rem' justifyContent={'center'}>
 				<Box w='50%' mx='3%' px='5%' py='6%'>
-					<Text fontSize={'1.5rem'} mb='2%' color='#fff'>
-						DID login으로 a/b/c/d 사이트를 이용해보세요!
+					<Text fontSize={'1.5rem'} mb='2%' color='#fff' textAlign='center'>
+						DID Login으로 다양한 사이트를
+						<br />
+						하나의 아이디로 이용해보세요!
 					</Text>
-					<Text fontSize='0.75rem' mb='0.5%' color='#fff'>
-						a/b/c/d 사이트는 DID login으로 이용할 수 있습니다
-					</Text>
-					<Text fontSize='0.75rem' mb='4%' color='#fff'>
+					<Text fontSize='1rem' m='2% 0' color='#fff' textAlign='center'>
 						사용 중인 DID계정으로 로그인해 보세요
 					</Text>
 					<Image mr='1%' src='https://accounts.kakao.com/assets/weblogin/techin/retina/banner_login2-7800b65948f0912306346a56a61832a98aa302c7e6cf3411eacd35db47d53a3c.png'></Image>

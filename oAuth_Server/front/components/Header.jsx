@@ -20,7 +20,7 @@ const Header = ({ user }) => {
 				<Box>
 					<Flex justifyContent='center' alignItems='center' px='2.5rem' pb='1rem' w='full' size='sm' fontSize='2xl' position='fixed' zIndex={10} mt='6'>
 						<Box w={3000}>
-							<a href='http://localhost:8080/main'>
+							<a href='/'>
 								<Image src={logo} width={250} height={100} />
 							</a>
 						</Box>

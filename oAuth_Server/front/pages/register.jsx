@@ -120,22 +120,22 @@ const register = () => {
 							<Flex justifyContent={'center'}>
 								<Input type='text' onChange={getEmail} placeholder='email을 입력해주세요' id='userEmail' size='md' mb='5%' style={{ color: 'white' }} />
 
-								<Select placeholder='Select Domain' size='md' id='domainSelector' onChange={domainSelect}>
+								<Select placeholder='Select Domain' size='md' id='domainSelector' onChange={domainSelect} style={{ color: 'white' }}>
 									<option value='@kakao.com'>@kakao.com</option>
 									<option value='@naver.com'>@naver.com</option>
 									<option value='@gmail.com'>@gmail.com</option>
 								</Select>
 							</Flex>
 
-							<FormLabel fontSize={'140%'} px='2%'>
+							<FormLabel fontSize={'140%'} px='2%' color='#fff'>
 								이름
 							</FormLabel>
-							<Input type='text' onChange={getName} placeholder='이름을 입력해주세요' size='md' mb='5%' />
+							<Input type='text' onChange={getName} placeholder='이름을 입력해주세요' size='md' mb='5%' style={{ color: 'white' }} />
 
-							<FormLabel fontSize={'140%'} px='2%' mb='2%'>
+							<FormLabel fontSize={'140%'} px='2%' mb='2%' color='#fff'>
 								성별
 							</FormLabel>
-							<RadioGroup onChange={selectGender} fontSize={'140%'} mb='5%' px='3%'>
+							<RadioGroup onChange={selectGender} fontSize={'140%'} mb='5%' px='3%' style={{ color: 'white' }}>
 								<Stack direction='row'>
 									<Radio value='m' mr='2%'>
 										남자
@@ -144,26 +144,26 @@ const register = () => {
 								</Stack>
 							</RadioGroup>
 
-							<FormLabel fontSize={'140%'} px='2%'>
+							<FormLabel fontSize={'140%'} px='2%' color='#fff'>
 								나이
 							</FormLabel>
-							<Input placeholder='나이를 입력해주세요' mb='5%' size='md' onChange={getAge} />
+							<Input placeholder='나이를 입력해주세요' mb='5%' size='md' onChange={getAge} style={{ color: 'white' }} />
 
-							<FormLabel fontSize={'140%'} px='2%'>
+							<FormLabel fontSize={'140%'} px='2%' color='#fff'>
 								주소
 							</FormLabel>
-							<Input mb='5%' size='md' placeholder='주소를 입력해주세요' onChange={getAdr} />
+							<Input mb='5%' size='md' placeholder='주소를 입력해주세요' onChange={getAdr} style={{ color: 'white' }} />
 
-							<FormLabel fontSize={'140%'} px='2%'>
+							<FormLabel fontSize={'140%'} px='2%' color='#fff'>
 								전화번호
 							</FormLabel>
-							<Input mb='5%' size='md' placeholder='전화번호를 입력해주세요' onChange={getPhone} />
+							<Input mb='5%' size='md' placeholder='전화번호를 입력해주세요' onChange={getPhone} style={{ color: 'white' }} />
 
-							<FormLabel fontSize={'140%'} px='2%'>
+							<FormLabel fontSize={'140%'} px='2%' color='#fff'>
 								비밀번호
 							</FormLabel>
-							<Input type='password' onChange={setpwdCheck} placeholder='패스워드를 입력해주세요' id='password' size='md' />
-							<FormHelperText mb='7%' px='2%'>
+							<Input type='password' onChange={setpwdCheck} placeholder='패스워드를 입력해주세요' id='password' size='md' style={{ color: 'white' }} />
+							<FormHelperText mb='7%' px='2%' color='#fff'>
 								{psError == true ? '사용 가능한 비밀번호입니다.' : '비밀번호는 영문자, 숫자, 특수문자 포함 8~15자여야 합니다.'}
 							</FormHelperText>
 						</>
@@ -171,7 +171,7 @@ const register = () => {
 						''
 					)}
 					{sentEmail == false ? (
-						<Input type='submit' value='회원가입' onClick={sendEmail} bg='gray.200' mb='20%' />
+						<Input type='submit' value='회원가입' onClick={sendEmail} bg='gray.200' mb='20%' color='#160627' />
 					) : (
 						<>
 							<Input type='text' placeholder='발송된 6자리 숫자를 입력하세요' id='verifier' />
