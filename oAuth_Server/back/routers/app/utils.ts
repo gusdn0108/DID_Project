@@ -27,11 +27,10 @@ export const generateHash = (appName:string, email:string) => {
 };
 
 export const responseObject = (status:boolean, msg:string) => {
-    const response = {
-        status: status,
-        msg : msg
+    return {
+        status,
+        msg
     }
-    return response
 }
 
 export const infoStringToBool = (getUserInfo:any) => {

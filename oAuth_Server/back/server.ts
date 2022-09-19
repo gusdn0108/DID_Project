@@ -1,5 +1,5 @@
 import express from 'express';
-import router from './router'
+import router from './routers'
 import dotenv from 'dotenv';
 import sequelize from './models';
 import cors from 'cors';
