@@ -15,8 +15,6 @@ export interface Point {
     point?: number
 }
 
-
-
 interface IAppInfo {
     owner?: string;
     appName?: string;
