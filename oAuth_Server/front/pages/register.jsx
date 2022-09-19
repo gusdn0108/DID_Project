@@ -129,12 +129,10 @@ const register = () => {
         );
         if (response.data.status == 1) {
           alert("회원가입이 완료되었습니다.");
-          setLoading(true);
           location.href = `${frontend}`;
         }
       } catch (e) {
         console.error(e);
-        setLoading(true);
       }
     } else {
       alert("인증 번호가 일치하지 않습니다");
@@ -144,15 +142,15 @@ const register = () => {
   };
 
   return (
-    <Box display="flex" justifyContent="center">
+    <Box display="flex" justifyContent="center" bg="#160627" pt="12rem">
       <Box pt="3rem" display="flex" justifyContent="center" w="22%">
         <FormControl mt="3">
-          <Text mb="8%" textAlign={"center"} fontSize="2rem">
+          <Text mb="8%" textAlign={"center"} fontSize="2rem" color="#fff">
             회원 가입
           </Text>
           {sentEmail == false ? (
             <>
-              <FormLabel fontSize={"140%"} px="2%" mb="3%">
+              <FormLabel fontSize={"140%"} px="2%" mb="3%" color="#fff">
                 이메일
               </FormLabel>
               <Flex justifyContent={"center"}>
@@ -163,6 +161,7 @@ const register = () => {
                   id="userEmail"
                   size="md"
                   mb="5%"
+                  style={{ color: "white" }}
                 />
 
                 <Select

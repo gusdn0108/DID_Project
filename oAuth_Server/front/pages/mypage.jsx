@@ -1,6 +1,5 @@
 import {
   Box,
-  Image,
   Text,
   Divider,
   Spinner,
@@ -8,14 +7,10 @@ import {
   FormLabel,
   Button,
   FormControl,
-  Radio,
-  Stack,
   Input,
-  RadioGroup,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
-
 import crypto from "crypto";
 import { deleteCookie } from "cookies-next";
 
@@ -181,12 +176,14 @@ const Mypage = ({ hashId, email }) => {
   };
 
   useEffect(() => {
-    getUserInfo();
+    if (hashId) {
+      getUserInfo();
+    }
   }, []);
 
   return (
-    <Center w="100%" h="100%" pt="3%" px="5%" bg="#160627">
-      <Box w="40%" m="0 5%" h={pwCheck ? "100%" : "100rem"} pt="5rem" px="6%">
+    <Center w="100%" h="100%" pt="5%" px="5%" bg="#160627">
+      <Box w="40%" m="0 5%" h={pwCheck ? "100rem" : "55rem"} pt="5rem" px="6%">
         {pwCheck === false ? (
           <>
             <Center>
@@ -244,13 +241,7 @@ const Mypage = ({ hashId, email }) => {
         ) : (
           <Box w="100%" h="100%" pt="5%" px="5%" bg="#160627">
             <FormControl mt="3">
-              <Text
-                fontSize={"200%"}
-                px="25%"
-                mb="4%"
-                color="white"
-                textAlign={"center"}
-              >
+              <Text fontSize={"175%"} px="25%" mb="3%" color="white">
                 회원정보수정
               </Text>
               <FormLabel fontSize={"140%"} px="2%" mb="3%" color="white">
@@ -259,7 +250,6 @@ const Mypage = ({ hashId, email }) => {
               <Input
                 type="text"
                 style={{ color: "white" }}
-                placeholder="email을 입력해주세요"
                 id="userEmail"
                 value={email}
                 size="md"
@@ -350,13 +340,7 @@ const Mypage = ({ hashId, email }) => {
             )}
             <Divider />
 
-            <Text
-              fontSize={"200%"}
-              px="25%"
-              pt="4rem"
-              color="white"
-              textAlign={"center"}
-            >
+            <Text fontSize={"175%"} px="25%" pt="4rem" color="white">
               비밀 번호 수정
             </Text>
 

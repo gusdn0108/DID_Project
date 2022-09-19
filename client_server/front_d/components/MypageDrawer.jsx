@@ -25,12 +25,14 @@ function SizeExample({ user, did }) {
   };
 
   useEffect(() => {
-    (async function () {
-      const response = await axios.post('http://localhost:4003/api/auth/pointInquiry', { email });
-      if (response.data.status) {
-        setPoint(response.data.point);
-      }
-    })();
+    if (user) {
+      (async function () {
+        const response = await axios.post('http://localhost:4003/api/auth/pointInquiry', { email });
+        if (response.data.status) {
+          setPoint(response.data.point);
+        }
+      })();
+    }
   }, []);
 
   return (
