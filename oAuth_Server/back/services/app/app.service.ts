@@ -191,7 +191,7 @@ const getInfoUpdate = async (getUserInfo: any, restAPI: string) => {
     return response;
 }
 
-const updateRedirect = async (uris: string, restAPI: string) => {
+const updateRedirect = async (uris: string[], restAPI: string) => {
     const uri = noWhiteSpace(uris);
 
     try {

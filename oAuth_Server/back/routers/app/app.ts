@@ -62,6 +62,44 @@ router.post('/apiDistribution', async (req: Request, res: Response) => {
     res.json(response);
 });
 
+/**
+ * @openapi
+ * paths:
+ *  /Oauth/app/getMyApp
+ *   post:
+ *     tag:
+ *     - call, application
+ *     summary: transfer data of applications
+ *     description: Optional 디스크립션
+ *     parameters:
+ *       - in: body
+ *         name: email
+ *         required: true
+ *         description: application owner's email
+ *         schema:
+ *           type: string
+ *           example: "test@gmail.com"
+ *     responses:
+ *       '200':    
+ *         description: OK.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/Response'
+ *       '404':
+ *         description: uri not found.
+ * components:
+ *   Response:
+ *     type: array
+ *     properties:
+ *       status:
+ *         type: boolean
+ *       myapp:
+ *         type: array
+ *     required:
+ *     - status
+ */
+
 router.post('/getMyApp', async (req: Request, res: Response) => {
     const { email } = req.body;
     try {
@@ -74,6 +112,52 @@ router.post('/getMyApp', async (req: Request, res: Response) => {
     res.json(response);
 });
 
+/**
+ * @openapi
+ * paths:
+ *  /Oauth/app/deleteMyApp
+ *   post:
+ *     tag:
+ *     - delete, application
+ *     summary: delete selected application
+ *     description: stop syncing user's application
+ *     parameters:
+ *       - in: body
+ *         name: restAPI
+ *         required: true
+ *         description: application's restAPI
+ *         schema:
+ *           type: string
+ *           example: "ed2bddf3ece5bf7bf4fd134c1fad973"
+ *         - in: body
+ *         name: client_secret
+ *         required: true
+ *         description: client_secret code
+ *         schema:
+ *           type: string
+ *           example: "ed2bddf3ece5bf7bf4fd134c1fad973"
+ *     responses:
+ *       '200':    
+ *         description: OK.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/Response'
+ *       '404':
+ *         description: uri not found.
+ * components:
+ *   Response:
+ *     type: 
+ *     properties:
+ *       status:
+ *         type: boolean
+ *       msg:
+ *         type: string
+ *     required:
+ *     - status
+ * -msg
+ */
+
 router.post('/deleteApp', async (req: Request, res: Response) => {
     const { restAPI, client_secret } = req.body;
     try {
@@ -84,6 +168,44 @@ router.post('/deleteApp', async (req: Request, res: Response) => {
     }
     res.json(response);
 });
+
+/**
+ * @openapi
+ * paths:
+ *  /Oauth/app/appInfo
+ *   post:
+ *     tag:
+ *     - call, application
+ *     summary: load selected application's information
+ *     description: same as summary
+ *     parameters:
+ *       - in: body
+ *         name: restAPI
+ *         required: true
+ *         description: application's restAPI
+ *         schema:
+ *           type: string
+ *           example: "ed2bddf3ece5bf7bf4fd134c1fad973"
+ *     responses:
+ *       '200':    
+ *         description: OK.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/Response'
+ *       '404':
+ *         description: uri not found.
+ * components:
+ *   Response:
+ *     type: 
+ *     properties:
+ *       status:
+ *         type: boolean
+ *       result:
+ *         type: object
+ *     required:
+ *     - status
+ */
 
 router.use('/appInfo', async (req: Request, res: Response) => {
     const { restAPI } = req.body;
@@ -96,6 +218,52 @@ router.use('/appInfo', async (req: Request, res: Response) => {
     res.json(response);
 });
 
+/**
+ * @openapi
+ * paths:
+ *  /Oauth/app/getInfoUpdate
+ *   post:
+ *     tag:
+ *     - modify, application
+ *     summary: select information provided
+ *     description: select needed data
+ *     parameters:
+ *       - in: body
+ *         name: restAPI
+ *         required: true
+ *         description: application's restAPI
+ *         schema:
+ *           type: string
+ *           example: "ed2bddf3ece5bf7bf4fd134c1fad973"
+ *        - in: body
+ *         name: getUserInfo
+ *         required: true
+ *         description: select which information to be provided
+ *         schema:
+ *           type: array
+ *           example: [1,0,0,0,1,1]
+ *     responses:
+ *       '200':    
+ *         description: OK.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/Response'
+ *       '404':
+ *         description: uri not found.
+ * components:
+ *   Response:
+ *     type: 
+ *     properties:
+ *       status:
+ *         type: boolean
+ *       msg:
+ *         type: string
+ *     required:
+ *     - status
+ *     - string
+ */
+
 router.use('/getInfoUpdate', async (req: Request, res: Response) => {
     const { getUserInfo, restAPI } = req.body;
     try {
@@ -106,6 +274,52 @@ router.use('/getInfoUpdate', async (req: Request, res: Response) => {
     }
     res.json(response);
 });
+
+/**
+ * @openapi
+ * paths:
+ *  /Oauth/app/updateRedirect
+ *   post:
+ *     tag:
+ *     - modify, redirectURI, application
+ *     summary: save redirectURI
+ *     description: select needed data
+ *     parameters:
+ *       - in: body
+ *         required: true
+ *         description: application's restAPI
+ *         schema:
+ *           type: object
+ *           properties : 
+ *              uris : string[]
+ *           example :
+ *              []
+ *              restAPI : string
+ *            
+ *              
+ *              "ed2bddf3ece5bf7bf4fd134c1fad973"
+
+ *     responses:
+ *       '200':    
+ *         description: OK.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/Response'
+ *       '404':
+ *         description: uri not found.
+ * components:
+ *   Response:
+ *     type: 
+ *     properties:
+ *       status:
+ *         type: boolean
+ *       msg:
+ *         type: string
+ *     required:
+ *     - status
+ *     - string
+ */
 
 router.post('/updateRedirect', async (req: Request, res: Response) => {
     const { uris, restAPI } = req.body;
