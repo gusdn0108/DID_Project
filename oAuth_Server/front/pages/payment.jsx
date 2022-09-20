@@ -23,15 +23,17 @@ const payment = () => {
             {v.appName}
           </Center>
           <Center w="77%" h="3rem" borderLeft="1px solid #fff">
-            <Text w="50%" h="3rem" fontSize="1rem" borderRight="1px solid #fff" textAlign={'center'} lineHeight="3rem">
+            <Text w="45%" h="3rem" fontSize="0.8rem" borderRight="1px solid #fff" textAlign={'center'} lineHeight="3rem">
               보유 Point : {v.point}
             </Text>
-            <Text pl="1rem">사용 Point :</Text>
+            <Text pl="1rem" fontSize="0.8rem">
+              사용 Point
+            </Text>
             <NumberInput w="30%" min={0} max={v.point} ml="1rem" onChange={(valueAsNumber) => usedPay(valueAsNumber, v.id)}>
               <NumberInputField />
             </NumberInput>
           </Center>
-          <Checkbox w="8%" colorScheme="green" onChange={() => checkedBox(v.id)}>
+          <Checkbox w="13%" pl="1%" colorScheme="green" onChange={() => checkedBox(v.id)}>
             사용
           </Checkbox>
         </Flex>
