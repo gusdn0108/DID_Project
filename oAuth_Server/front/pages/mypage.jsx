@@ -13,6 +13,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import crypto from "crypto";
 import { deleteCookie } from "cookies-next";
+import { backend } from "../utils/ip";
 
 const Mypage = ({ hashId, email }) => {
   const [name, setName] = useState("");
@@ -58,10 +59,9 @@ const Mypage = ({ hashId, email }) => {
   };
 
   const getUserInfo = async () => {
-    const response = await axios.post(
-      "http://localhost:8000/Oauth/user/searchUser",
-      { hashId: hashId }
-    );
+    const response = await axios.post(`${backend}/Oauth/user/searchUser`, {
+      hashId: hashId,
+    });
 
     setName(response.data.name);
     setAddr(response.data.addr);
@@ -113,7 +113,7 @@ const Mypage = ({ hashId, email }) => {
     };
 
     const response = await axios.post(
-      "http://localhost:8000/Oauth/user/upDatePassword",
+      `${backend}/Oauth/user/upDatePassword`,
       body
     );
 
@@ -139,10 +139,7 @@ const Mypage = ({ hashId, email }) => {
       hashId,
     };
 
-    const response = await axios.post(
-      "http://localhost:8000/Oauth/user/upDateUser",
-      body
-    );
+    const response = await axios.post(`${backend}/Oauth/user/upDateUser`, body);
 
     if (response.data.status == true) {
       setName(response.data.name);
@@ -160,10 +157,10 @@ const Mypage = ({ hashId, email }) => {
 
   const deleteUser = async (req, res) => {
     setLoading(false);
-    const response = await axios.post(
-      "http://localhost:8000/oauth/user/deleteUser",
-      { hashId, email }
-    );
+    const response = await axios.post(`${backend}/oauth/user/deleteUser`, {
+      hashId,
+      email,
+    });
 
     if (response.data.status) {
       deleteCookie("user", { req, res, maxAge: 60 * 60 * 24 * 1000 });
@@ -182,8 +179,16 @@ const Mypage = ({ hashId, email }) => {
   }, []);
 
   return (
-    <Center w="100%" h="100%" pt="5%" px="5%" bg="#160627">
-      <Box w="40%" m="0 5%" h={pwCheck ? "100rem" : "55rem"} pt="5rem" px="6%">
+    <Center w="100%" h="100%" pt="10%" px="5%" bg="#160627">
+      <Box
+        w="40%"
+        m="10% 5% 20% 5%"
+        h={pwCheck ? "100rem" : "55rem"}
+        p="10% 0"
+        px="6%"
+        border="2px solid #fff"
+        borderRadius="1rem"
+      >
         {pwCheck === false ? (
           <>
             <Center>
@@ -214,13 +219,11 @@ const Mypage = ({ hashId, email }) => {
               onChange={setPwdCheckfunction}
             />
 
-            <Center>
-              <Button mb="1rem" mt="2rem" onClick={checkPwdfunction} w="30%">
+            <Center mt="5%">
+              <Button onClick={checkPwdfunction} w="30%" mx="3%">
                 {" "}
                 확인
               </Button>
-            </Center>
-            <Center>
               <Button
                 onClick={(req, res) => {
                   deleteCookie("user", {
@@ -233,6 +236,7 @@ const Mypage = ({ hashId, email }) => {
                 }}
                 color="#160627"
                 w="30%"
+                mx="3%"
               >
                 LOGOUT
               </Button>
@@ -270,16 +274,10 @@ const Mypage = ({ hashId, email }) => {
                 onChange={getName}
               />
 
-              <FormLabel
-                fontSize={"140%"}
-                px="2%"
-                mb="2%"
-                color="white"
-                textAlign="center"
-              >
+              <FormLabel fontSize={"140%"} px="2%" mb="2%" color="white">
                 성별
                 <Text mt="2%" mb="5%">
-                  {gender === "f" ? `여성 🚺` : `남성 🚹`}
+                  {gender === "f" ? `여성` : `남성`}
                 </Text>
               </FormLabel>
 
