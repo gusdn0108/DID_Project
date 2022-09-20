@@ -13,7 +13,6 @@ let response: any;
 
 const authorize = async (data: any) => {
     const { email, password, restAPI, reURL, giveUserInfo } = data;
-
     const userhash = email + password;
     const hash = crypto.createHash('sha256').update(userhash).digest('base64');
     try {
@@ -23,6 +22,7 @@ const authorize = async (data: any) => {
                 redirectURI: reURL,
             },
         });
+
         if (!checkRedirectUri) throw new Error('존재하지 않는 어플리케이션 혹은 redirect Uri');
 
         const contract = await deployed();
@@ -41,15 +41,16 @@ const authorize = async (data: any) => {
         });
 
         if (!isRegistered) {
+            
             response = {
                 status: 'first',
-                registerUri: `http://${frontend}/userAppRegister?email=${email}&restAPI=${restAPI}&redirectUri=${reURL}&hash=${hash}&giveUserInfo=${giveUserInfo}`,
+                registerUri: `${frontend}/userAppRegister?email=${email}&restAPI=${restAPI}&redirectUri=${reURL}&hash=${hash}&giveUserInfo=${giveUserInfo}`,
             };
-            const headerINfo = { key: 'Access-Control-Allow-Origin', value: 'http://localhost:8080' };
+            const headerINfo = { key: 'Access-Control-Allow-Origin', value: frontend };
             return { response, headerINfo };
         }
-
         if (result) {
+
             const sentHash = encodeURIComponent(hash);
             response = {
                 status: 'redirect',
@@ -58,7 +59,7 @@ const authorize = async (data: any) => {
             return response;
         }
     } catch (e) {
-        response = responseObject(false, '비정상적인 접근입니다.');
+        response = responseObject(false, e.message);
     }
     return response;
 };
@@ -86,7 +87,7 @@ const codeAuthorize = async (MAKE_ACCESS_TOKEN: any) => {
                 MAKE_ACCESS_TOKEN,
                 exp: EXPIRES_IN,
             },
-            'asdf',
+            process.env.SECRET_KEY,
         );
         response = {
             status: true,
@@ -132,6 +133,7 @@ const codeAuthorize2 = async (bearer_token: any) => {
     } catch (e) {
         response = responseObject(false, 'access token 검증 실패');
     }
+    return response;
 };
 
 const localAuthorize = async (email: string, password: string) => {
@@ -155,7 +157,7 @@ const localAuthorize = async (email: string, password: string) => {
 
         if ((result[0] == '' && result[2] == 0) || email !== result[5]) {
             response = responseObject(false, 'id/pw를 확인해주세요');
-            return;
+            return response;
         }
         if (result) {
             let token = jwt.sign(
@@ -175,6 +177,10 @@ const localAuthorize = async (email: string, password: string) => {
     } catch (e) {
         response = responseObject(false, e.message);
     }
+    console.log('---------')
+    console.log(response)
+    console.log(cookieInfo)
+    console.log('---------')
     return { response, cookieInfo };
 };
 

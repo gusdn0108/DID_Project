@@ -101,6 +101,7 @@ const upDateUser = async (data: any) => {
         if (e instanceof Error) console.log(e.message);
             response = responseObject(false,'회원정보를 변경하지 못하였습니다.')
     }
+    return response;
 }
 
 const searchUser = async (hashId: string) => {

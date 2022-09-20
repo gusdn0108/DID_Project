@@ -101,7 +101,7 @@ const Header = ({ email }) => {
         <Flex justifyContent="space-between" alignItems="center" h="3.5rem">
           <Box borderX="1px" borderColor="gray.200">
             <Text py="1rem" px="0.875rem">
-              ㅡㅡ - 전체메뉴
+              전체메뉴
             </Text>
           </Box>
 

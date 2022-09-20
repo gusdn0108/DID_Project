@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import crypto from 'crypto';
 import { deleteCookie } from 'cookies-next';
 import LoadingModal from '../components/LoadingModal.jsx';
+import { backend } from '../utils/ip.js';
 
 const Mypage = ({ hashId, email }) => {
   const [name, setName] = useState('');
@@ -54,8 +55,6 @@ const Mypage = ({ hashId, email }) => {
     const response = await axios.post(`${backend}/Oauth/user/searchUser`, {
       hashId: hashId,
     });
-
-    console.log(response.data);
 
     setName(response.data.name);
     setAddr(response.data.addr);
