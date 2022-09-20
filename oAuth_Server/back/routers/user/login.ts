@@ -8,18 +8,23 @@ router.post('/authorize', async (req: Request, res: Response) => {
     const { email, password, restAPI, reURL, giveUserInfo } = req.body;
     try {
         response = await loginService.authorize(req.body);
-        if (response.status === false) throw new Error(response.msg);
-        if (response.status === 'first') {
-            const { key, value } = response.headerINfo;
-            res.header(key, value);
-            res.json(response.response);
-        }
+
+        if (response.status === false) throw new Error(response.msg)
         if (response.status === 'redirect'){
-            res.redirect(response.redirectInfo);
+            res.redirect(302,response.redirectInfo);
+        }
+        if(response.response){
+            if (response.response.status === 'first') {
+                const { key, value } = response.headerINfo;
+                res.header(key, value);
+                res.json(response.response);
+            }
         }
     } catch (e) {
         res.json(response);
     }
+
+
 });
 
 router.post('/codeAuthorize', async (req: Request, res: Response) => {
@@ -46,6 +51,7 @@ router.post('/localAuthorize', async (req: Request, res: Response) => {
     const { email, password } = req.body;
     try {
         response = await loginService.localAuthorize(email, password);
+        console.log(response)
         if(response.response.status ===false ) throw new Error(response.msg)
         const {key, value, options} = response.cookieInfo
         res.cookie(key, value, options)
