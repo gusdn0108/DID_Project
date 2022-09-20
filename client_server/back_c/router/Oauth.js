@@ -1,7 +1,7 @@
 const express = require('express');
 const axios = require('axios');
 const jwt = require('jsonwebtoken');
-const { filterNull } = require('./utils');
+const { filterNull, oauth_Front, oauth_Back, frontEnd } = require('./utils');
 const { Account, UserInfo } = require('../models');
 require('dotenv').config();
 
@@ -17,13 +17,13 @@ const Otp = {
 };
 
 router.get('/DIDLogin', async (req, res) => {
-    const url = `http://localhost:8080/login?clientId=${Otp.clientId}&redirectUri=${Otp.redirectUri}&response_type=code&giveUserInfo=${Otp.giveUserInfo}`;
+    const url = `http://${oauth_Front}/login?clientId=${Otp.clientId}&redirectUri=${Otp.redirectUri}&response_type=code&giveUserInfo=${Otp.giveUserInfo}`;
     res.redirect(url);
 });
 
 router.get('/getCode', async (req, res) => {
     const { email, hash1 } = req.query;
-    const url = 'http://localhost:8000/oauth/login/codeAuthorize';
+    const url = `http://${oauth_Back}/oauth/login/codeAuthorize`;
 
     const hash = decodeURIComponent(hash1);
 
@@ -46,7 +46,7 @@ router.get('/getCode', async (req, res) => {
     }
 
     try {
-        const url = 'http://localhost:8000/oauth/login/codeAuthorize2';
+        const url = `http://${oauth_Back}/oauth/login/codeAuthorize2`;
         const Header = {
             headers: {
                 Authorization: access_token,
@@ -73,10 +73,10 @@ router.get('/getCode', async (req, res) => {
 
         const cookiOpt = { maxAge: 43199 };
         res.cookie('accessToken', ACCESS_TOKEN, cookiOpt);
-        res.header('Access_control_allow_origin', 'http://localhost:3002');
+        res.header('Access_control_allow_origin', `${frontEnd}`);
         res.header('Content-Type', 'application/json');
         const result = {
-            redirectUri: `http://localhost:3002/login?accessToken=${ACCESS_TOKEN.split('.')[1]}`,
+            redirectUri: `http://${frontEnd}/login?accessToken=${ACCESS_TOKEN.split('.')[1]}`,
         };
         res.json(result);
     } catch (e) {
