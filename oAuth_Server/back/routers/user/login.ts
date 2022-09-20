@@ -11,13 +11,12 @@ router.post('/authorize', async (req: Request, res: Response) => {
         console.log(response)
         if (response.response){
             const { key, value } = response.headerINfo;
-            console.log('헤더 셋팅전')
             res.header(key, value);
-            console.log('헤더 셋팅후')
             res.json(response.response);
         }
         else if (response.status === false) throw new Error(response.msg)
         else if (response.status === 'redirect') res.redirect(302,response.redirectInfo);
+        else res.json(response);
     } catch (e) {
         res.json(response);
     }
