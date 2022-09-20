@@ -1,4 +1,5 @@
 import swaggerJsdoc, {OAS3Options, OAS3Definition} from 'swagger-jsdoc';
+import path from 'path'
 
 const definition: OAS3Definition = {
     openapi: "3.0.0",	
@@ -17,8 +18,8 @@ const definition: OAS3Definition = {
 
 const options: OAS3Options = {
 	definition,
-    apis: [__dirname+'/../routers/**/*.ts/']
+    apis:[path.join(__dirname, '../routers/**/*.ts')]
 };
-
+console.log(options)
 
 export const swaggerSpec = swaggerJsdoc(options);

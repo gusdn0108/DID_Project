@@ -7,50 +7,6 @@ const MAX_REDIRECT_URI_NUM = 5;
 let response: IResponse_App;
 
 
-/**
- * @openapi
- * paths:
- *  /Oauth/app/apiDistribution
- *   post:
- *     tag:
- *     -app distribution
- *     summary: distribute your app on Oauth.
- *     description: Optional 디스크립션
- *     parameters:
- *       - in: body
- *         name: token
- *         required: true
- *         description: token for verification.
- *         schema:
- *           type: string
- *           example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1X2lkeCI6NCwidV9pZCI6ImdyZWVueSIsInVfbmlja25hbWUiOiLstIjroZ3snYDstIjroZ3stIjroZ3tlbQiLCJ1X2xldmVsIjozLCJ1X2FjdGl2ZSI6MSwidV9kYXRlX29mX2pvaW4iOiIwMDozMjo0NCIsImlhdCI6MTY2MzE3MTkyOSwiZXhwIjoxNjYzMTc1NTI5fQ.fACnWuNaNyB03S6wS6agJRsJD5hAJPzSxMr9RSVoOII"
- *     responses:
- *       '200':    
- *         description: OK.
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/Response'
- *       '204':
- *         description: The resource was deleted successfully.
- *       '400':
- *         description: Not authenticated.
- *       '403':
- *         description: Access token does not have the required scope
- * components:
- *   Response:
- *     type: object
- *     properties:
- *       status:
- *         type: boolean
- *       msg:
- *         type: string
- *       REST_API:
- *         type: string
- *     required:
- *     - status
- */
-
 router.post('/apiDistribution', async (req: Request, res: Response) => {
     const { appName, email } = req.body;
     try {
