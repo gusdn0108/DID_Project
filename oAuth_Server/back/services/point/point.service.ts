@@ -1,29 +1,26 @@
-import express, { Request, Response } from 'express';
 import { Failable, Point } from '../../@types/response';
-import jwt from 'jsonwebtoken';
 import sequelize from '../../models';
 import TotalPoint from '../../models/user/totalPoint.model';
+import jwt from 'jsonwebtoken';
 import { Op } from 'sequelize';
-const router = express.Router();
 
-router.post('/checkPoint', async (req: Request, res: Response) => {
-    const { email } = req.body;
+const checkPoint = async (email: string) => {
     let response: Failable<Point[], string>;
     try {
         const result = await sequelize.query(
             `
-        SELECT p.id, p.email, p.restAPI, a.appName, p.point 
-            FROM point_totals as p
-            LEFT OUTER JOIN apps as a
-                ON p.restAPI = a.restAPI 
-            WHERE email = :email`,
+    SELECT p.id, p.email, p.restAPI, a.appName, p.point 
+        FROM point_totals as p
+        LEFT OUTER JOIN apps as a
+            ON p.restAPI = a.restAPI 
+        WHERE email = :email`,
             {
                 replacements: { email },
                 raw: true,
                 model: TotalPoint,
             },
         );
-
+        if(result[0]==undefined) throw new Error('유저정보가 없습니다')
         response = {
             isError: false,
             value: result,
@@ -34,33 +31,36 @@ router.post('/checkPoint', async (req: Request, res: Response) => {
             error: e.message,
         };
     }
-    res.json(response);
-});
+    return response;
+};
 
-//토큰 생성 후 프론트로 보내기
-router.post('/sendToken', async (req: Request, res: Response) => {
-    const { pointInfo } = req.body;
+const sendToken = async (pointInfo: any) => {
     let token;
-    if (pointInfo) {
-        token = jwt.sign(
-            {
-                pointInfo,
-            },
-            process.env.SECRET_KEY as string,
-            { algorithm: 'HS256', expiresIn: 60 * 10 },
-        );
+    let response: Failable<string, string>;
+    try {
+        if (pointInfo) {
+            token = jwt.sign(
+                {
+                    pointInfo,
+                },
+                process.env.SECRET_KEY as string,
+                { algorithm: 'HS256', expiresIn: 60 * 10 },
+            );
+        }
+        response = {
+            isError: false,
+            value: token,
+        };
+    } catch (e) {
+        response = {
+            isError: true,
+            error: e.message,
+        };
     }
-    const response: Failable<string, string> = {
-        isError: false,
-        value: token,
-    };
-    res.json(response);
-});
+    return response;
+};
 
-//검증 및 포인트 사용
-router.post('/usePoint', async (req: Request, res: Response) => {
-    const { token, payPoint } = req.body;
-
+const usePoint = async (token: string, payPoint: any) => {
     let response: Failable<string, string>;
 
     const verifyToken = (token: string) => {
@@ -88,10 +88,9 @@ router.post('/usePoint', async (req: Request, res: Response) => {
         };
         throw new Error(response.error);
     }
-
     const usePoint = Object.entries(payPoint);
-
     const tx = await sequelize.transaction();
+
     try {
         for (let i = 0; i < usePoint.length; i++) {
             const [result] = await TotalPoint.findAll({
@@ -133,7 +132,13 @@ router.post('/usePoint', async (req: Request, res: Response) => {
             error: `입력한 포인트 사용 불가 및 롤백`,
         };
     }
-    res.json(response);
-});
+    return response;
+};
 
-export default router;
+const pointService = {
+    checkPoint,
+    sendToken,
+    usePoint,
+};
+
+export default pointService;
