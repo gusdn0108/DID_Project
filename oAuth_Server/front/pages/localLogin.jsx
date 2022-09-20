@@ -77,12 +77,14 @@ export default function Home({ user }) {
                   로그인
                 </Button>{' '}
                 <Button
-                  color="#160627"
+                  color="#fff"
+                  bg="#160627"
+                  border="1px #fff solid"
                   onClick={() => {
                     window.location.replace('/register');
                   }}
                   w="100%"
-                  mt="2rem"
+                  mt="1.5rem"
                 >
                   회원가입{' '}
                 </Button>
