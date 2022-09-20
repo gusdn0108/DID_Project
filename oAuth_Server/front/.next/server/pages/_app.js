@@ -27,9 +27,12 @@ var next_image = __webpack_require__(5675);
 var image_default = /*#__PURE__*/__webpack_require__.n(next_image);
 ;// CONCATENATED MODULE: ./image/teamlogo.png
 /* harmony default export */ const teamlogo = ({"src":"/_next/static/media/teamlogo.e08bfc49.png","height":100,"width":250,"blurDataURL":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAADCAYAAACuyE5IAAAAaElEQVR4nGN8M2eGP7OgkMXvD++n8ielff/z6eM/RlY2JgYGhs9A/Ivx3arlNzl09NS+njxWKpCQcub3588/GVlZZYCSx4H4CePbebNMmQQFDX9sXLX4f2jcdzYvHwZhBgZGoCQI/AcAPLYlyIERMOcAAAAASUVORK5CYII="});
+// EXTERNAL MODULE: ./utils/ip.js
+var ip = __webpack_require__(9997);
 // EXTERNAL MODULE: external "react/jsx-runtime"
 var jsx_runtime_ = __webpack_require__(997);
 ;// CONCATENATED MODULE: ./components/Header.jsx
+
 
 
 
@@ -90,13 +93,13 @@ const Header = ({
               },
               children: "Logout"
             }), /*#__PURE__*/jsx_runtime_.jsx("a", {
-              href: "http://localhost:8080/mypage",
+              href: `http://${ip/* frontend */.tQ}/mypage`,
               children: /*#__PURE__*/jsx_runtime_.jsx(react_.Button, {
                 ml: "3",
                 children: "Profile"
               })
             }), /*#__PURE__*/jsx_runtime_.jsx("a", {
-              href: "http://localhost:8080/manageApp",
+              href: `http://${ip/* frontend */.tQ}/manageApp`,
               children: /*#__PURE__*/jsx_runtime_.jsx(react_.Button, {
                 ml: "3",
                 children: "MyApp"
@@ -105,12 +108,12 @@ const Header = ({
           }) : /*#__PURE__*/(0,jsx_runtime_.jsxs)(react_.Box, {
             w: 450,
             children: [/*#__PURE__*/jsx_runtime_.jsx("a", {
-              href: "http://localhost:8080/localLogin",
+              href: `http://${ip/* frontend */.tQ}/localLogin`,
               children: /*#__PURE__*/jsx_runtime_.jsx(react_.Button, {
                 children: "Login"
               })
             }), /*#__PURE__*/jsx_runtime_.jsx("a", {
-              href: "http://localhost:8080/register",
+              href: `http://${ip/* frontend */.tQ}/register`,
               children: /*#__PURE__*/jsx_runtime_.jsx(react_.Button, {
                 ml: "3",
                 children: "Sign up"
@@ -177,6 +180,20 @@ function MyApp({
 }
 
 /* harmony default export */ const _app = (MyApp);
+
+/***/ }),
+
+/***/ 9997:
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "tQ": () => (/* binding */ frontend),
+/* harmony export */   "y3": () => (/* binding */ backend)
+/* harmony export */ });
+/* unused harmony export cookieDomain */
+const backend = 'localhost:8000';
+const frontend = '3.35.86.127:80';
+const cookieDomain = 'localhost';
 
 /***/ }),
 

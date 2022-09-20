@@ -174,9 +174,9 @@ const getServerSideProps = async ctx => {
 /* harmony export */   "y3": () => (/* binding */ backend)
 /* harmony export */ });
 /* unused harmony export cookieDomain */
-const backend = "localhost:8000";
-const frontend = "localhost:8080";
-const cookieDomain = "localhost";
+const backend = 'localhost:8000';
+const frontend = '3.35.86.127:80';
+const cookieDomain = 'localhost';
 
 /***/ }),
 
