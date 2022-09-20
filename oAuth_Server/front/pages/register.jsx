@@ -21,8 +21,6 @@ const register = () => {
 
   const [loading, setLoading] = useState(true);
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
-
   const setpwdCheck = (e) => {
     setPassword(e.target.value);
     setpsError(pwdCheck(password));

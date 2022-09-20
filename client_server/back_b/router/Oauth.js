@@ -8,8 +8,6 @@ require('dotenv').config();
 
 const router = express.Router();
 
-const baseUrl = 'http://localhost:8000';
-
 const Otp = {
     clientId: process.env.CLIENT_ID,
     redirectUri: process.env.REDIRECT_URI,
@@ -18,13 +16,13 @@ const Otp = {
 };
 
 router.get('/DIDLogin', async (req, res) => {
-    const url = `http://${oauth_Front}/login?clientId=${Otp.clientId}&redirectUri=${Otp.redirectUri}&response_type=code&giveUserInfo=${Otp.giveUserInfo}`;
+    const url = `${oauth_Front}/login?clientId=${Otp.clientId}&redirectUri=${Otp.redirectUri}&response_type=code&giveUserInfo=${Otp.giveUserInfo}`;
     res.redirect(url);
 });
 
 router.get('/getCode', async (req, res) => {
     const { email, hash1 } = req.query;
-    const url = `http://${oauth_Back}/oauth/login/codeAuthorize`;
+    const url = `${oauth_Back}/oauth/login/codeAuthorize`;
 
     //const hash = hash1.replace(/ /g, '+');
     const hash = decodeURIComponent(hash1);
@@ -49,7 +47,7 @@ router.get('/getCode', async (req, res) => {
 
     // axios 두번 oauth 백으로 1. 코드를던져서 토큰을받기 2. 토큰을던져서 유저정보받기
     try {
-        const url = `http://${oauth_Back}/oauth/login/codeAuthorize2`;
+        const url = `${oauth_Back}/oauth/login/codeAuthorize2`;
         const Header = {
             headers: {
                 Authorization: access_token,
@@ -61,10 +59,9 @@ router.get('/getCode', async (req, res) => {
 
         const vpCookie = filterNull(VP);
 
-        let stringCookie = '';
+        let stringCookie = { email };
         for (let i = 0; i < vpCookie.length; i++) {
-            stringCookie += vpCookie[i].att + '=';
-            stringCookie += vpCookie[i].value + '&';
+            stringCookie = { ...stringCookie, [vpCookie[i].att]: vpCookie[i].value };
         }
 
         const ACCESS_TOKEN = jwt.sign(
@@ -80,7 +77,7 @@ router.get('/getCode', async (req, res) => {
         res.header('Access_control_allow_origin', `${frontEnd}`);
         res.header('Content-Type', 'application/json');
         const result = {
-            redirectUri: `http://${frontEnd}/login?accessToken=${ACCESS_TOKEN.split('.')[1]}`,
+            redirectUri: `${frontEnd}/login?accessToken=${ACCESS_TOKEN.split('.')[1]}`,
         };
         res.json(result);
     } catch (e) {
@@ -141,7 +138,7 @@ router.post('/giveUserinfo', async (req, res) => {
 router.get('/getoauthPoint', async (req, res) => {
     const { email } = req.query;
     try {
-        const response = await axios.get(`${baseUrl}/oauth/app/getPoint?email=${email}&restAPI=${Otp.clientId}`);
+        const response = await axios.get(`${oauth_Back}/oauth/app/getPoint?email=${email}&restAPI=${Otp.clientId}`);
         if (response.data.status == false) throw new Error(response.data.msg);
 
         res.json({

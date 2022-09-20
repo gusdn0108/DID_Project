@@ -1,18 +1,8 @@
-import {
-  Box,
-  Center,
-  Text,
-  Button,
-  Flex,
-  Checkbox,
-  Divider,
-  NumberInput,
-  NumberInputField,
-} from "@chakra-ui/react";
-import axios from "axios";
-import { useState, useEffect } from "react";
-import { setCookie } from "cookies-next";
-import { backend, frontend } from "../utils/ip";
+import { Box, Center, Text, Button, Flex, Checkbox, Divider, NumberInput, NumberInputField } from '@chakra-ui/react';
+import axios from 'axios';
+import { useState, useEffect } from 'react';
+import { setCookie } from 'cookies-next';
+import { backend, frontend } from '../utils/ip';
 
 const payment = () => {
   const [payMenu, setPayMenu] = useState([]);
@@ -28,43 +18,20 @@ const payment = () => {
   const showList = () => {
     return payMenu.map((v, k) => {
       return (
-        <Flex
-          w="100%"
-          mt="1.5rem"
-          border="1px solid #fff"
-          key={k}
-          borderRadius="10px"
-        >
-          <Center w="15%" h="3rem" fontSize={"125%"}>
+        <Flex w="100%" mt="1.5rem" border="1px solid #fff" key={k} borderRadius="10px">
+          <Center w="15%" h="3rem" fontSize={'125%'}>
             {v.appName}
           </Center>
           <Center w="77%" h="3rem" borderLeft="1px solid #fff">
-            <Text
-              w="50%"
-              h="3rem"
-              fontSize="1rem"
-              borderRight="1px solid #fff"
-              textAlign={"center"}
-              lineHeight="3rem"
-            >
+            <Text w="50%" h="3rem" fontSize="1rem" borderRight="1px solid #fff" textAlign={'center'} lineHeight="3rem">
               보유 Point : {v.point}
             </Text>
             <Text pl="1rem">사용 Point :</Text>
-            <NumberInput
-              w="30%"
-              min={0}
-              max={v.point}
-              ml="1rem"
-              onChange={(valueAsNumber) => usedPay(valueAsNumber, v.id)}
-            >
+            <NumberInput w="30%" min={0} max={v.point} ml="1rem" onChange={(valueAsNumber) => usedPay(valueAsNumber, v.id)}>
               <NumberInputField />
             </NumberInput>
           </Center>
-          <Checkbox
-            w="8%"
-            colorScheme="green"
-            onChange={() => checkedBox(v.id)}
-          >
+          <Checkbox w="8%" colorScheme="green" onChange={() => checkedBox(v.id)}>
             사용
           </Checkbox>
         </Flex>
@@ -90,25 +57,19 @@ const payment = () => {
   };
 
   const getPoint = async () => {
-    const email = window.location.search.split("&")[0].split("=")[1];
-    const response = await axios.post(
-      `http://${backend}/Oauth/point/checkPoint`,
-      { email }
-    );
+    const email = window.location.search.split('&')[0].split('=')[1];
+    const response = await axios.post(`${backend}/Oauth/point/checkPoint`, { email });
     if (!response.data.isError) {
       setPayMenu(response.data.value);
     } else {
-      alert("포인트 정보를 불러오는데 실패하였습니다 다시 시도하여 주십시오.");
+      alert('포인트 정보를 불러오는데 실패하였습니다 다시 시도하여 주십시오.');
     }
   };
 
   const Pay = async (req, res) => {
-    const response = await axios.post(
-      `http://${backend}/Oauth/point/sendToken`,
-      { pointInfo: payPoint }
-    );
+    const response = await axios.post(`${backend}/Oauth/point/sendToken`, { pointInfo: payPoint });
     document.domain = `localhost`;
-    setCookie("item", response.data.value, {
+    setCookie('item', response.data.value, {
       req,
       res,
       maxAge: 60 * 60 * 24 * 1000,
@@ -118,7 +79,7 @@ const payment = () => {
   };
 
   useEffect(() => {
-    setPoint(window.location.search.split("&")[1].split("=")[1]);
+    setPoint(window.location.search.split('&')[1].split('=')[1]);
     getPoint();
   }, []);
 
@@ -130,14 +91,7 @@ const payment = () => {
             OAuth 결제 모듈
           </Text>
         </Center>
-        <Text
-          className="pointText"
-          fontSize="1.5rem"
-          fontWeight="semibold"
-          textAlign="center"
-          mt="1rem"
-          color="white"
-        >
+        <Text className="pointText" fontSize="1.5rem" fontWeight="semibold" textAlign="center" mt="1rem" color="white">
           결제할 포인트 : {point} P
         </Text>
         <Divider mt="1rem" />
@@ -156,25 +110,13 @@ const payment = () => {
               <Text fontSize="1.2rem" color="white">
                 입력 Point : {totalPayPrice()}
               </Text>
-              <Button
-                ml="2rem"
-                onClick={Pay}
-                disabled={totalPayPrice() === Number(point) ? false : true}
-                bg="white"
-              >
+              <Button ml="2rem" onClick={Pay} disabled={totalPayPrice() === Number(point) ? false : true} bg="white">
                 적용하기
               </Button>
             </Center>
             <Center w="100%">
-              <Text
-                mt="0.2rem"
-                color={totalPayPrice() === Number(point) ? null : "red"}
-              >
-                {totalPayPrice() === 0
-                  ? null
-                  : totalPayPrice() === Number(point)
-                  ? null
-                  : "상품의 가격과 사용할 포인트를 맞춰 주십시오."}
+              <Text mt="0.2rem" color={totalPayPrice() === Number(point) ? null : 'red'}>
+                {totalPayPrice() === 0 ? null : totalPayPrice() === Number(point) ? null : '상품의 가격과 사용할 포인트를 맞춰 주십시오.'}
               </Text>
             </Center>
           </Flex>

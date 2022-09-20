@@ -1,1 +1,1 @@
-export const frontend = 'localhost:8080';
+export const frontend = 'http://localhost:8080';

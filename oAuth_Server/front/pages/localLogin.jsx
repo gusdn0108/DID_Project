@@ -2,7 +2,7 @@ import { Box, Button, Flex, Text, Input, Center, Spinner, Image, FormControl, Fo
 import axios from 'axios';
 import { useState } from 'react';
 import { setCookie } from 'cookies-next';
-
+import { backend, frontend } from '../utils/ip';
 export default function Home() {
   const [DIDid, setDIDid] = useState(undefined);
   const [DIDPw, setDIDPw] = useState(undefined);
@@ -17,17 +17,20 @@ export default function Home() {
   };
 
   const didLoginHandler = async (req, res) => {
-    //앞에 상태변수를 요청
     setLoading(false);
-    const response = await axios.post('http://localhost:8000/Oauth/login/localAuthorize', { email: DIDid, password: DIDPw });
-    //보내온 데이터의 status 가 true면,
-    //payload 라는변수에 split으로 잘라넣고
-    //setCookie(쿠키생성)
+    const response = await axios.post(`${backend}/Oauth/login/localAuthorize`, {
+      email: DIDid,
+      password: DIDPw,
+    });
+
     if (response.data.status == true) {
       const payload = response.data.token.split('.')[1];
-      setCookie('user', payload, { req, res, maxAge: 60 * 60 * 24 * 1000 });
-      location.href = 'http://localhost:8080';
-      //다했ㄷ으니 마이페이지로 쿠키와함께 화면전환
+      setCookie('user', payload, {
+        req,
+        res,
+        maxAge: 60 * 60 * 24 * 1000,
+      });
+      location.href = `${frontend}`;
     } else {
       alert(response.data.msg);
       setLoading(true);
@@ -38,12 +41,13 @@ export default function Home() {
     <Box bg="#160627" w="100%" h="59rem">
       <Flex w="60%" mx="auto" pt="12rem" justifyContent={'center'}>
         <Box w="50%" mx="3%" px="5%" py="6%">
-          <Text fontSize={'1.5rem'} mb="2%" color="#fff" textAlign="center">
-            DID Login으로 다양한 사이트를
-            <br />
-            하나의 아이디로 이용해보세요!
+          <Text fontSize={'1.5rem'} mb="2%" color="#fff">
+            DID login으로 a/b/c/d 사이트를 이용해보세요!
           </Text>
-          <Text fontSize="1rem" m="2% 0" color="#fff" textAlign="center">
+          <Text fontSize="0.75rem" mb="0.5%" color="#fff">
+            a/b/c/d 사이트는 DID login으로 이용할 수 있습니다
+          </Text>
+          <Text fontSize="0.75rem" mb="4%" color="#fff">
             사용 중인 DID계정으로 로그인해 보세요
           </Text>
           <Image mr="1%" src="https://accounts.kakao.com/assets/weblogin/techin/retina/banner_login2-7800b65948f0912306346a56a61832a98aa302c7e6cf3411eacd35db47d53a3c.png"></Image>
