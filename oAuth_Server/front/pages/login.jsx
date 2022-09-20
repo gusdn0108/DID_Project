@@ -31,13 +31,16 @@ export default function Home() {
     const reURL = codeUrl.split("redirectUri=")[1].split("&")[0];
     const restAPI = codeUrl.split("clientId=")[1].split("&")[0];
     const giveUserInfo = codeUrl.split("giveUserInfo=")[1];
-    const response = await axios.post(`${backend}/oauth/login/authorize`, {
-      email: DIDid,
-      password: DIdPw,
-      reURL,
-      restAPI,
-      giveUserInfo,
-    });
+    const response = await axios.post(
+      `http://${backend}/oauth/login/authorize`,
+      {
+        email: DIDid,
+        password: DIdPw,
+        reURL,
+        restAPI,
+        giveUserInfo,
+      }
+    );
 
     if (response.data.status == "first") {
       location.href = response.data.registerUri;

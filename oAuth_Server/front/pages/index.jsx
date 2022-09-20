@@ -27,7 +27,7 @@ const main = () => {
     <>
       <Animation />
       <Box background={"#160627"} borderTop="2px" borderColor="#160627">
-        <Flex justifyContent="space-around" mt={20}>
+        <Flex justifyContent="space-around">
           <motion.div
             initial={"offscreen"}
             whileInView={"onscreen"}
