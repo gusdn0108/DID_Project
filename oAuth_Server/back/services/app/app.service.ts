@@ -1,22 +1,18 @@
-import express, { Request, Response } from 'express';
-import App from '../../models/webSite/app.model';
-import DataNeeded from '../../models/webSite/dataNeeded.model';
-import RedirectURI from '../../models/webSite/redirectURI.model';
-import { makeRedirectUriList, generateHash, responseObject, infoStringToBool, noWhiteSpace, filterNull, insertNewUri, filterNotNeeded, getUserinfo, rawVP, refineVP } from './utils';
-import TotalPoint from '../../models/user/totalPoint.model';
-import axios from 'axios';
+import axios from "axios";
+import { Failable, IResponse_App } from "../../@types/response";
+import TotalPoint from "../../models/user/totalPoint.model";
+import App from "../../models/webSite/app.model";
+import DataNeeded from "../../models/webSite/dataNeeded.model";
+import RedirectURI from "../../models/webSite/redirectURI.model";
+import { filterNotNeeded, filterNull, generateHash, getUserinfo, infoStringToBool, insertNewUri, makeRedirectUriList, noWhiteSpace, rawVP, refineVP, responseObject } from "../../routers/app/utils";
 
-const router = express.Router();
+let response: IResponse_App;
 const MAX_REDIRECT_URI_NUM = 5;
 
-router.post('/apiDistribution', async (req: Request, res: Response) => {
-    const { appName, email } = req.body;
 
-    const AppCodes = generateHash(appName, email);
-    const restAPI = AppCodes[0];
-    const client_secret = AppCodes[1];
-
+const apiDistribution = async (appName: string, email: string) => {
     try {
+        const [restAPI, client_secret] = generateHash(appName, email);
         const exAppName = await App.findOne({
             where: {
                 appName: appName,
@@ -31,12 +27,12 @@ router.post('/apiDistribution', async (req: Request, res: Response) => {
         await App.create({
             owner: email,
             appName,
-            restAPI: restAPI,
+            restAPI,
             code: client_secret,
         });
 
         await DataNeeded.create({
-            restAPI: restAPI,
+            restAPI,
             owner: email,
             email: true,
             name: true,
@@ -46,84 +42,81 @@ router.post('/apiDistribution', async (req: Request, res: Response) => {
             mobile: false,
         });
 
-        res.json({
+        response = {
             status: true,
             msg: '성공적으로 등록되었습니다.',
             REST_API: restAPI,
-        });
+        };
     } catch (e) {
-        if (e instanceof Error) console.log(e.message);
-        res.json(responseObject(false, e.message));
+        response = responseObject(false, e.message);
     }
-});
+    return response;
+};
 
-router.post('/getMyApp', async (req: Request, res: Response) => {
-    const { email } = req.body;
+const getMyApp = async (email:string) => {
     try {
         const myAppName = await App.findAll({
             where: {
                 owner: email,
             },
         });
-        res.json({
+        if(myAppName[0]===undefined) throw new Error('설정된 앱이 없습니다.')
+        response = {
             status: true,
             myapp: myAppName,
-        });
+        }
     } catch (e) {
-        if (e instanceof Error) console.log(e.message);
-        res.json(responseObject(false, '비정상적 접근입니다.'));
+        response = responseObject(false, e.message);
     }
-});
+    return response;
+};
 
-router.post('/deleteApp', async (req: Request, res: Response) => {
-    const {restAPI, client_secret} = req.body
 
+const deleteApp = async (restAPI: string, client_secret: string) => {
     try {
-
         const targetApp = await App.findOne({
-            where : {
+            where: {
                 restAPI,
-                code : client_secret
-            }
-        })
-
-        if(!targetApp) {
-            throw new Error ('잘못된 삭제 요청입니다.')
+                code: client_secret,
+            },
+        });
+        if (!targetApp) {
+            throw new Error('잘못된 삭제 요청입니다.');
         }
 
-        Promise.all([DataNeeded.destroy({
-            where : {
-                restAPI,
-            }
-        }), TotalPoint.destroy({
-            where : {
-                restAPI
-            }
-        }), RedirectURI.destroy({
-            where : {
-                restAPI
-            }
-        })])
-        .then(() => {console.log('어플리케이션 정보 삭제 완료')})
-        .catch((e) => res.json(responseObject(false, e.message)))
+        Promise.all([
+            DataNeeded.destroy({
+                where: {
+                    restAPI,
+                },
+            }),
+            TotalPoint.destroy({
+                where: {
+                    restAPI,
+                },
+            }),
+            RedirectURI.destroy({
+                where: {
+                    restAPI,
+                },
+            }),
+        ]).then(() => {
+            console.log('어플리케이션 정보 삭제 완료');
+        }).catch((e: any) => response = responseObject(false, e.message));
 
         await App.destroy({
             where : {
                 restAPI
             }
         })
-        
-        res.json(responseObject(true, '어플리케이션이 삭제되었습니다'))
+        response = responseObject(true, '어플리케이션이 삭제되었습니다');
+    } catch (e) {
+        response = responseObject(false, e.message);
     }
-    catch (e) {
-        console.log(e.message)
-        res.json(responseObject(false, e.message))
-    }
-})
+    return response;
+};
 
-router.use('/appInfo', async (req: Request, res: Response) => {
-    const { restAPI } = req.body;
-
+const appInfo = async (restAPI: string) => {
     try {
         const urlInfo = await RedirectURI.findAll({
             where: {
@@ -146,11 +139,10 @@ router.use('/appInfo', async (req: Request, res: Response) => {
         for (let i = 0; i < urlInfo.length; i++) {
             tempUri[i] = urlInfo[i].redirectURI;
         }
-
         const result = {
-            email: appInfo?.owner,
-            appName: appInfo?.appName,
-            client_secret: appInfo?.code,
+            email: appInfo.owner,
+            appName: appInfo.appName,
+            client_secret: appInfo.code,
             redirectURI: tempUri,
             restAPI,
             neededInfo: [
@@ -162,18 +154,17 @@ router.use('/appInfo', async (req: Request, res: Response) => {
                 { att: 'mobile', get: neededInfo?.mobile },
             ],
         };
-        res.json({
+        response = {
             status: true,
-            result,
-        });
+            result
+        }
     } catch (e) {
-        if (e instanceof Error) console.log(e.message);
-        res.json(responseObject(false, '비정상적 접근이 감지되었습니다.'));
+        response = responseObject(false, e.message);
     }
-});
+    return response;
+}
 
-router.use('/getInfoUpdate', async (req: Request, res: Response) => {
-    const { getUserInfo, restAPI } = req.body;
+const getInfoUpdate = async (getUserInfo: any, restAPI: string) => {
     const newGetInfo = infoStringToBool(getUserInfo);
 
     try {
@@ -192,17 +183,15 @@ router.use('/getInfoUpdate', async (req: Request, res: Response) => {
                 },
             },
         );
-
-        res.json(responseObject(true, '정상적으로 반영되었습니다'));
+        response = responseObject(true, '정상적으로 반영되었습니다');
     } catch (e) {
         if (e instanceof Error) console.log(e.message);
-        res.json(responseObject(false, '서버 에러, 나중에 다시 시도해주세요.'));
+        response = responseObject(false, '서버 에러, 나중에 다시 시도해주세요.');
     }
-});
+    return response;
+}
 
-router.post('/updateRedirect', async (req: Request, res: Response) => {
-    const { uris, restAPI } = req.body;
-
+const updateRedirect = async (uris: string, restAPI: string) => {
     const uri = noWhiteSpace(uris);
 
     try {
@@ -226,16 +215,15 @@ router.post('/updateRedirect', async (req: Request, res: Response) => {
             },
         });
 
-        res.json(responseObject(true, '리다이렉트 url 수정이 완료되었습니다.'));
+        response = responseObject(true, '리다이렉트 url 수정이 완료되었습니다.');
     } catch (e) {
         if (e instanceof Error) console.log(e.message);
-        res.json(responseObject(false, '서버 에러'));
+        response = responseObject(false, '서버 에러');
     }
-});
+    return response;
+};
 
-router.get('/giveUserInfo', async (req: Request, res: Response) => {
-    const { restAPI } = req.query;
-
+const giveUserInfo = async (restAPI: any) => {
     try {
         const appName = await App.findOne({
             where: {
@@ -257,21 +245,19 @@ router.get('/giveUserInfo', async (req: Request, res: Response) => {
 
         const filteredInfos = filterNotNeeded(infos);
 
-        const response = {
+        response = {
             status: true,
             appName: appName.appName,
             infos: filteredInfos,
         };
-
-        res.json(response);
     } catch (e) {
-        console.log(e.message);
-        res.json(responseObject(false, '비정상적인 접근입니다.'));
+        response = responseObject(false, '비정상적인 접근입니다.');
     }
-});
+    return response;
+}
 
-router.post('/userdidregister', async (req, res) => {
-    const { restAPI, email, point, hash, giveUserInfo } = req.body;
+const userdidregister = async(data:any) => {
+    const { restAPI, email, point, hash, giveUserInfo } = data;
 
     try {
         const ifUser = await TotalPoint.findOne({
@@ -290,29 +276,31 @@ router.post('/userdidregister', async (req, res) => {
         });
 
         const rawVp = await getUserinfo(restAPI, hash.replace(/ /g, '+'));
-
         const refinedVP = refineVP(rawVp);
-
         const data = {
             vp: refinedVP,
             email,
         };
 
-        const response = await axios.post(giveUserInfo, data);
+        const request = await axios.post(giveUserInfo, data);
 
-        if (response.data.status == false) {
+        if (request.data.status == false) {
             throw new Error('클라이언트 서버 에러');
         }
 
+<<<<<<< HEAD:oAuth_Server/back/services/app/app.service.ts
+        response = responseObject(true, '정상적으로 등록되었습니다. 다시 로그인해주세요.');
+        // 문제가 없다면 로그인, 쿠키 생성을 위해 클라이언트 서버의 백엔드로 리다이렉트
+=======
         res.json(responseObject(true, '정상적으로 등록되었습니다. 다시 로그인해주세요.'));
+>>>>>>> aaac2fce0479a8f0b52afda91bd60d0db09e5d12:oAuth_Server/back/router/app/app.ts
     } catch (e) {
-        console.log(e.message);
-        res.json(responseObject(false, e.message));
+        response = responseObject(false, e.message);
     }
-});
+    return response;
+}
 
-router.get('/getPoint', async (req, res) => {
-    const { restAPI, email } = req.query;
+const getPoint = async (restAPI: any, email: any) => {
     try {
         const userPoint = await TotalPoint.findOne({
             where: {
@@ -321,16 +309,26 @@ router.get('/getPoint', async (req, res) => {
             },
         });
 
-        const point = userPoint.point;
-        const response = {
+        response = {
             status: true,
-            point,
+            point: userPoint.point,
         };
-        res.json(response);
     } catch (e) {
-        console.log(e.message);
-        res.json(responseObject(false, '포인트를 가져오지 못했습니디.'));
+        response = responseObject(false, '포인트를 가져오지 못했습니디.');
     }
-});
+    return response;
+};
 
-export default router;
+const appService = {
+    apiDistribution,
+    getMyApp,
+    deleteApp,
+    appInfo,
+    getInfoUpdate,
+    updateRedirect,
+    giveUserInfo,
+    userdidregister,
+    getPoint
+}
+
+export default appService;
