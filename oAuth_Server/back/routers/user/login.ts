@@ -10,13 +10,13 @@ let response: any;
  *   post:
  *     tag:
  *     - authorize
- *     summary: 요약
+ *     summary: authorize
  *     description: 인가
  *     parameters:
  *       - in: body
  *         name: data
  *         required: true
- *         description: data for token
+ *         description: object data for token
  *         schema:
  *           type: object
  *           properties:
@@ -52,8 +52,9 @@ let response: any;
  *         status:
  *           type: boolean
  *           example: true
- *         value:
- *           type: object
+ *         registerUri:
+ *           type: string
+ *           example: 'http://localhost:8080/userAppRegister?email=yellow_w@naver.com&restAPI=af27b2865ab2dd31aeb0c6fbc54a18b&redirectUri=http://localhost:4000/api/Oauth/getCode&hash=hBNh54QTfHT+a5TunScmyjamZKhVsOdRcWMCN3fbT80=&giveUserInfo=http://localhost:4000/api/Oauth/giveUserInfo'
  *         redirectInfo:
  *           type: string
  *           example: 'http://localhost:4000/api/Oauth/getCode?email=yellow_w@gmail.com&hash1=yDjrWmU0ZtWIWriqhPQAizW9LxkeuE3XW0cHNQSZ1Ng%3D'
@@ -85,13 +86,13 @@ router.post('/authorize', async (req: Request, res: Response) => {
  *   post:
  *     tag:
  *     - authorize
- *     summary: authorize
- *     description: 인가
+ *     summary: get acess token for authentication
+ *     description: get acess token for authentication
  *     parameters:
  *       - in: body
  *         name: MAKE_ACCESS_TOKEN
  *         required: true
- *         description: information for token
+ *         description: object data for getting acess token
  *         schema:
  *           type: object
  *           properties:
@@ -153,14 +154,14 @@ router.post('/codeAuthorize', async (req: Request, res: Response) => {
  * /Oauth/user/codeAuthorize2:
  *   post:
  *     tag:
- *     - authorize
- *     summary: request user's point
- *     description: 인가
+ *     - codeAuthorize2
+ *     summary: get vp
+ *     description: get vp for suitable web site
  *     parameters:
  *       - in: body
- *         name: data
+ *         name: ''
  *         required: true
- *         description: data for token
+ *         description: token data for getting VP
  *         schema:
  *           type: string
  *           example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJNQUtFX0FDQ0VTU19UT0tFTiI6eyJncmFudF90eXBlIjoiYXV0aG9yaXphdGlvbl9jb2RlIiwicmVzdEFQSSI6ImFmMjdiMjg2NWFiMmRkMzFhZWIwYzZmYmM1NGExOGIiLCJjbGllbnRfc2VjcmV0IjoiYjMwM2FhM2YxOGQwOGZmOGYzNmQxMmE5ZDhmMTA4NSIsInJlZGlyZWN0IjoiaHR0cDovL2xvY2FsaG9zdDo0MDAwL2FwaS9PYXV0aC9nZXRDb2RlIiwiZW1haWwiOiJmZmZmQGdtYWlsLmNvbSIsImhhc2giOiJ5RGpyV21VMFp0V0lXcmlxaFBRQWl6VzlMeGtldUUzWFcwY0hOUVNaMU5nPSJ9LCJleHAiOjQzMTk5LCJpYXQiOjE2NjM2OTI5MTd9.1hvXVz7_7YHnoeksv7fu8oHvVPduoEgBKlGC7xjrN-E'
@@ -208,14 +209,14 @@ router.get('/codeAuthorize2', async (req: Request, res: Response) => {
  * /Oauth/user/localAuthorize:
  *   post:
  *     tag:
- *     -authorize
- *     summary: request user's point
- *     description: 인가
+ *     -localAuthorize
+ *     summary: sign in Oauth web site
+ *     description: sign in Oauth web site
  *     parameters:
  *       - in: body
  *         name: data
  *         required: true
- *         description: data for token
+ *         description: object data for sign in
  *         schema:
  *           type: object
  *           properties:
