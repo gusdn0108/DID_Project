@@ -143,21 +143,18 @@ const localAuthorize = async (email: string, password: string) => {
         const hash = crypto.createHash('sha256').update(userhash).digest('base64');
         const dbUser = await VerifyId.findOne({
             where: {
-                email: email,
+                email
             },
         });
-        console.log(dbUser);
 
         if (!dbUser) throw new Error('id/pw를 확인해주세요');
 
         const contract = await deployed();
-
         const result = await contract.methods.getUser(hash).call();
-        console.log('result: ', result);
 
         if ((result[0] == '' && result[2] == 0) || email !== result[5]) {
             response = responseObject(false, 'id/pw를 확인해주세요');
-            return response;
+            throw new Error(response.msg)
         }
         if (result) {
             let token = jwt.sign(
@@ -177,10 +174,6 @@ const localAuthorize = async (email: string, password: string) => {
     } catch (e) {
         response = responseObject(false, e.message);
     }
-    console.log('---------')
-    console.log(response)
-    console.log(cookieInfo)
-    console.log('---------')
     return { response, cookieInfo };
 };
 

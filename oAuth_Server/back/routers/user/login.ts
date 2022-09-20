@@ -51,8 +51,7 @@ router.post('/localAuthorize', async (req: Request, res: Response) => {
     const { email, password } = req.body;
     try {
         response = await loginService.localAuthorize(email, password);
-        console.log(response)
-        if(response.response.status ===false ) throw new Error(response.msg)
+        if(response.status !== true ) throw new Error(response.msg);
         const {key, value, options} = response.cookieInfo
         res.cookie(key, value, options)
     } catch (e) {}
