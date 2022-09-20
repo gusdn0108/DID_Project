@@ -2311,12 +2311,12 @@
     "420": {
       "events": {},
       "links": {},
-      "address": "0x30268f7DCf3B06171b2E06A37BAB16a38828c9b4",
-      "transactionHash": "0x2722ff0cb32ca960a2f678b23b9733820ef2c6b9327dfc89a531baa4857dd7ff"
+      "address": "0x6de59FC0A3511c3d450E034EfE777852f59eaE95",
+      "transactionHash": "0x89db27b13182df44ea00c5ed2a001f0dd3929d76f0d832a8fb3ddfa368137e9e"
     }
   },
   "schemaVersion": "3.4.5",
-  "updatedAt": "2022-09-15T10:00:48.447Z",
+  "updatedAt": "2022-09-20T02:49:23.236Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",
