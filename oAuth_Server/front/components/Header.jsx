@@ -26,7 +26,7 @@ const Header = ({ user }) => {
               </a>
             </Box>
             {isLogin ? (
-              <Box w={700}>
+              <Flex w={700}>
                 <Button
                   onClick={(req, res) => {
                     deleteCookie('user', { req, res, maxAge: 60 * 60 * 24 * 1000 });
@@ -42,7 +42,7 @@ const Header = ({ user }) => {
                 <a href={`${frontend}/manageApp`}>
                   <Button ml="3">MyApp</Button>
                 </a>
-              </Box>
+              </Flex>
             ) : (
               <Box w={450}>
                 <a href={`${frontend}/localLogin`}>

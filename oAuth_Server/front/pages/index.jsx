@@ -11,8 +11,9 @@ import test4 from '../image/d.png';
 import Textanime from '../components/Textanime';
 import Textanime2 from '../components/Textanime2';
 import Textanime3 from '../components/Textanime3';
+import Header from '../components/Header';
 
-const main = () => {
+const main = ({ user }) => {
   const animationOption = {
     offscreen: { x: -100 },
     onscreen: { x: 1, rotate: [3, -3] },
@@ -25,6 +26,7 @@ const main = () => {
 
   return (
     <>
+      <Header user={user} />
       <Animation />
       <Box background={'#160627'} borderTop="2px" borderColor="#160627">
         <Flex justifyContent="space-around">

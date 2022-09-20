@@ -3,8 +3,9 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { backend } from '../utils/ip.js';
 import AppModal from '../components/appModal.jsx';
+import Header from '../components/Header.jsx';
 
-const manageApp = ({ appList, email }) => {
+const manageApp = ({ appList, email, user }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [myAppList, setmyAppList] = useState(appList);
 
@@ -148,128 +149,131 @@ const manageApp = ({ appList, email }) => {
   };
 
   return (
-    <Box bg="#160627" h={showInfo ? '100%' : '60rem'}>
-      <Center w="100%" py="5%" px="5%" h="100%">
-        <Box w="70%" h="100%" mx="auto" p="3%">
-          <Flex mx="auto" my="0" justifyContent={'center'} mb="3%">
-            <Box w="40%" mx="auto" my="0">
-              <Text textAlign={'center'} fontSize={'175%'} mb="0.5rem" color={'white'}>
-                어플리케이션 등록
-              </Text>
-              <Flex justifyContent={'center'}>
-                <Button onClick={onOpen} color="white" variant="outline" m="2%">
-                  어플리케이션 생성
-                </Button>
-                <AppModal isOpen={isOpen} onClose={closeAndUpdate} email={email} display="block" />
+    <>
+      <Header user={user} />
+      <Box bg="#160627" h={showInfo ? '100%' : '60rem'} pt="10%">
+        <Center w="100%" py="5%" px="5%" h="100%">
+          <Box w="70%" h="100%" mx="auto" p="3%">
+            <Flex mx="auto" my="0" justifyContent={'center'} mb="3%">
+              <Box w="40%" mx="auto" my="0">
+                <Text textAlign={'center'} fontSize={'175%'} mb="0.5rem" color={'white'}>
+                  어플리케이션 등록
+                </Text>
+                <Flex justifyContent={'center'}>
+                  <Button onClick={onOpen} color="white" variant="outline" m="2%">
+                    어플리케이션 생성
+                  </Button>
+                  <AppModal isOpen={isOpen} onClose={closeAndUpdate} email={email} display="block" />
+                </Flex>
+              </Box>
+            </Flex>
+
+            <Flex>
+              <Box mx="auto" my="3%" justifyContent={'center'}>
+                <Text fontSize={'200%'} color={'white'}>
+                  내 어플리케이션
+                </Text>
+
+                <Box color={'white'} cursor="pointer">
+                  {showAppList}
+                </Box>
+              </Box>
+            </Flex>
+
+            <Divider />
+
+            <Box pt="5%" w="70%" mx="auto" my="2%" bg={whichApp == null ? '' : 'white'} borderRadius="4rem">
+              <Flex flexDirection={'column'} alignItems="center" mb="3%">
+                <Box fontSize={'180%'}>{whichApp == null ? '' : <Text>Application : {whichApp}</Text>}</Box>
+              </Flex>
+
+              <Flex flexDirection={'column'} alignItems={'center'} w="80%" mx="auto">
+                {showInfo == false ? (
+                  ''
+                ) : (
+                  <Box>
+                    <Table mb="3%">
+                      <Thead>
+                        <Tr>
+                          <Th textAlign={'center'} fontSize="80%">
+                            Rest API
+                          </Th>
+                        </Tr>
+                      </Thead>
+                      <Tbody>
+                        <Tr>
+                          <Td textAlign={'center'}>{appRestAPI}</Td>
+                        </Tr>
+                      </Tbody>
+                    </Table>
+                    <Table mb="3%">
+                      <Thead>
+                        <Tr>
+                          <Th textAlign={'center'} fontSize="80%">
+                            Client Secret
+                          </Th>
+                        </Tr>
+                      </Thead>
+                      <Tbody>
+                        <Tr>
+                          <Td textAlign={'center'}>{appSecret}</Td>
+                        </Tr>
+                      </Tbody>
+                    </Table>
+
+                    <Box textAlign={'center'} borderColor="white" border={'3px'} w="100%">
+                      <Box fontSize={'175%'} mt="2%">
+                        {' '}
+                        사용자 정보 요청{' '}
+                      </Box>
+                      <Text mb="3%">사용자에게 제공을 요청할 정보를 선택해주세요</Text>
+
+                      <Box mx="auto" mb="2%" w="100%">
+                        <Flex justifyContent={'space-around'}>
+                          <Table>
+                            <Thead>
+                              <Tr>
+                                <Th textAlign={'center'}> 항목 이름 </Th>
+                                <Th textAlign={'center'}> 상태 </Th>
+                                <Th textAlign={'center'}> 수정 </Th>
+                              </Tr>
+                            </Thead>
+                            <Tbody>{getUserInfos}</Tbody>
+                          </Table>
+                        </Flex>
+                      </Box>
+                    </Box>
+
+                    <Divider orientation="horizontal" my="3%" />
+
+                    <Box textAlign={'center'} w="100%">
+                      <Box fontSize={'175%'} mt="3%">
+                        Redirect URI 관리
+                      </Box>
+                      <Text mb="2%">리다이렉트 url은 최대 5개까지 등록할 수 있습니다.</Text>
+
+                      <Box mb="2%">{uris}</Box>
+
+                      <Box mb="1%">
+                        <Text>uri 수정 후, 수정 완료 버튼을 눌려주세요.</Text>
+                      </Box>
+                      <Box mx="5%" my="10%">
+                        <Button onClick={modifyRed} mx="1%">
+                          수정 완료
+                        </Button>
+                        <Button mx="1%" onClick={deleteApp} colorScheme="red" variant={'outline'}>
+                          어플리케이션 삭제
+                        </Button>
+                      </Box>
+                    </Box>
+                  </Box>
+                )}
               </Flex>
             </Box>
-          </Flex>
-
-          <Flex>
-            <Box mx="auto" my="3%" justifyContent={'center'}>
-              <Text fontSize={'200%'} color={'white'}>
-                내 어플리케이션
-              </Text>
-
-              <Box color={'white'} cursor="pointer">
-                {showAppList}
-              </Box>
-            </Box>
-          </Flex>
-
-          <Divider />
-
-          <Box pt="5%" w="70%" mx="auto" my="2%" bg={whichApp == null ? '' : 'white'} borderRadius="4rem">
-            <Flex flexDirection={'column'} alignItems="center" mb="3%">
-              <Box fontSize={'180%'}>{whichApp == null ? '' : <Text>Application : {whichApp}</Text>}</Box>
-            </Flex>
-
-            <Flex flexDirection={'column'} alignItems={'center'} w="80%" mx="auto">
-              {showInfo == false ? (
-                ''
-              ) : (
-                <Box>
-                  <Table mb="3%">
-                    <Thead>
-                      <Tr>
-                        <Th textAlign={'center'} fontSize="80%">
-                          Rest API
-                        </Th>
-                      </Tr>
-                    </Thead>
-                    <Tbody>
-                      <Tr>
-                        <Td textAlign={'center'}>{appRestAPI}</Td>
-                      </Tr>
-                    </Tbody>
-                  </Table>
-                  <Table mb="3%">
-                    <Thead>
-                      <Tr>
-                        <Th textAlign={'center'} fontSize="80%">
-                          Client Secret
-                        </Th>
-                      </Tr>
-                    </Thead>
-                    <Tbody>
-                      <Tr>
-                        <Td textAlign={'center'}>{appSecret}</Td>
-                      </Tr>
-                    </Tbody>
-                  </Table>
-
-                  <Box textAlign={'center'} borderColor="white" border={'3px'} w="100%">
-                    <Box fontSize={'175%'} mt="2%">
-                      {' '}
-                      사용자 정보 요청{' '}
-                    </Box>
-                    <Text mb="3%">사용자에게 제공을 요청할 정보를 선택해주세요</Text>
-
-                    <Box mx="auto" mb="2%" w="100%">
-                      <Flex justifyContent={'space-around'}>
-                        <Table>
-                          <Thead>
-                            <Tr>
-                              <Th textAlign={'center'}> 항목 이름 </Th>
-                              <Th textAlign={'center'}> 상태 </Th>
-                              <Th textAlign={'center'}> 수정 </Th>
-                            </Tr>
-                          </Thead>
-                          <Tbody>{getUserInfos}</Tbody>
-                        </Table>
-                      </Flex>
-                    </Box>
-                  </Box>
-
-                  <Divider orientation="horizontal" my="3%" />
-
-                  <Box textAlign={'center'} w="100%">
-                    <Box fontSize={'175%'} mt="3%">
-                      Redirect URI 관리
-                    </Box>
-                    <Text mb="2%">리다이렉트 url은 최대 5개까지 등록할 수 있습니다.</Text>
-
-                    <Box mb="2%">{uris}</Box>
-
-                    <Box mb="1%">
-                      <Text>uri 수정 후, 수정 완료 버튼을 눌려주세요.</Text>
-                    </Box>
-                    <Box mx="5%" my="10%">
-                      <Button onClick={modifyRed} mx="1%">
-                        수정 완료
-                      </Button>
-                      <Button mx="1%" onClick={deleteApp} colorScheme="red" variant={'outline'}>
-                        어플리케이션 삭제
-                      </Button>
-                    </Box>
-                  </Box>
-                </Box>
-              )}
-            </Flex>
           </Box>
-        </Box>
-      </Center>
-    </Box>
+        </Center>
+      </Box>
+    </>
   );
 };
 
@@ -291,8 +295,6 @@ export const getServerSideProps = async (ctx) => {
   const response = await axios.post(`${backend}/oauth/app/getMyApp`, {
     email: email,
   });
-
-  console.log(response.data);
 
   return { props: { appList: response.data?.myapp } };
 };
