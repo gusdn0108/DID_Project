@@ -151,7 +151,7 @@ router.post('/sendToken', async (req: Request, res: Response) => {
  *     properties:
  *       isError:
  *         type: boolean
- *       value:
+ *       msg:
  *         type: string
  *         example: '입력한 포인트 사용 및 차감 완료'
  *       error:
