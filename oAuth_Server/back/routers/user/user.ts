@@ -33,8 +33,10 @@ router.post('/upDateUser', async (req: Request, res: Response) => {
 
 router.post('/searchUser', async (req: Request, res: Response) => {
     const { hashId } = req.body;
+    console.log(hashId)
     try {
         response = await userService.searchUser(hashId);
+        console.log(response)
         if(response.status !== true) throw new Error(response.msg);
     } catch (e) {}
     res.json(response)

@@ -60,7 +60,7 @@ const getMyApp = async (email:string) => {
                 owner: email,
             },
         });
-        if(myAppName[0]===undefined) throw new Error('설정된 앱이 없습니다.')
+        // if(myAppName[0]===undefined) throw new Error('설정된 앱이 없습니다.')
         response = {
             status: true,
             myapp: myAppName,

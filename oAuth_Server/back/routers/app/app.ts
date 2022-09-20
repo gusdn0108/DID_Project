@@ -21,6 +21,7 @@ router.post('/getMyApp', async (req: Request, res: Response) => {
     const { email } = req.body;
     try {
         response = await appService.getMyApp(email);
+        console.log(response)
         if (response.status !== true) throw new Error(response.msg);
     } catch (e) {
         if (e instanceof Error) console.log(e.message);

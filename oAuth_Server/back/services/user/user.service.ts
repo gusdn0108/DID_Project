@@ -116,10 +116,12 @@ const searchUser = async (hashId: string) => {
             addr: result[3],
             mobile: result[4],
         };
+        
     } catch (e) {
         if (e instanceof Error) console.log(e.message);
         response = responseObject(false, '유저 정보를 불러오는데 실패하였습니다.');
     }
+    return response;
 };
 
 const deleteUser = async(hashId: string, email: string) => {

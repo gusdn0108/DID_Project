@@ -63,6 +63,8 @@ const Mypage = ({ hashId, email }) => {
       hashId: hashId,
     });
 
+    console.log(response.data);
+
     setName(response.data.name);
     setAddr(response.data.addr);
     setAge(response.data.age);
