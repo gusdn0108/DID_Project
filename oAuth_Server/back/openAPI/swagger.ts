@@ -20,6 +20,5 @@ const options: OAS3Options = {
 	definition,
     apis:[path.join(__dirname, '../routers/**/*.ts')]
 };
-console.log(options)
 
 export const swaggerSpec = swaggerJsdoc(options);

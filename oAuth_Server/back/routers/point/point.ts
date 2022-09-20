@@ -5,8 +5,7 @@ const router = express.Router();
 
 /**
  * @openapi
- * paths:
- *  /Oauth/point/checkPoint
+ * /Oauth/point/checkPoint:
  *   post:
  *     tag:
  *     -request user point
@@ -61,11 +60,49 @@ router.post('/checkPoint', async (req: Request, res: Response) => {
         if(response.isError===true) throw new Error(response.error)
     } catch (e) {
     }
-    console.log(response)
     res.json(response);
 });
 
-//토큰 생성 후 프론트로 보내기
+
+/**
+ * @openapi
+ * /Oauth/point/sendPoint:
+ *   post:
+ *     tag:
+ *     -send user point
+ *     summary: send user's point
+ *     description: 유저가 사용할 포인트 전송
+ *     parameters:
+ *       - in: body
+ *         name: PointInfo
+ *         required: true
+ *         description: point information for use
+ *         schema:
+ *           type: obejct
+ *           example: { '1' : '8900' }
+ *     responses:
+ *       '200':    
+ *         description: OK.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/Response'
+ *       '404':
+ *         description: server error
+ * components:
+ *   Response:
+ *     type: object
+ *     properties:
+ *       isError:
+ *         type: boolean
+ *       value:
+ *         type: string
+ *         example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwb2ludEluZm8iOnsiMSI6Ijg5MDAifSwiaWF0IjoxNjYzNjc1MDg1LCJleHAiOjE2NjM2NzU2ODV9.4S_NvC58-IVZ04EEiozy4apC8s7t4XgpYhXmzqpiOao
+ *       error:
+ *         type: string
+ *     required:
+ *     - isError
+ */
 router.post('/sendToken', async (req: Request, res: Response) => {
     const { pointInfo } = req.body;
     let response: Failable<string, string>;
@@ -73,20 +110,64 @@ router.post('/sendToken', async (req: Request, res: Response) => {
         response = await pointService.sendToken(pointInfo);
         if (response.isError === true) throw new Error(response.error);
     } catch (e) {}
-    console.log(response)
-
     res.json(response);
 });
 
-//검증 및 포인트 사용
+
+/**
+ * @openapi
+ * /Oauth/point/usePoint:
+ *   post:
+ *     tag:
+ *     -send user point
+ *     summary: send user's point
+ *     description: 유저가 사용할 포인트 전송
+ *     parameters:
+ *       - in: body
+ *         name: ''
+ *         required: true
+ *         description: token for use
+ *         schema:
+ *           type: obejct
+ *           properties:
+ *             token:
+ *               type: string
+ *               example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwb2ludEluZm8iOnsiMSI6Ijg5MDAifSwiaWF0IjoxNjYzNjc1MDg1LCJleHAiOjE2NjM2NzU2ODV9.4S_NvC58-IVZ04EEiozy4apC8s7t4XgpYhXmzqpiOao'
+ *           pointInfo:
+ *             type: string
+ *             example: { '1' : '8900' }
+ *     responses:
+ *       '200':    
+ *         description: OK.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/Response'
+ *       '404':
+ *         description: server error
+ * components:
+ *   Response:
+ *     type: object
+ *     properties:
+ *       isError:
+ *         type: boolean
+ *       value:
+ *         type: string
+ *         example: '입력한 포인트 사용 및 차감 완료'
+ *       error:
+ *         type: string
+ *         example: '입력한 포인트 사용 불가 및 롤백'
+ *     required:
+ *     - isError
+ */
 router.post('/usePoint', async (req: Request, res: Response) => {
     const { token, payPoint } = req.body;
+    console.log(token, payPoint)
     let response: Failable<string, string>;
     try {
         response = await pointService.usePoint(token, payPoint);
     } catch (e) {}
     console.log(response)
-
     res.json(response);
 });
 
