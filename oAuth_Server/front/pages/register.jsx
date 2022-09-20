@@ -20,6 +20,7 @@ import { useEffect, useState } from "react";
 import { backend, frontend } from "../utils/ip.js";
 import { pwdCheck } from "../utils/regiCheck.js";
 
+
 const register = () => {
 	const [password, setPassword] = useState(undefined);
 	const [psError, setpsError] = useState(false);
@@ -41,6 +42,7 @@ const register = () => {
 		setPassword(e.target.value);
 		setpsError(pwdCheck(password));
 	};
+
 
 	const getEmail = (e) => {
 		setEmail(e.target.value);
@@ -81,6 +83,7 @@ const register = () => {
 			return;
 		}
 
+
 		const regiEmail = email + domain;
 
 		try {
@@ -100,6 +103,7 @@ const register = () => {
 				verifyArray[3] +
 				verifyArray[4] +
 				verifyArray[5];
+
 
 			setVerifyNum(verfifyNumber);
 			invalidation;
@@ -330,6 +334,8 @@ const register = () => {
 			</Box>
 		</Box>
 	);
+
+  
 };
 
 export default register;

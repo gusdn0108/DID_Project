@@ -15,18 +15,19 @@ import {
 import axios from "axios";
 import { useState } from "react";
 import { setCookie } from "cookies-next";
+
 export default function Home() {
-	const [DIDid, setDIDid] = useState(undefined);
-	const [DIDPw, setDIDPw] = useState(undefined);
-	const [loading, setLoading] = useState(true);
+  const [DIDid, setDIDid] = useState(undefined);
+  const [DIDPw, setDIDPw] = useState(undefined);
+  const [loading, setLoading] = useState(true);
 
-	const getId = (e) => {
-		setDIDid(e.target.value);
-	};
+  const getId = (e) => {
+    setDIDid(e.target.value);
+  };
 
-	const getPw = (e) => {
-		setDIDPw(e.target.value);
-	};
+  const getPw = (e) => {
+    setDIDPw(e.target.value);
+  };
 
 	const didLoginHandler = async (req, res) => {
 		//앞에 상태변수를 요청
@@ -145,4 +146,5 @@ export default function Home() {
 			</Flex>
 		</Box>
 	);
-}
+
+   }

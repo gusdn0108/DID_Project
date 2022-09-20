@@ -5,6 +5,7 @@ import axios from "axios";
 import { getCookie, deleteCookie } from "cookies-next";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
+import { oauth, oauthBack } from "../utils/ip";
 
 const Purchase = ({ email, whichCookie, point }) => {
   const router = useRouter();
@@ -33,7 +34,7 @@ const Purchase = ({ email, whichCookie, point }) => {
   const getPage = () => {
     document.domain = "localhost";
     window.open(
-      `http://localhost:8080/payment?email=${email}&point=${price}`,
+      `http://${oauth}/payment?email=${email}&point=${price}`,
       "",
       "width=800, height=600"
     );
@@ -78,7 +79,7 @@ const Purchase = ({ email, whichCookie, point }) => {
     ).pointInfo;
 
     const response = await axios.post(
-      "http://localhost:8000/Oauth/point/usePoint",
+      `http://${oauthBack}/Oauth/point/usePoint`,
       {
         token: Cookie,
         payPoint,
