@@ -8,13 +8,11 @@ import {
   Divider,
   NumberInput,
   NumberInputField,
-  NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { setCookie } from "cookies-next";
+import { backend, frontend } from "../utils/ip";
 
 const payment = () => {
   const [payMenu, setPayMenu] = useState([]);
@@ -94,7 +92,7 @@ const payment = () => {
   const getPoint = async () => {
     const email = window.location.search.split("&")[0].split("=")[1];
     const response = await axios.post(
-      "http://localhost:8000/Oauth/point/checkPoint",
+      `http://${backend}/Oauth/point/checkPoint`,
       { email }
     );
     if (!response.data.isError) {
@@ -106,10 +104,10 @@ const payment = () => {
 
   const Pay = async (req, res) => {
     const response = await axios.post(
-      "http://localhost:8000/Oauth/point/sendToken",
+      `http://${backend}/Oauth/point/sendToken`,
       { pointInfo: payPoint }
     );
-    document.domain = "localhost";
+    document.domain = `localhost`;
     setCookie("item", response.data.value, {
       req,
       res,
