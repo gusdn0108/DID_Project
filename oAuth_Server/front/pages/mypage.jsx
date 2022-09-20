@@ -1,32 +1,24 @@
-import {
-  Box,
-  Text,
-  Divider,
-  Spinner,
-  Center,
-  FormLabel,
-  Button,
-  FormControl,
-  Input,
-} from "@chakra-ui/react";
-import axios from "axios";
-import { useEffect, useState } from "react";
-import crypto from "crypto";
-import { deleteCookie } from "cookies-next";
-import { backend } from "../utils/ip";
+import { Box, Text, Divider, useDisclosure, Center, FormLabel, Button, FormControl, Input } from '@chakra-ui/react';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+import crypto from 'crypto';
+import { deleteCookie } from 'cookies-next';
+import LoadingModal from '../components/LoadingModal.jsx';
 
 const Mypage = ({ hashId, email }) => {
-  const [name, setName] = useState("");
-  const [gender, setGender] = useState("");
-  const [age, setAge] = useState("");
-  const [addr, setAddr] = useState("");
-  const [mobile, setMobile] = useState("");
+  const [name, setName] = useState('');
+  const [gender, setGender] = useState('');
+  const [age, setAge] = useState('');
+  const [addr, setAddr] = useState('');
+  const [mobile, setMobile] = useState('');
   const [pwCheck, setPwCheck] = useState(false); //뒤에 비밀번호 수정
-  const [pwdCheck, setPwdCheck] = useState(""); //첫번째 비밀번호입력란
-  const [newPw, setNewPw] = useState("");
-  const [confirmNewPw, setConfirmNewPw] = useState("");
+  const [pwdCheck, setPwdCheck] = useState(''); //첫번째 비밀번호입력란
+  const [newPw, setNewPw] = useState('');
+  const [confirmNewPw, setConfirmNewPw] = useState('');
   const [loading, setLoading] = useState(true); //로딩바
-  const [psError, setpsError] = useState("");
+  const [psError, setpsError] = useState('');
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const pwdFormCheck = (pwd) => {
     const pwdForm = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,15}$/;
@@ -80,30 +72,29 @@ const Mypage = ({ hashId, email }) => {
   const checkPwdfunction = () => {
     const userHash = email + pwdCheck;
 
-    const Hash = crypto.createHash("sha256").update(userHash).digest("base64");
+    const Hash = crypto.createHash('sha256').update(userHash).digest('base64');
 
     if (hashId === Hash) {
       setPwCheck(true); //true
       getUserInfo();
     } else {
-      alert("비밀번호가 일치하지 않습니다.");
+      alert('비밀번호가 일치하지 않습니다.');
     }
   };
 
   //	비밀번호...수정
   const updatePassword = async (e) => {
     setLoading(false);
+    onOpen();
 
     if (psError == false) {
-      alert(
-        "비밀번호는 영문자, 숫자, 특수문자 조합으로 8~15자리를 사용해주세요."
-      );
+      alert('비밀번호는 영문자, 숫자, 특수문자 조합으로 8~15자리를 사용해주세요.');
       setLoading(true);
       return;
     }
 
     if (confirmNewPw !== newPw) {
-      alert("비밀번호가 일치하지 않습니다.");
+      alert('비밀번호가 일치하지 않습니다.');
       setLoading(true);
       return;
     }
@@ -114,15 +105,13 @@ const Mypage = ({ hashId, email }) => {
       newPw,
     };
 
-    const response = await axios.post(
-      `${backend}/Oauth/user/upDatePassword`,
-      body
-    );
+    const response = await axios.post(`${backend}/Oauth/user/upDatePassword`, body);
 
     if (response.data.status == true) {
+      onClose();
       alert(response.data.msg);
-      deleteCookie("user", { path: "/", domain: `localhost` });
-      window.location.replace("/");
+      deleteCookie('user', { path: '/', domain: `localhost` });
+      window.location.replace('/');
     } else {
       alert(response.data.msg);
     }
@@ -131,6 +120,7 @@ const Mypage = ({ hashId, email }) => {
 
   const updateUser = async () => {
     setLoading(false);
+    onOpen();
     const body = {
       gender,
       name,
@@ -153,6 +143,7 @@ const Mypage = ({ hashId, email }) => {
       alert(response.data.msg);
     } else {
       setLoading(true);
+      onClose();
       alert(response.data.msg);
     }
   };
@@ -165,9 +156,10 @@ const Mypage = ({ hashId, email }) => {
     });
 
     if (response.data.status) {
-      deleteCookie("user", { req, res, maxAge: 60 * 60 * 24 * 1000 });
+      onClose();
+      deleteCookie('user', { req, res, maxAge: 60 * 60 * 24 * 1000 });
       alert(response.data.msg);
-      window.location.replace("/");
+      window.location.replace('/');
     } else {
       alert(response.data.msg);
     }
@@ -182,59 +174,39 @@ const Mypage = ({ hashId, email }) => {
 
   return (
     <Center w="100%" h="100%" pt="10%" px="5%" bg="#160627">
-      <Box
-        w="40%"
-        m="10% 5% 20% 5%"
-        h={pwCheck ? "100rem" : "55rem"}
-        p="10% 0"
-        px="6%"
-        border="2px solid #fff"
-        borderRadius="1rem"
-      >
+      <Box w="40%" m="10% 5% 20% 5%" h={pwCheck ? '100rem' : '55rem'} p="10% 0" px="6%" border="2px solid #fff" borderRadius="1rem">
         {pwCheck === false ? (
           <>
             <Center>
               <Box w="100%">
-                <Text
-                  textAlign={"center"}
-                  fontSize={"200%"}
-                  mb="2rem"
-                  color="White"
-                >
-                  {" "}
+                <Text textAlign={'center'} fontSize={'200%'} mb="2rem" color="White">
+                  {' '}
                   회원정보
                 </Text>
               </Box>
             </Center>
 
             <Divider />
-            <Text fontSize={"130%"} mt="2rem" mb="1rem" color="White">
-              {" "}
+            <Text fontSize={'130%'} mt="2rem" mb="1rem" color="White">
+              {' '}
               비밀번호 입력
             </Text>
-            <Input
-              type="password"
-              style={{ color: "white" }}
-              placeholder="패스워드를 입력해주세요"
-              id="password"
-              size="md"
-              onChange={setPwdCheckfunction}
-            />
+            <Input type="password" style={{ color: 'white' }} placeholder="패스워드를 입력해주세요" id="password" size="md" onChange={setPwdCheckfunction} />
 
             <Center mt="5%">
               <Button onClick={checkPwdfunction} w="30%" mx="3%">
-                {" "}
+                {' '}
                 확인
               </Button>
               <Button
                 onClick={(req, res) => {
-                  deleteCookie("user", {
+                  deleteCookie('user', {
                     req,
                     res,
                     maxAge: 60 * 60 * 24 * 1000,
                   });
                   //        setIsLogin(false);
-                  window.location.replace("/");
+                  window.location.replace('/');
                 }}
                 color="#160627"
                 w="30%"
@@ -247,79 +219,40 @@ const Mypage = ({ hashId, email }) => {
         ) : (
           <Box w="100%" h="100%" pt="5%" px="5%" bg="#160627">
             <FormControl mt="3">
-              <Text fontSize={"175%"} px="25%" mb="3%" color="white">
+              <Text fontSize={'175%'} px="25%" mb="3%" color="white">
                 회원정보수정
               </Text>
-              <FormLabel fontSize={"140%"} px="2%" mb="3%" color="white">
+              <FormLabel fontSize={'140%'} px="2%" mb="3%" color="white">
                 이메일
               </FormLabel>
-              <Input
-                type="text"
-                style={{ color: "white" }}
-                id="userEmail"
-                value={email}
-                size="md"
-                mb="5%"
-                disabled
-              />
+              <Input type="text" style={{ color: 'white' }} id="userEmail" value={email} size="md" mb="5%" disabled />
 
-              <FormLabel fontSize={"140%"} px="2%" color="white">
+              <FormLabel fontSize={'140%'} px="2%" color="white">
                 이름
               </FormLabel>
-              <Input
-                type="text"
-                style={{ color: "white" }}
-                placeholder="이름을 입력해주세요"
-                size="md"
-                mb="5%"
-                value={name}
-                onChange={getName}
-              />
+              <Input type="text" style={{ color: 'white' }} placeholder="이름을 입력해주세요" size="md" mb="5%" value={name} onChange={getName} />
 
-              <FormLabel fontSize={"140%"} px="2%" mb="2%" color="white">
+              <FormLabel fontSize={'140%'} px="2%" mb="2%" color="white">
                 성별
                 <Text mt="2%" mb="5%">
-                  {gender === "f" ? `여성` : `남성`}
+                  {gender === 'f' ? `여성` : `남성`}
                 </Text>
               </FormLabel>
 
-              <FormLabel fontSize={"140%"} px="2%" color="white">
+              <FormLabel fontSize={'140%'} px="2%" color="white">
                 나이
               </FormLabel>
-              <Input
-                placeholder="나이를 입력해주세요"
-                style={{ color: "white" }}
-                mb="5%"
-                size="md"
-                value={age}
-                onChange={getAge}
-              />
+              <Input placeholder="나이를 입력해주세요" style={{ color: 'white' }} mb="5%" size="md" value={age} onChange={getAge} />
 
-              <FormLabel fontSize={"140%"} px="2%" color="white">
+              <FormLabel fontSize={'140%'} px="2%" color="white">
                 주소
               </FormLabel>
-              <Input
-                type="text"
-                mb="5%"
-                size="md"
-                style={{ color: "white" }}
-                placeholder="주소를 입력해주세요"
-                value={addr}
-                onChange={getAddress}
-              />
+              <Input type="text" mb="5%" size="md" style={{ color: 'white' }} placeholder="주소를 입력해주세요" value={addr} onChange={getAddress} />
 
-              <FormLabel fontSize={"140%"} px="2%" color="white">
+              <FormLabel fontSize={'140%'} px="2%" color="white">
                 전화번호
               </FormLabel>
-              <Input
-                type="mobile"
-                mb="5%"
-                size="md"
-                style={{ color: "white" }}
-                placeholder="전화번호를 입력해주세요"
-                value={mobile}
-                onChange={getMobile}
-              />
+              <Input type="mobile" mb="5%" size="md" style={{ color: 'white' }} placeholder="전화번호를 입력해주세요" value={mobile} onChange={getMobile} />
             </FormControl>
             {loading ? (
               <Center>
@@ -328,59 +261,28 @@ const Mypage = ({ hashId, email }) => {
                 </Button>
               </Center>
             ) : (
-              <Center>
-                <Spinner
-                  thickness="4px"
-                  speed="0.65s"
-                  emptyColor="gray.200"
-                  color="blue.500"
-                  size="md"
-                />
-              </Center>
+              <LoadingModal isOpen={isOpen} onClose={onClose} />
             )}
             <Divider />
 
-            <Text fontSize={"175%"} px="25%" pt="4rem" color="white">
+            <Text fontSize={'175%'} px="25%" pt="4rem" color="white">
               비밀 번호 수정
             </Text>
 
-            <FormLabel fontSize={"140%"} px="2%" pt="2rem" color="white">
+            <FormLabel fontSize={'140%'} px="2%" pt="2rem" color="white">
               변경 할 비밀번호
             </FormLabel>
-            <Input
-              type="password"
-              style={{ color: "white" }}
-              placeholder="패스워드를 입력해주세요"
-              id="password"
-              size="md"
-              onChange={getNewPw}
-            />
-            <Text
-              my="4%"
-              px="2%"
-              color={psError == true ? "green" : "red"}
-              fontSize="1rem"
-            >
-              {psError === ""
-                ? null
-                : psError
-                ? "사용 가능한 비밀번호입니다."
-                : "비밀번호는 영문자, 숫자, 특수문자 포함 8~15자여야 합니다."}
+            <Input type="password" style={{ color: 'white' }} placeholder="패스워드를 입력해주세요" id="password" size="md" onChange={getNewPw} />
+            <Text my="4%" px="2%" color={psError == true ? 'green' : 'red'} fontSize="1rem">
+              {psError === '' ? null : psError ? '사용 가능한 비밀번호입니다.' : '비밀번호는 영문자, 숫자, 특수문자 포함 8~15자여야 합니다.'}
             </Text>
-            <FormLabel fontSize={"140%"} px="2%" pt="2rem" color="white">
+            <FormLabel fontSize={'140%'} px="2%" pt="2rem" color="white">
               비밀번호 확인
             </FormLabel>
-            <Input
-              type="password"
-              style={{ color: "white" }}
-              placeholder="패스워드를 입력해주세요"
-              id="password"
-              size="md"
-              onChange={confirmPw}
-            />
+            <Input type="password" style={{ color: 'white' }} placeholder="패스워드를 입력해주세요" id="password" size="md" onChange={confirmPw} />
             {loading ? (
               <Center>
-                {" "}
+                {' '}
                 <Button
                   mb="2rem"
                   mt="2rem"
@@ -392,50 +294,23 @@ const Mypage = ({ hashId, email }) => {
                 </Button>
               </Center>
             ) : (
-              <Center>
-                <Spinner
-                  thickness="4px"
-                  speed="0.65s"
-                  emptyColor="gray.200"
-                  color="blue.500"
-                  size="md"
-                />
-              </Center>
+              <LoadingModal isOpen={isOpen} onClose={onClose} />
             )}
             <Divider />
-            <Text
-              fontSize={"180%"}
-              px="35%"
-              pt="4rem"
-              color="white"
-              textAlign={"center"}
-            >
-              {" "}
-              회원 탈퇴{" "}
+            <Text fontSize={'180%'} px="35%" pt="4rem" color="white" textAlign={'center'}>
+              {' '}
+              회원 탈퇴{' '}
             </Text>
 
             {loading ? (
               <Center>
-                <Button
-                  color="#160627"
-                  mb="2rem"
-                  mt="2rem"
-                  onClick={deleteUser}
-                >
-                  {" "}
+                <Button color="#160627" mb="2rem" mt="2rem" onClick={deleteUser}>
+                  {' '}
                   회원탈퇴버튼
                 </Button>
               </Center>
             ) : (
-              <Center>
-                <Spinner
-                  thickkness="4px"
-                  speed="0.65s"
-                  emptyColor="gray.200"
-                  color="blue.500"
-                  size="md"
-                />
-              </Center>
+              <LoadingModal isOpen={isOpen} onClose={onClose} />
             )}
           </Box>
         )}
