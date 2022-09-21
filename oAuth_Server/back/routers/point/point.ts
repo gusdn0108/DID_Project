@@ -10,7 +10,7 @@ const router = express.Router();
  *     tag:
  *     - checkPoint
  *     summary: request user's point
- *     description: request user point
+ *     description: 유저가 보유하고 있는 포인트 정보 조회
  *     parameters:
  *       - in: body
  *         name: email
@@ -21,7 +21,7 @@ const router = express.Router();
  *           peoperties:
  *             email:
  *               type: string
- *               example: "yellow_w@naver.com"
+ *               example: "test@gmail.com"
  *     responses:
  *       '200':    
  *         description: OK.
@@ -75,7 +75,7 @@ router.post('/checkPoint', async (req: Request, res: Response) => {
  *     tag:
  *     -sendPoint
  *     summary: send user's point
- *     description: send usable point
+ *     description: 가용포인트에 대한 토큰 전송
  *     parameters:
  *       - in: body
  *         name: PointInfo
@@ -126,7 +126,7 @@ router.post('/sendToken', async (req: Request, res: Response) => {
  *     tag:
  *     - usePoint
  *     summary: send user's point
- *     description: send user's point
+ *     description: 포인트 사용에 관한 토큰 검증 및 정보 일치 시 포인트 사용
  *     parameters:
  *       - in: body
  *         name: ''
