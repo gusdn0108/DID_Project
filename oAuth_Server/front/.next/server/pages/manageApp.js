@@ -573,7 +573,7 @@ const getServerSideProps = async ctx => {
 /* harmony export */   "y3": () => (/* binding */ backend)
 /* harmony export */ });
 /* unused harmony export cookieDomain */
-const backend = 'http://3.39.202.148';
+const backend = 'http://13.124.225.13';
 const frontend = 'http://3.35.86.127:80';
 const cookieDomain = 'localhost';
 
