@@ -296,24 +296,7 @@ const userdidregister = async(data:any) => {
     return response;
 }
 
-// const getPoint = async (restAPI: any, email: any) => {
-//     try {
-//         const userPoint = await TotalPoint.findOne({
-//             where: {
-//                 restAPI,
-//                 email,
-//             },
-//         });
 
-//         response = {
-//             status: true,
-//             point: userPoint.point,
-//         };
-//     } catch (e) {
-//         response = responseObject(false, '포인트를 가져오지 못했습니디.');
-//     }
-//     return response;
-// };
 
 const appService = {
     apiDistribution,
