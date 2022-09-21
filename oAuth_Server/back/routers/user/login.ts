@@ -163,8 +163,11 @@ router.post('/codeAuthorize', async (req: Request, res: Response) => {
  *         required: true
  *         description: token data for getting VP
  *         schema:
- *           type: string
- *           example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJNQUtFX0FDQ0VTU19UT0tFTiI6eyJncmFudF90eXBlIjoiYXV0aG9yaXphdGlvbl9jb2RlIiwicmVzdEFQSSI6ImFmMjdiMjg2NWFiMmRkMzFhZWIwYzZmYmM1NGExOGIiLCJjbGllbnRfc2VjcmV0IjoiYjMwM2FhM2YxOGQwOGZmOGYzNmQxMmE5ZDhmMTA4NSIsInJlZGlyZWN0IjoiaHR0cDovL2xvY2FsaG9zdDo0MDAwL2FwaS9PYXV0aC9nZXRDb2RlIiwiZW1haWwiOiJmZmZmQGdtYWlsLmNvbSIsImhhc2giOiJ5RGpyV21VMFp0V0lXcmlxaFBRQWl6VzlMeGtldUUzWFcwY0hOUVNaMU5nPSJ9LCJleHAiOjQzMTk5LCJpYXQiOjE2NjM2OTI5MTd9.1hvXVz7_7YHnoeksv7fu8oHvVPduoEgBKlGC7xjrN-E'
+ *           type: object
+ *           properties:
+ *             bearer_token:
+ *               type: string
+ *               example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJNQUtFX0FDQ0VTU19UT0tFTiI6eyJncmFudF90eXBlIjoiYXV0aG9yaXphdGlvbl9jb2RlIiwicmVzdEFQSSI6ImFmMjdiMjg2NWFiMmRkMzFhZWIwYzZmYmM1NGExOGIiLCJjbGllbnRfc2VjcmV0IjoiYjMwM2FhM2YxOGQwOGZmOGYzNmQxMmE5ZDhmMTA4NSIsInJlZGlyZWN0IjoiaHR0cDovL2xvY2FsaG9zdDo0MDAwL2FwaS9PYXV0aC9nZXRDb2RlIiwiZW1haWwiOiJmZmZmQGdtYWlsLmNvbSIsImhhc2giOiJ5RGpyV21VMFp0V0lXcmlxaFBRQWl6VzlMeGtldUUzWFcwY0hOUVNaMU5nPSJ9LCJleHAiOjQzMTk5LCJpYXQiOjE2NjM2OTI5MTd9.1hvXVz7_7YHnoeksv7fu8oHvVPduoEgBKlGC7xjrN-E'
  *     responses:
  *       '200':    
  *         description: OK.

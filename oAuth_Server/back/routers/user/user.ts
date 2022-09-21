@@ -231,8 +231,11 @@ router.post('/upDateUser', async (req: Request, res: Response) => {
  *         required: true
  *         description: hashId for get user information
  *         schema:
- *           type: string
- *           example: 'hBNh54QTfHT+a5TunScmyjamZKhVsOdRcWMCN3fbT80='
+ *           type: object
+ *           properties:
+ *             hashId:
+ *               type: string
+ *               example: 'hBNh54QTfHT+a5TunScmyjamZKhVsOdRcWMCN3fbT80='
  *     responses:
  *       '200':    
  *         description: OK.

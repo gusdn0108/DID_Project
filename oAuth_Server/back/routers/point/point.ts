@@ -17,8 +17,11 @@ const router = express.Router();
  *         required: true
  *         description: email for request
  *         schema:
- *           type: string
- *           example: "yellow_w@naver.com"
+ *           type: object
+ *           peoperties:
+ *             email:
+ *               type: string
+ *               example: "yellow_w@naver.com"
  *     responses:
  *       '200':    
  *         description: OK.
