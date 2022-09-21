@@ -105,9 +105,6 @@ const BuyItem = ({ user, did }) => {
 
   return (
     <Box m="10">
-      <Text className="tokenText" display="none">
-        test
-      </Text>
       <Flex>
         <Image flex={1} src={imageUrl} height={700} />
         <Stack flex={1} ml="5" direction="row" p={4}>
