@@ -23,7 +23,7 @@ let response: any;
  *           properties:
  *             email:
  *               type: string
- *               example: 'yellow_w@naver.com'
+ *               example: 'test@gmail.com'
  *     responses:
  *       '200':    
  *         description: OK.

@@ -22,7 +22,7 @@ let response: any;
  *           properties:
  *             email:
  *               type: string
- *               example: 'yellow_w@naver.com'
+ *               example: 'test@gmail.com'
  *             password:
  *               type: string
  *               example: 'QWERT12345!'
@@ -54,10 +54,10 @@ let response: any;
  *           example: true
  *         registerUri:
  *           type: string
- *           example: 'http://localhost:8080/userAppRegister?email=yellow_w@naver.com&restAPI=af27b2865ab2dd31aeb0c6fbc54a18b&redirectUri=http://localhost:4000/api/Oauth/getCode&hash=hBNh54QTfHT+a5TunScmyjamZKhVsOdRcWMCN3fbT80=&giveUserInfo=http://localhost:4000/api/Oauth/giveUserInfo'
+ *           example: 'http://localhost:8080/userAppRegister?email=test@gmail.com&restAPI=af27b2865ab2dd31aeb0c6fbc54a18b&redirectUri=http://localhost:4000/api/Oauth/getCode&hash=hBNh54QTfHT+a5TunScmyjamZKhVsOdRcWMCN3fbT80=&giveUserInfo=http://localhost:4000/api/Oauth/giveUserInfo'
  *         redirectInfo:
  *           type: string
- *           example: 'http://localhost:4000/api/Oauth/getCode?email=yellow_w@gmail.com&hash1=yDjrWmU0ZtWIWriqhPQAizW9LxkeuE3XW0cHNQSZ1Ng%3D'
+ *           example: 'http://localhost:4000/api/Oauth/getCode?email=test@gmail.com&hash1=yDjrWmU0ZtWIWriqhPQAizW9LxkeuE3XW0cHNQSZ1Ng%3D'
  *         msg:
  *           type: string
  *       required:
@@ -187,7 +187,7 @@ router.post('/codeAuthorize', async (req: Request, res: Response) => {
  *           example: true
  *         VP:
  *           type: array
- *           example: [{ att: 'name', value: '노랑이' },{ att: 'mobile', value: '01012341234' },{ att: 'email', value: 'yellow_w@naver.com' }]
+ *           example: [{ att: 'name', value: '노랑이' },{ att: 'mobile', value: '01012341234' },{ att: 'email', value: 'test@gmail.com' }]
  *         hash:
  *           type: string
  *           example: 'yDjrWmU0ZtWIWriqhPQAizW9LxkeuE3XW0cHNQSZ1Ng='
@@ -223,7 +223,7 @@ router.get('/codeAuthorize2', async (req: Request, res: Response) => {
  *           properties:
  *             email:
  *               type: string
- *               example: "yellow_w@naver.com"
+ *               example: "test@gmail.com"
  *             password:
  *               type: string
  *               example: 'QWERT12345!'
