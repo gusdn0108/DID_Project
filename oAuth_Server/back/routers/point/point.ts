@@ -8,9 +8,9 @@ const router = express.Router();
  * /Oauth/point/checkPoint:
  *   post:
  *     tag:
- *     -request user point
+ *     - checkPoint
  *     summary: request user's point
- *     description: 유저 포인트 조회
+ *     description: request user point
  *     parameters:
  *       - in: body
  *         name: email
@@ -25,32 +25,33 @@ const router = express.Router();
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/Response'
+ *               $ref: '#/components/Response/checkPoint'
  *       '404':
  *         description: server error
  * components:
  *   Response:
- *     type: object
- *     properties:
- *       isError:
- *         type: boolean
- *       value:
- *         type: object
- *         properties:
- *           id:
- *             type: integer
- *           email:
- *             type: string
- *           restAPI:
- *             type: string
- *           appName:
- *             type: string
- *           point:
- *             type: integer
- *       error:
- *         type: string
- *     required:
- *     - isError
+ *     checkPoint:
+ *       type: object
+ *       properties:
+ *         isError:
+ *           type: boolean
+ *         value:
+ *           type: object
+ *           properties:
+ *             id:
+ *               type: integer
+ *             email:
+ *               type: string
+ *             restAPI:
+ *               type: string
+ *             appName:
+ *               type: string
+ *             point:
+ *               type: integer
+ *         error:
+ *           type: string
+ *       required:
+ *       - isError
  */
 router.post('/checkPoint', async (req: Request, res: Response) => {
     const { email } = req.body;
@@ -69,9 +70,9 @@ router.post('/checkPoint', async (req: Request, res: Response) => {
  * /Oauth/point/sendPoint:
  *   post:
  *     tag:
- *     -send user point
+ *     -sendPoint
  *     summary: send user's point
- *     description: 유저가 사용할 포인트 전송
+ *     description: send usable point
  *     parameters:
  *       - in: body
  *         name: PointInfo
@@ -86,22 +87,23 @@ router.post('/checkPoint', async (req: Request, res: Response) => {
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/Response'
+ *               $ref: '#/components/Response/sendPoint'
  *       '404':
  *         description: server error
  * components:
  *   Response:
- *     type: object
- *     properties:
- *       isError:
- *         type: boolean
- *       value:
- *         type: string
- *         example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwb2ludEluZm8iOnsiMSI6Ijg5MDAifSwiaWF0IjoxNjYzNjc1MDg1LCJleHAiOjE2NjM2NzU2ODV9.4S_NvC58-IVZ04EEiozy4apC8s7t4XgpYhXmzqpiOao
- *       error:
- *         type: string
- *     required:
- *     - isError
+ *     sendPoint:
+ *       type: object
+ *       properties:
+ *         isError:
+ *           type: boolean
+ *         value:
+ *           type: string
+ *           example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwb2ludEluZm8iOnsiMSI6Ijg5MDAifSwiaWF0IjoxNjYzNjc1MDg1LCJleHAiOjE2NjM2NzU2ODV9.4S_NvC58-IVZ04EEiozy4apC8s7t4XgpYhXmzqpiOao
+ *         error:
+ *           type: string
+ *       required:
+ *       - isError
  */
 router.post('/sendToken', async (req: Request, res: Response) => {
     const { pointInfo } = req.body;
@@ -119,14 +121,14 @@ router.post('/sendToken', async (req: Request, res: Response) => {
  * /Oauth/point/usePoint:
  *   post:
  *     tag:
- *     -send user point
+ *     - usePoint
  *     summary: send user's point
- *     description: 유저가 사용할 포인트 전송
+ *     description: send user's point
  *     parameters:
  *       - in: body
  *         name: ''
  *         required: true
- *         description: token for use
+ *         description: object data for using poing
  *         schema:
  *           type: obejct
  *           properties:
@@ -142,23 +144,24 @@ router.post('/sendToken', async (req: Request, res: Response) => {
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/Response'
+ *               $ref: '#/components/Response/usePoint'
  *       '404':
  *         description: server error
  * components:
  *   Response:
- *     type: object
- *     properties:
- *       isError:
- *         type: boolean
- *       value:
- *         type: string
- *         example: '입력한 포인트 사용 및 차감 완료'
- *       error:
- *         type: string
- *         example: '입력한 포인트 사용 불가 및 롤백'
- *     required:
- *     - isError
+ *     usePoint:
+ *       type: object
+ *       properties:
+ *         isError:
+ *           type: boolean
+ *         msg:
+ *           type: string
+ *           example: '입력한 포인트 사용 및 차감 완료'
+ *         error:
+ *           type: string
+ *           example: '입력한 포인트 사용 불가 및 롤백'
+ *       required:
+ *       - isError
  */
 router.post('/usePoint', async (req: Request, res: Response) => {
     const { token, payPoint } = req.body;
