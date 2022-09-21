@@ -16,7 +16,6 @@ let response: IResponse_App;
  *     description: Optional
  *     parameters:
  *       - in: body
- *         name: ''
  *         required: true
  *         description: application owner's email
  *         schema:
@@ -161,7 +160,6 @@ router.post('/getMyApp', async (req: Request, res: Response) => {
  *         type: string
  *     required:
  *     - status
- * -msg
  */
 
 router.post('/deleteApp', async (req: Request, res: Response) => {
@@ -264,7 +262,6 @@ router.use('/appInfo', async (req: Request, res: Response) => {
  *         type: string
  *     required:
  *     - status
- *     - string
  */
 
 router.use('/getInfoUpdate', async (req: Request, res: Response) => {

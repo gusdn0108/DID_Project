@@ -13,15 +13,14 @@ const router = express.Router();
  *     description: 유저가 보유하고 있는 포인트 정보 조회
  *     parameters:
  *       - in: body
- *         name: email
  *         required: true
  *         description: email for request
  *         schema:
  *           type: object
- *           peoperties:
+ *           properties:
  *             email:
  *               type: string
- *               example: "test@gmail.com"
+ *               example: test@gmail.com
  *     responses:
  *       '200':    
  *         description: OK.
@@ -43,14 +42,19 @@ const router = express.Router();
  *           properties:
  *             id:
  *               type: integer
+ *               example: 1
  *             email:
  *               type: string
+ *               example: test@gmail.com
  *             restAPI:
  *               type: string
+ *               example: af27b2865ab2dd31aeb0c6fbc54a18b
  *             appName:
  *               type: string
+ *               example: '경일투어'
  *             point:
  *               type: integer
+ *               example: 50000
  *         error:
  *           type: string
  *       required:
@@ -64,9 +68,9 @@ router.post('/checkPoint', async (req: Request, res: Response) => {
         if(response.isError===true) throw new Error(response.error)
     } catch (e) {
     }
+    console.log(response)
     res.json(response);
 });
-
 
 /**
  * @openapi
@@ -115,6 +119,8 @@ router.post('/sendToken', async (req: Request, res: Response) => {
         response = await pointService.sendToken(pointInfo);
         if (response.isError === true) throw new Error(response.error);
     } catch (e) {}
+    console.log(response)
+
     res.json(response);
 });
 

@@ -5,13 +5,13 @@ const definition: OAS3Definition = {
     openapi: "3.0.0",	
     info: {
         title: "Oauth Back server API",	
-        description: "Optional",	
+        description: "Optional",
         version: "0.0.1",	
     }, 
     server:[{
         url: "http://localhost:8000"
     }],
-    schema: ['http']
+    schema: ['http'],
 };
 
 //http://localhost:8000/api-docs/
