@@ -77,12 +77,15 @@ router.post('/apiDistribution', async (req: Request, res: Response) => {
  *     description: Optional 디스크립션
  *     parameters:
  *       - in: body
- *         name: 'email'
+ *         name: ""
  *         required: true
  *         description: application owner's email
  *         schema :
- *           type : string
- *           example: "loerain111@gmail.com"
+ *           type : object
+ *           properties:
+ *             email :
+ *               type : string
+ *               example : 'test@gmail.com'
  *     responses:
  *       '200':    
  *         description: OK.
@@ -121,7 +124,7 @@ router.post('/getMyApp', async (req: Request, res: Response) => {
 
 /**
  * @openapi
- *  /Oauth/app/deleteMyApp:
+ *  /Oauth/app/deleteApp:
  *   post:
  *     tag:
  *     - delete, application
@@ -133,35 +136,36 @@ router.post('/getMyApp', async (req: Request, res: Response) => {
  *         required: true
  *         description: application's restAPI
  *         schema:
- *           type: string
- *           example: "ed2bddf3ece5bf7bf4fd134c1fad973"
- *         - in: body
- *         name: client_secret
- *         required: true
- *         description: client_secret code
- *         schema:
- *           type: string
- *           example: "ed2bddf3ece5bf7bf4fd134c1fad973"
+ *           type: object
+ *           properties:
+ *             restAPI : 
+ *               type : string
+ *               example : "466192a1fbd26edef63c3e66ab7e3a1"
+ *             client_secret :
+ *               type : string
+ *               example : "334a854e6e4ec109d78c72a2a34f18c"
  *     responses:
  *       '200':    
  *         description: OK.
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/Response'
+ *               $ref: '#/components/Response/deleteApp'
  *       '404':
  *         description: uri not found.
  * components:
  *   Response:
- *     type: 
- *     properties:
- *       status:
- *         type: boolean
- *       msg:
- *         type: string
- *     required:
- *     - status
- * -msg
+ *     deleteApp:
+ *       type: object
+ *       properties:
+ *         status:
+ *           type: boolean
+ *           example: true
+ *         msg:
+ *           type: string
+ *           example: '어플리케이션이 삭제되었습니다.'
+ *       required:
+ *       - status
  */
 
 router.post('/deleteApp', async (req: Request, res: Response) => {
