@@ -49,8 +49,8 @@ const BuyItem = ({ user, did }) => {
 
   // OAuth의 페이지 요청하는 함수
   const getPage = () => {
-    document.domain = 'localhost';
-    window.open(`http://${oauth}/payment?email=${email}&point=${formattedPrice}`, '', 'width=800, height=600');
+    document.domain = `${oauth}`;
+    window.open(`${oauth}/payment?email=${email}&point=${formattedPrice}`, '', 'width=800, height=600');
   };
 
   // OAuth에 포인트를 차감 요청할 함수
@@ -59,7 +59,7 @@ const BuyItem = ({ user, did }) => {
 
     const payPoint = JSON.parse(Buffer.from(Cookie.split('.')[1], 'base64').toString('utf-8')).pointInfo;
 
-    const response = await axios.post(`http://${oauthBack}/Oauth/point/usePoint`, {
+    const response = await axios.post(`${oauthBack}/Oauth/point/usePoint`, {
       token: Cookie,
       payPoint,
     });

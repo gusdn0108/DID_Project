@@ -2,6 +2,7 @@ import { Box, Center, Text, Button, Flex, Checkbox, Divider, NumberInput, Number
 import { request } from '../utils/axios.js';
 import { useState, useEffect } from 'react';
 import { setCookie } from 'cookies-next';
+import { frontend } from '../utils/ip.js';
 
 const payment = () => {
   const [payMenu, setPayMenu] = useState([]);
@@ -69,7 +70,7 @@ const payment = () => {
 
   const Pay = async (req, res) => {
     const response = await request.post(`/Oauth/point/sendToken`, { pointInfo: payPoint });
-    document.domain = `localhost`;
+    document.domain = `${frontend}`;
     setCookie('item', response.data.value, {
       req,
       res,
