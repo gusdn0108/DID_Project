@@ -57,6 +57,7 @@ const router = express.Router();
  *               example: 50000
  *         error:
  *           type: string
+ *           example: '유저정보가 없습니다'
  *       required:
  *       - isError
  */
@@ -68,7 +69,6 @@ router.post('/checkPoint', async (req: Request, res: Response) => {
         if(response.isError===true) throw new Error(response.error)
     } catch (e) {
     }
-    console.log(response)
     res.json(response);
 });
 

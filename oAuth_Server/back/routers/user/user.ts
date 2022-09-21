@@ -10,8 +10,8 @@ let response: any;
  *   post:
  *     tag:
  *     - oAuthRegister
- *     summary: sign up
- *     description: sign up for use
+ *     summary: sign up for use
+ *     description: DID 서비스 사용을 위한 Oauth 사이트 회원가입
  *     parameters:
  *       - in: body
  *         name: ''
@@ -22,7 +22,7 @@ let response: any;
  *           properties:
  *             email:
  *               type: string
- *               example: 'yellow_w@naver.com'
+ *               example: 'test@gmail.com'
  *             gender:
  *               type: string
  *               example: 'm'
@@ -80,7 +80,7 @@ router.post('/oAuthRegister', async (req: Request, res: Response) => {
  *     tag:
  *     - upDatePassword
  *     summary: update password
- *     description: update user password
+ *     description: 비밀번호 변경
  *     parameters:
  *       - in: body
  *         name: ''
@@ -94,7 +94,7 @@ router.post('/oAuthRegister', async (req: Request, res: Response) => {
  *               example: 'hBNh54QTfHT+a5TunScmyjamZKhVsOdRcWMCN3fbT80='
  *             email:
  *               type: string
- *               example: 'yellow_w@naver.com'
+ *               example: 'test@gmail.com'
  *             newPw:
  *               type: string
  *               example: 'QWERT54321!'
@@ -141,7 +141,7 @@ router.post('/upDatePassword', async (req: Request, res: Response) => {
  *     tag:
  *     - upDateUser
  *     summary: update user information
- *     description: update user information
+ *     description: 유저 정보 변경
  *     parameters:
  *       - in: body
  *         name: ''
@@ -152,7 +152,7 @@ router.post('/upDatePassword', async (req: Request, res: Response) => {
  *           properties:
  *             email:
  *               type: string
- *               example: 'yellow_w@naver.com'
+ *               example: 'test@gmail.com'
  *             gender:
  *               type: string
  *               example: 'f'
@@ -224,7 +224,7 @@ router.post('/upDateUser', async (req: Request, res: Response) => {
  *     tag:
  *     - searchUser
  *     summary: get user information
- *     description: get user information for showing on profile page
+ *     description: 프로필 페이지 출력을 위한 유저 정보 조회
  *     parameters:
  *       - in: body
  *         name: 'hashId'
@@ -291,7 +291,7 @@ router.post('/searchUser', async (req: Request, res: Response) => {
  *     tag:
  *     - deleteUser
  *     summary: delete user information 
- *     description: delete user informaiton
+ *     description: 유저 정보 삭제
  *     parameters:
  *       - in: body
  *         name: ''
@@ -305,7 +305,7 @@ router.post('/searchUser', async (req: Request, res: Response) => {
  *               example: 'hBNh54QTfHT+a5TunScmyjamZKhVsOdRcWMCN3fbT80='
  *             email:
  *               type: string
- *               example: 'yellow_w@naver.com'
+ *               example: 'test@gmail.com'
  *     responses:
  *       '200':    
  *         description: OK.
