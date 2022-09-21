@@ -1,11 +1,12 @@
 const axios = require('axios');
-const { backend } = require('./ip.js');
+const { backend, frontend } = require('./ip.js');
 
 const config = {
   baseURL: backend,
   headers: {
     withCredentials: true,
     'Content-Type': 'application/json',
+    origin: frontend,
   },
 };
 

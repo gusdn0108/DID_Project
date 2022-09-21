@@ -18,14 +18,16 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 const axios = __webpack_require__(2167);
 
 const {
-  backend
+  backend,
+  frontend
 } = __webpack_require__(9997);
 
 const config = {
   baseURL: backend,
   headers: {
     withCredentials: true,
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    origin: frontend
   }
 };
 const request = axios.create(_objectSpread({}, config));
