@@ -20,8 +20,7 @@ router.post('/apiDistribution', async (req: Request, res: Response) => {
 
 /**
  * @openapi
- * paths:
- *  /Oauth/app/getMyApp
+ * /Oauth/app/getMyApp: 
  *   post:
  *     tag:
  *     - call, application
@@ -70,8 +69,7 @@ router.post('/getMyApp', async (req: Request, res: Response) => {
 
 /**
  * @openapi
- * paths:
- *  /Oauth/app/deleteMyApp
+ *  /Oauth/app/deleteMyApp:
  *   post:
  *     tag:
  *     - delete, application
@@ -127,8 +125,7 @@ router.post('/deleteApp', async (req: Request, res: Response) => {
 
 /**
  * @openapi
- * paths:
- *  /Oauth/app/appInfo
+ *  /Oauth/app/appInfo:
  *   post:
  *     tag:
  *     - call, application
@@ -176,8 +173,7 @@ router.use('/appInfo', async (req: Request, res: Response) => {
 
 /**
  * @openapi
- * paths:
- *  /Oauth/app/getInfoUpdate
+ *  /Oauth/app/getInfoUpdate:
  *   post:
  *     tag:
  *     - modify, application
@@ -185,19 +181,18 @@ router.use('/appInfo', async (req: Request, res: Response) => {
  *     description: select needed data
  *     parameters:
  *       - in: body
- *         name: restAPI
+ *         name: ''
  *         required: true
  *         description: application's restAPI
  *         schema:
- *           type: string
- *           example: "ed2bddf3ece5bf7bf4fd134c1fad973"
- *        - in: body
- *         name: getUserInfo
- *         required: true
- *         description: select which information to be provided
- *         schema:
- *           type: array
- *           example: [1,0,0,0,1,1]
+ *           type: object
+ *           properties :
+ *              getUserInfo :
+ *                  type : array
+ *                  example : [true, false, true, true, false, false]
+ *              restAPI :
+ *                  type : string
+ *                  example: "ed2bddf3ece5bf7bf4fd134c1fad973"
  *     responses:
  *       '200':    
  *         description: OK.
@@ -233,8 +228,7 @@ router.use('/getInfoUpdate', async (req: Request, res: Response) => {
 
 /**
  * @openapi
- * paths:
- *  /Oauth/app/updateRedirect
+ *  /Oauth/app/updateRedirect:
  *   post:
  *     tag:
  *     - modify, redirectURI, application
@@ -247,14 +241,12 @@ router.use('/getInfoUpdate', async (req: Request, res: Response) => {
  *         schema:
  *           type: object
  *           properties : 
- *              uris : string[]
- *           example :
- *              []
- *              restAPI : string
- *            
- *              
- *              "ed2bddf3ece5bf7bf4fd134c1fad973"
-
+ *              uris :
+ *                  type: array
+ *                  example : ['http://localhost:4001','http://localhost:4000','http://localhost:4000','http://localhost:4000','http://localhost:4000']
+ *              restAPI : 
+ *                type : string
+ *                example: "ed2bddf3ece5bf7bf4fd134c1fad973"
  *     responses:
  *       '200':    
  *         description: OK.
@@ -288,6 +280,40 @@ router.post('/updateRedirect', async (req: Request, res: Response) => {
     res.json(response);
 });
 
+/**
+ * @openapi
+ *  /Oauth/app/giveUserInfo:
+ *   get:
+ *     tag:
+ *     - VP, application, userInfo
+ *     summary: make VP
+ *     description: select needed data and make VP to send
+ *     parameters:
+ *       - in: query
+ *         required: true
+ *         description: application's information request
+ *         schema:
+ *           type: string
+ *           example: "ed2bddf3ece5bf7bf4fd134c1fad973"
+ *     responses:
+ *       '200':    
+ *         description: OK.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/Response'
+ *       '404':
+ *         description: uri not found.
+ * components:
+ *   Response:
+ *     type: 
+ *     properties:
+ *       status:
+ *         type: boolean
+ *     required:
+ *     - status
+ */
+
 router.get('/giveUserInfo', async (req: Request, res: Response) => {
     const { restAPI } = req.query;
 
@@ -300,6 +326,58 @@ router.get('/giveUserInfo', async (req: Request, res: Response) => {
     res.json(response);
 });
 
+/**
+ * @openapi
+ *  /Oauth/app/userdidregister:
+ *   post:
+ *     tag:
+ *     - register, did, application
+ *     summary: sync user with specific application
+ *     description: sync user with specific application
+ *     parameters:
+ *       - in: body
+ *         required: true
+ *         description: information of application, user
+ *         schema:
+ *           type: object
+ *           properties : 
+ *              email :
+ *                  type: string
+ *                  example : "619049@naver.com"
+ *              restAPI :
+ *                type : string
+ *                example: "ed2bddf3ece5bf7bf4fd134c1fad973"
+ *              point :
+ *                type : integer
+ *                example: "50000"
+ *              hash :
+ *                type : string
+ *                example: "ed2bddf3ece5bf7bf4fd134c1fad973"
+ *              giveUserInfo :
+ *                type : array
+ *                example : [true, false, true, false, true, false]     
+ *     responses:
+ *       '200':    
+ *         description: OK.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/Response'
+ *       '404':
+ *         description: uri not found.
+ * components:
+ *   Response:
+ *     type: 
+ *     properties:
+ *       status:
+ *         type: boolean
+ *       msg:
+ *         type: string
+ *     required:
+ *     - status
+ *     - string
+ */
+
 router.post('/userdidregister', async (req: Request, res: Response) => {
     // const { restAPI, email, point, hash, giveUserInfo } = req.body;
     try {
@@ -310,6 +388,58 @@ router.post('/userdidregister', async (req: Request, res: Response) => {
     }
     res.json(response);
 });
+
+/**
+ * @openapi
+ *  /Oauth/app/userdidregister:
+ *   post:
+ *     tag:
+ *     - register, did, application
+ *     summary: sync user with specific application
+ *     description: sync user with specific application
+ *     parameters:
+ *       - in: body
+ *         required: true
+ *         description: information of application, user
+ *         schema:
+ *           type: object
+ *           properties : 
+ *              email :
+ *                  type: string
+ *                  example : "619049@naver.com"
+ *              restAPI :
+ *                type : string
+ *                example: "ed2bddf3ece5bf7bf4fd134c1fad973"
+ *              point :
+ *                type : integer
+ *                example: "50000"
+ *              hash :
+ *                type : string
+ *                example: "ed2bddf3ece5bf7bf4fd134c1fad973"
+ *              giveUserInfo :
+ *                type : array
+ *                example : [true, false, true, false, true, false]     
+ *     responses:
+ *       '200':    
+ *         description: OK.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/Response'
+ *       '404':
+ *         description: uri not found.
+ * components:
+ *   Response:
+ *     type: 
+ *     properties:
+ *       status:
+ *         type: boolean
+ *       msg:
+ *         type: string
+ *     required:
+ *     - status
+ *     - string
+ */
 
 router.get('/getPoint', async (req: Request, res: Response) => {
     const { restAPI, email } = req.query;
