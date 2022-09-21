@@ -353,8 +353,8 @@ router.post('/updateRedirect', async (req: Request, res: Response) => {
  *   get:
  *     tag:
  *     - VP, application, userInfo
- *     summary: make VP
- *     description: select needed data and make VP to send
+ *     summary: sned list of needed information
+ *     description: 연동 어플리케이션이 제공받는 정보를 체크 후, 리스트 생성
  *     parameters:
  *       - in: query
  *         name : restAPI
@@ -369,7 +369,7 @@ router.post('/updateRedirect', async (req: Request, res: Response) => {
  *               $ref: '#/components/Response/giveUserInfo'
  *       '404':
  *         description: uri not found.
-  * components:
+ * components:
  *   Response:
  *     giveUserInfo:
  *       type: object
@@ -405,7 +405,7 @@ router.get('/giveUserInfo', async (req: Request, res: Response) => {
  *     tag:
  *     - register, did, application
  *     summary: sync user with specific application
- *     description: sync user with specific application
+ *     description: 사용자를 어플리케이션 SSO 기능에 연동
  *     parameters:
  *       - in: body
  *         required: true
@@ -434,20 +434,22 @@ router.get('/giveUserInfo', async (req: Request, res: Response) => {
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/Response'
+ *               $ref: '#/components/Response/userdidregister'
  *       '404':
  *         description: uri not found.
  * components:
  *   Response:
- *     type: 
- *     properties:
- *       status:
- *         type: boolean
- *       msg:
- *         type: string
- *     required:
- *     - status
- *     - string
+ *     userdidregister:
+ *       type: object
+ *       properties:
+ *         status:
+ *           type: boolean
+ *           example: true
+ *         msg:
+ *           type: string
+ *           example: '정상적으로 등록되었습니다. 다시 로그인해주세요.'
+ *       required:
+ *       - status
  */
 
 router.post('/userdidregister', async (req: Request, res: Response) => {
@@ -468,51 +470,51 @@ router.post('/userdidregister', async (req: Request, res: Response) => {
  *     tag:
  *     -user, point, application
  *     summary: load user's point
- *     description: show uer's point using emal, restAPI
+ *     description: 사용자의 포인트 정보를 전송
  *     parameters:
  *       - in: query
+ *         name : restAPI
+ *         type : string
+ *         example : 
  *         required: true
- *         description: user's email, application's restAPI
- *         schema:
- *           type: object
- *           properties : 
- *              email :
- *                  type: string
- *                  example : "619049@naver.com"
- *              restAPI :
- *                type : string
- *                example: "ed2bddf3ece5bf7bf4fd134c1fad973" 
+ *       - in : query
+ *         name : email
+ *         type : string
+ *         example : 
+ *         required : true
  *     responses:
  *       '200':    
  *         description: OK.
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/Response'
+ *               $ref: '#/components/Response/getPoint'
  *       '404':
  *         description: uri not found.
  * components:
  *   Response:
- *     type: 
- *     properties:
- *       status:
- *         type: boolean
- *       msg:
- *         type: string
- *     required:
- *     - status
- *     - string
+ *     getPoint:
+ *       type: object
+ *       properties:
+ *         status:
+ *           type: boolean
+ *           example: true
+ *         msg:
+ *           type: integer
+ *           example: 50000
+ *       required:
+ *       - status
  */
 
-router.get('/getPoint', async (req: Request, res: Response) => {
-    const { restAPI, email } = req.query;
-    try {
-        response = await appService.getPoint(restAPI, email);
-        if (response.status !== true) throw new Error(response.msg);
-    } catch (e) {
-        if (e instanceof Error) console.log(e.message);
-    }
-    res.json(response);
-});
+// router.get('/getPoint', async (req: Request, res: Response) => {
+//     const { restAPI, email } = req.query;
+//     try {
+//         response = await appService.getPoint(restAPI, email);
+//         if (response.status !== true) throw new Error(response.msg);
+//     } catch (e) {
+//         if (e instanceof Error) console.log(e.message);
+//     }
+//     res.json(response);
+// });
 
 export default router;

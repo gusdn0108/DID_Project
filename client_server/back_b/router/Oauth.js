@@ -59,7 +59,7 @@ router.get('/getCode', async (req, res) => {
 
         const vpCookie = filterNull(VP);
 
-        let stringCookie = { email };
+        let stringCookie = { email, hash };
         for (let i = 0; i < vpCookie.length; i++) {
             stringCookie = { ...stringCookie, [vpCookie[i].att]: vpCookie[i].value };
         }
@@ -138,7 +138,7 @@ router.post('/giveUserinfo', async (req, res) => {
 router.get('/getoauthPoint', async (req, res) => {
     const { email } = req.query;
     try {
-        const response = await axios.get(`${oauth_Back}/oauth/app/getPoint?email=${email}&restAPI=${Otp.clientId}`);
+        const response = await axios.get(`${oauth_Back}/oauth/point/getPoint?email=${email}&restAPI=${Otp.clientId}`);
         if (response.data.status == false) throw new Error(response.data.msg);
 
         res.json({
