@@ -1,5 +1,5 @@
 import express from 'express';
-import router from './routers'
+import router from './routers';
 import dotenv from 'dotenv';
 import sequelize from './models';
 import cors from 'cors';
@@ -13,20 +13,18 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(
     cors({
-        origin: '*',
+        origin: ['*', ' http://3.35.86.127:80 ', 'http://3.35.86.127'],
         credentials: true,
     }),
 );
 app.use('/Oauth', router);
-app.use('/api-docs',swaggerUi.serve, swaggerUi.setup(swaggerSpec))
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-
-app.listen(8000, async() => {
-    try{
-    await sequelize.sync({force:false});
-    console.log('db connected!!')
-    }
-    catch (e){
+app.listen(8000, async () => {
+    try {
+        await sequelize.sync({ force: false });
+        console.log('db connected!!');
+    } catch (e) {
         if (e instanceof Error) console.log(e);
     }
     console.log('oauth server start 8000');

@@ -38,7 +38,7 @@ const userAppRegister = ({
   const attributes = getUserInfo.map((v, k) => {
     return /*#__PURE__*/react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx(_chakra_ui_react__WEBPACK_IMPORTED_MODULE_0__.Box, {
       mb: "5%",
-      fontSize: "105%",
+      fontSize: '105%',
       children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)(_chakra_ui_react__WEBPACK_IMPORTED_MODULE_0__.Flex, {
         children: ["- ", v.att]
       })
@@ -47,7 +47,7 @@ const userAppRegister = ({
 
   const didRegister = async () => {
     const codeUrl = location.href;
-    const email = codeUrl.split("?")[1].split("&")[0].split("=")[1];
+    const email = codeUrl.split('?')[1].split('&')[0].split('=')[1];
     const response = await axios__WEBPACK_IMPORTED_MODULE_1___default().post(`${_utils_ip_js__WEBPACK_IMPORTED_MODULE_3__/* .backend */ .y3}/oauth/app/userdidregister`, {
       restAPI,
       email,
@@ -65,7 +65,7 @@ const userAppRegister = ({
   return /*#__PURE__*/react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.Fragment, {
     children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)(_chakra_ui_react__WEBPACK_IMPORTED_MODULE_0__.Box, {
       border: "1px",
-      borderColor: "gray.200",
+      borderColor: 'gray.200',
       w: "35%",
       mx: "auto",
       my: "10%",
@@ -74,7 +74,7 @@ const userAppRegister = ({
       py: "6%",
       children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)(_chakra_ui_react__WEBPACK_IMPORTED_MODULE_0__.Flex, {
         h: "10%",
-        alignItems: "center",
+        alignItems: 'center',
         pb: "12%",
         children: [/*#__PURE__*/react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx(_chakra_ui_react__WEBPACK_IMPORTED_MODULE_0__.Img, {
           src: "https://k.kakaocdn.net/14/dn/btqmdPkHR5M/DrrBuObYWlfrBaNkokh3J0/o.jpg",
@@ -82,23 +82,23 @@ const userAppRegister = ({
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)(_chakra_ui_react__WEBPACK_IMPORTED_MODULE_0__.Box, {
           w: "20%",
           mx: "5%",
-          textAlign: "center",
+          textAlign: 'center',
           children: [/*#__PURE__*/react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx(_chakra_ui_react__WEBPACK_IMPORTED_MODULE_0__.Text, {
-            fontSize: "90%",
+            fontSize: '100%',
             pr: "15%",
             children: appName
           }), /*#__PURE__*/react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx(_chakra_ui_react__WEBPACK_IMPORTED_MODULE_0__.Text, {
-            fontSize: "75%",
+            fontSize: '75%',
             color: "gray.500",
-            textAlign: "left",
+            textAlign: 'left',
             px: "7%",
             children: "sila"
           })]
         }), /*#__PURE__*/react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx(_chakra_ui_react__WEBPACK_IMPORTED_MODULE_0__.Box, {
           w: "80%",
           children: /*#__PURE__*/react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx(_chakra_ui_react__WEBPACK_IMPORTED_MODULE_0__.Text, {
-            textAlign: "left",
-            fontSize: "4%",
+            textAlign: 'left',
+            fontSize: "5%",
             mt: "2%",
             children: "\uC11C\uBE44\uC2A4 \uC81C\uACF5\uC744 \uC704\uD574, \uB2E4\uC74C \uC0AC\uC6A9\uC790 \uC815\uBCF4 \uC81C\uACF5\uC5D0 \uB3D9\uC758\uD574\uC8FC\uC138\uC694!"
           })
@@ -108,7 +108,7 @@ const userAppRegister = ({
         my: "4%"
       }), /*#__PURE__*/react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx(_chakra_ui_react__WEBPACK_IMPORTED_MODULE_0__.Flex, {
         h: "20%",
-        fontWeight: "800",
+        fontWeight: '800',
         children: /*#__PURE__*/react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx(_chakra_ui_react__WEBPACK_IMPORTED_MODULE_0__.Checkbox, {
           children: "\uC57D\uAD00 \uB3D9\uC758\uD558\uAE30"
         })
@@ -118,10 +118,10 @@ const userAppRegister = ({
       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)(_chakra_ui_react__WEBPACK_IMPORTED_MODULE_0__.Box, {
         py: "2%",
         children: [/*#__PURE__*/react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx(_chakra_ui_react__WEBPACK_IMPORTED_MODULE_0__.Flex, {
-          justifyContent: "space-around",
+          justifyContent: 'space-around',
           py: "2%",
           children: /*#__PURE__*/react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx(_chakra_ui_react__WEBPACK_IMPORTED_MODULE_0__.Text, {
-            fontSize: "80%",
+            fontSize: '80%',
             children: "\uC57D\uAD00 \uB3D9\uC758\uB294 \uB2E4\uC74C \uC815\uBCF4\uB4E4\uC758 \uC81C\uACF5\uACFC \uC81C\uACF5 \uBAA9\uC801\uC5D0 \uB300\uD55C \uB3D9\uC758\uB97C \uD3EC\uD568\uD558\uACE0 \uC788\uC2B5\uB2C8\uB2E4."
           })
         }), /*#__PURE__*/react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx(_chakra_ui_react__WEBPACK_IMPORTED_MODULE_0__.Flex, {
@@ -130,7 +130,7 @@ const userAppRegister = ({
             children: attributes
           })
         }), /*#__PURE__*/react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx(_chakra_ui_react__WEBPACK_IMPORTED_MODULE_0__.Flex, {
-          justifyContent: "center",
+          justifyContent: 'center',
           children: /*#__PURE__*/react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx(_chakra_ui_react__WEBPACK_IMPORTED_MODULE_0__.Button, {
             onClick: didRegister,
             mt: "5%",
@@ -174,9 +174,9 @@ const getServerSideProps = async ctx => {
 /* harmony export */   "y3": () => (/* binding */ backend)
 /* harmony export */ });
 /* unused harmony export cookieDomain */
-const backend = "localhost:8000";
-const frontend = "localhost:8080";
-const cookieDomain = "localhost";
+const backend = 'http://3.39.202.148';
+const frontend = 'http://3.35.86.127:80';
+const cookieDomain = 'localhost';
 
 /***/ }),
 
