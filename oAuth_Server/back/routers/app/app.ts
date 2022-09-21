@@ -6,6 +6,55 @@ const router = express.Router();
 const MAX_REDIRECT_URI_NUM = 5;
 let response: IResponse_App;
 
+/**
+ * @openapi
+ * /Oauth/app/apiDistribution: 
+ *   post:
+ *     tag:
+ *     - call_my_app
+ *     summary: transfer data of applications
+ *     description: Optional
+ *     parameters:
+ *       - in: body
+ *         name: ''
+ *         required: true
+ *         description: application owner's email
+ *         schema:
+ *            type: object
+ *            properties:
+ *              email:
+ *                  type: string
+ *                  example: 'test@gmail.com'
+ *              appName:
+ *                  type: string
+ *                  example: 'localB'
+ *     responses:
+ *       '200':    
+ *         description: OK.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/Response/apiDistribution'
+ *       '404':
+ *         description: uri not found.
+ * components:
+ *   Response:
+ *     apiDistribution:
+ *      type: object
+ *      properties:
+ *       status:
+ *         type: boolean
+ *         example : true
+ *       msg:
+ *         type: string
+ *         example : '성공적으로 등록되었습니다.'
+ *       REST_API:
+ *          type : string
+ *          example : "ed2bddf3ece5bf7bf4fd134c1fad973"
+ *     required:
+ *     - status
+ */
+
 
 router.post('/apiDistribution', async (req: Request, res: Response) => {
     const { appName, email } = req.body;
@@ -23,36 +72,39 @@ router.post('/apiDistribution', async (req: Request, res: Response) => {
  * /Oauth/app/getMyApp: 
  *   post:
  *     tag:
- *     - call, application
+ *     - call_my_app
  *     summary: transfer data of applications
  *     description: Optional 디스크립션
  *     parameters:
  *       - in: body
- *         name: email
+ *         name: 'email'
  *         required: true
  *         description: application owner's email
- *         schema:
- *           type: string
- *           example: "test@gmail.com"
+ *         schema :
+ *           type : string
+ *           example: "loerain111@gmail.com"
  *     responses:
  *       '200':    
  *         description: OK.
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/Response'
+ *               $ref: '#/components/Response/getMyApp'
  *       '404':
  *         description: uri not found.
  * components:
  *   Response:
- *     type: array
- *     properties:
- *       status:
- *         type: boolean
- *       myapp:
- *         type: array
- *     required:
- *     - status
+ *     getMyApp:
+ *       type: object
+ *       properties:
+ *         status:
+ *           type: boolean
+ *           example : true
+ *         myapp:
+ *           type: array
+ *           example : ['localB', 'testApp']
+ *       required:
+ *       - status
  */
 
 router.post('/getMyApp', async (req: Request, res: Response) => {
@@ -290,11 +342,9 @@ router.post('/updateRedirect', async (req: Request, res: Response) => {
  *     description: select needed data and make VP to send
  *     parameters:
  *       - in: query
+ *         name : restAPI
+ *         type : string
  *         required: true
- *         description: application's information request
- *         schema:
- *           type: string
- *           example: "ed2bddf3ece5bf7bf4fd134c1fad973"
  *     responses:
  *       '200':    
  *         description: OK.
@@ -391,16 +441,16 @@ router.post('/userdidregister', async (req: Request, res: Response) => {
 
 /**
  * @openapi
- *  /Oauth/app/userdidregister:
- *   post:
+ *  /Oauth/app/getPoint:
+ *   get:
  *     tag:
- *     - register, did, application
- *     summary: sync user with specific application
- *     description: sync user with specific application
+ *     -user, point, application
+ *     summary: load user's point
+ *     description: show uer's point using emal, restAPI
  *     parameters:
- *       - in: body
+ *       - in: query
  *         required: true
- *         description: information of application, user
+ *         description: user's email, application's restAPI
  *         schema:
  *           type: object
  *           properties : 
@@ -409,16 +459,7 @@ router.post('/userdidregister', async (req: Request, res: Response) => {
  *                  example : "619049@naver.com"
  *              restAPI :
  *                type : string
- *                example: "ed2bddf3ece5bf7bf4fd134c1fad973"
- *              point :
- *                type : integer
- *                example: "50000"
- *              hash :
- *                type : string
- *                example: "ed2bddf3ece5bf7bf4fd134c1fad973"
- *              giveUserInfo :
- *                type : array
- *                example : [true, false, true, false, true, false]     
+ *                example: "ed2bddf3ece5bf7bf4fd134c1fad973" 
  *     responses:
  *       '200':    
  *         description: OK.
