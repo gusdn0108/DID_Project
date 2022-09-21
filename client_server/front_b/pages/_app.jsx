@@ -45,18 +45,14 @@ function MyApp({ Component, pageProps }) {
   let didEmail = "";
 
   if (!userCookie && accessToken) {
-    let userHash = JSON.parse(
-      Buffer.from(accessToken, "base64").toString("utf-8")
-    ).hash;
-
     let userInfo = JSON.parse(
       Buffer.from(accessToken, "base64").toString("utf-8")
     ).stringCookie;
 
-    didHash = userHash;
-    didName = userInfo.split("&")[0].split("=")[1];
-    didMobile = userInfo.split("&")[1].split("=")[1];
-    didEmail = userInfo.split("&")[2].split("=")[1].split("&")[0];
+    didHash = userInfo.hash;
+    didName = userInfo.name;
+    didMobile = userInfo.mobile;
+    didEmail = userInfo.email;
   }
 
   const setDidUserInfo = () => {

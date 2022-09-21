@@ -9,8 +9,8 @@ const filterNull = (uris) => {
     return newRedirectUri;
 };
 
-const oauth_Front = 'localhost:8080';
-const oauth_Back = 'localhost:8000';
-const frontEnd = 'localhost:3003';
+const oauth_Front = 'http://localhost:8080';
+const oauth_Back = 'http://localhost:8000';
+const frontEnd = 'http://localhost:3003';
 
 module.exports = { filterNull, oauth_Front, oauth_Back, frontEnd };

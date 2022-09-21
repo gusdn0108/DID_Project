@@ -4,8 +4,10 @@ import { useEffect, useState } from 'react';
 import crypto from 'crypto';
 import { deleteCookie } from 'cookies-next';
 import LoadingModal from '../components/LoadingModal.jsx';
+import { backend } from '../utils/ip.js';
+import Header from '../components/Header.jsx';
 
-const Mypage = ({ hashId, email }) => {
+const Mypage = ({ hashId, email, user }) => {
   const [name, setName] = useState('');
   const [gender, setGender] = useState('');
   const [age, setAge] = useState('');
@@ -51,7 +53,9 @@ const Mypage = ({ hashId, email }) => {
   };
 
   const getUserInfo = async () => {
-    const response = await axios.post('http://localhost:8000/Oauth/user/searchUser', { hashId: hashId });
+    const response = await axios.post(`${backend}/Oauth/user/searchUser`, {
+      hashId: hashId,
+    });
 
     setName(response.data.name);
     setAddr(response.data.addr);
@@ -101,7 +105,7 @@ const Mypage = ({ hashId, email }) => {
       newPw,
     };
 
-    const response = await axios.post('http://localhost:8000/Oauth/user/upDatePassword', body);
+    const response = await axios.post(`${backend}/Oauth/user/upDatePassword`, body);
 
     if (response.data.status == true) {
       onClose();
@@ -127,7 +131,7 @@ const Mypage = ({ hashId, email }) => {
       hashId,
     };
 
-    const response = await axios.post('http://localhost:8000/Oauth/user/upDateUser', body);
+    const response = await axios.post(`${backend}/Oauth/user/upDateUser`, body);
 
     if (response.data.status == true) {
       setName(response.data.name);
@@ -146,8 +150,10 @@ const Mypage = ({ hashId, email }) => {
 
   const deleteUser = async (req, res) => {
     setLoading(false);
-    onOpen();
-    const response = await axios.post('http://localhost:8000/oauth/user/deleteUser', { hashId, email });
+    const response = await axios.post(`${backend}/oauth/user/deleteUser`, {
+      hashId,
+      email,
+    });
 
     if (response.data.status) {
       onClose();
@@ -167,150 +173,150 @@ const Mypage = ({ hashId, email }) => {
   }, []);
 
   return (
-    <Center w="100%" h="100%" pt="5%" px="5%" bg="#160627">
-      <Box w="40%" m="0 5%" h={pwCheck ? '100rem' : '55rem'} pt="5rem" px="6%">
-        {pwCheck === false ? (
-          <>
-            <Center>
-              <Box w="100%">
-                <Text textAlign={'center'} fontSize={'200%'} mb="2rem" color="White">
-                  {' '}
-                  회원정보
-                </Text>
-              </Box>
-            </Center>
+    <>
+      <Header user={user} />
+      <Center w="100%" h="100%" pt="10%" px="5%" bg="#160627">
+        <Box w="40%" m="10% 5% 25% 5%" h={pwCheck ? '100rem' : '55rem'} p="8% 0" px="6%" border="2px solid #fff" borderRadius="1rem">
+          {pwCheck === false ? (
+            <>
+              <Center>
+                <Box w="100%">
+                  <Text textAlign={'center'} fontSize={'200%'} mb="2rem" color="White">
+                    {' '}
+                    회원정보
+                  </Text>
+                </Box>
+              </Center>
 
-            <Divider />
-            <Text fontSize={'130%'} mt="2rem" mb="1rem" color="White">
-              {' '}
-              비밀번호 입력
-            </Text>
-            <Input type="password" style={{ color: 'white' }} placeholder="패스워드를 입력해주세요" id="password" size="md" onChange={setPwdCheckfunction} />
-
-            <Center>
-              <Button mb="1rem" mt="2rem" onClick={checkPwdfunction} w="30%">
+              <Divider />
+              <Text fontSize={'130%'} mt="2rem" mb="1rem" color="White">
                 {' '}
-                확인
-              </Button>
-            </Center>
-            <Center>
-              <Button
-                onClick={(req, res) => {
-                  deleteCookie('user', {
-                    req,
-                    res,
-                    maxAge: 60 * 60 * 24 * 1000,
-                  });
-                  //        setIsLogin(false);
-                  window.location.replace('/');
-                }}
-                color="#160627"
-                w="30%"
-              >
-                LOGOUT
-              </Button>
-            </Center>
-          </>
-        ) : (
-          <Box w="100%" h="100%" pt="5%" px="5%" bg="#160627">
-            <FormControl mt="3">
-              <Text fontSize={'175%'} px="25%" mb="3%" color="white">
-                회원정보수정
+                비밀번호 입력
               </Text>
-              <FormLabel fontSize={'140%'} px="2%" mb="3%" color="white">
-                이메일
-              </FormLabel>
-              <Input type="text" style={{ color: 'white' }} id="userEmail" value={email} size="md" mb="5%" disabled />
+              <Input type="password" style={{ color: 'white' }} placeholder="패스워드를 입력해주세요" id="password" size="md" onChange={setPwdCheckfunction} />
 
-              <FormLabel fontSize={'140%'} px="2%" color="white">
-                이름
-              </FormLabel>
-              <Input type="text" style={{ color: 'white' }} placeholder="이름을 입력해주세요" size="md" mb="5%" value={name} onChange={getName} />
-
-              <FormLabel fontSize={'140%'} px="2%" mb="2%" color="white" textAlign="center">
-                성별
-                <Text mt="2%" mb="5%">
-                  {gender === 'f' ? `여성 🚺` : `남성 🚹`}
-                </Text>
-              </FormLabel>
-
-              <FormLabel fontSize={'140%'} px="2%" color="white">
-                나이
-              </FormLabel>
-              <Input placeholder="나이를 입력해주세요" style={{ color: 'white' }} mb="5%" size="md" value={age} onChange={getAge} />
-
-              <FormLabel fontSize={'140%'} px="2%" color="white">
-                주소
-              </FormLabel>
-              <Input type="text" mb="5%" size="md" style={{ color: 'white' }} placeholder="주소를 입력해주세요" value={addr} onChange={getAddress} />
-
-              <FormLabel fontSize={'140%'} px="2%" color="white">
-                전화번호
-              </FormLabel>
-              <Input type="mobile" mb="5%" size="md" style={{ color: 'white' }} placeholder="전화번호를 입력해주세요" value={mobile} onChange={getMobile} />
-            </FormControl>
-            {loading ? (
-              <Center>
-                <Button color="#160627" mb="2rem" onClick={updateUser}>
-                  변경하기
-                </Button>
-              </Center>
-            ) : (
-              <LoadingModal isOpen={isOpen} onClose={onClose} />
-            )}
-            <Divider />
-
-            <Text fontSize={'175%'} px="25%" pt="4rem" color="white">
-              비밀 번호 수정
-            </Text>
-
-            <FormLabel fontSize={'140%'} px="2%" pt="2rem" color="white">
-              변경 할 비밀번호
-            </FormLabel>
-            <Input type="password" style={{ color: 'white' }} placeholder="패스워드를 입력해주세요" id="password" size="md" onChange={getNewPw} />
-            <Text my="4%" px="2%" color={psError == true ? 'green' : 'red'} fontSize="1rem">
-              {psError === '' ? null : psError ? '사용 가능한 비밀번호입니다.' : '비밀번호는 영문자, 숫자, 특수문자 포함 8~15자여야 합니다.'}
-            </Text>
-            <FormLabel fontSize={'140%'} px="2%" pt="2rem" color="white">
-              비밀번호 확인
-            </FormLabel>
-            <Input type="password" style={{ color: 'white' }} placeholder="패스워드를 입력해주세요" id="password" size="md" onChange={confirmPw} />
-            {loading ? (
-              <Center>
-                {' '}
-                <Button
-                  mb="2rem"
-                  mt="2rem"
-                  color="#160627"
-                  disabled={confirmNewPw === newPw ? false : true}
-                  onClick={updatePassword} //updatePassword setLoading(false)
-                >
-                  변경하기
-                </Button>
-              </Center>
-            ) : (
-              <LoadingModal isOpen={isOpen} onClose={onClose} />
-            )}
-            <Divider />
-            <Text fontSize={'180%'} px="35%" pt="4rem" color="white" textAlign={'center'}>
-              {' '}
-              회원 탈퇴{' '}
-            </Text>
-
-            {loading ? (
-              <Center>
-                <Button color="#160627" mb="2rem" mt="2rem" onClick={deleteUser}>
+              <Center mt="5%">
+                <Button onClick={checkPwdfunction} w="30%" mx="3%">
                   {' '}
-                  회원탈퇴버튼
+                  확인
+                </Button>
+                <Button
+                  onClick={(req, res) => {
+                    deleteCookie('user', {
+                      req,
+                      res,
+                      maxAge: 60 * 60 * 24 * 1000,
+                    });
+                    //        setIsLogin(false);
+                    window.location.replace('/');
+                  }}
+                  color="#160627"
+                  w="30%"
+                  mx="3%"
+                >
+                  LOGOUT
                 </Button>
               </Center>
-            ) : (
-              <LoadingModal isOpen={isOpen} onClose={onClose} />
-            )}
-          </Box>
-        )}
-      </Box>
-    </Center>
+            </>
+          ) : (
+            <Box w="100%" h="100%" pt="5%" px="5%" bg="#160627">
+              <FormControl mt="3">
+                <Text fontSize={'225%'} px="25%" mb="5%" color="white" textAlign={'center'}>
+                  회원정보수정
+                </Text>
+                <FormLabel fontSize={'125%'} px="2%" mb="3%" color="white">
+                  이메일
+                </FormLabel>
+                <Input type="text" style={{ color: 'white' }} id="userEmail" value={email} size="md" mb="5%" disabled />
+
+                <FormLabel fontSize={'125%'} px="2%" color="white">
+                  이름
+                </FormLabel>
+                <Input type="text" style={{ color: 'white' }} placeholder="이름을 입력해주세요" size="md" mb="5%" value={name} onChange={getName} />
+
+                <FormLabel fontSize={'125%'} px="2%" mb="2%" color="white">
+                  성별
+                </FormLabel>
+                <Input type="text" style={{ color: 'white' }} size="md" mb="5%" value={gender === 'f' ? `여성` : `남성`} disabled="true" />
+
+                <FormLabel fontSize={'125%'} px="2%" color="white">
+                  나이
+                </FormLabel>
+                <Input placeholder="나이를 입력해주세요" style={{ color: 'white' }} mb="5%" size="md" value={age} onChange={getAge} />
+
+                <FormLabel fontSize={'125%'} px="2%" color="white">
+                  주소
+                </FormLabel>
+                <Input type="text" mb="5%" size="md" style={{ color: 'white' }} placeholder="주소를 입력해주세요" value={addr} onChange={getAddress} />
+
+                <FormLabel fontSize={'125%'} px="2%" color="white">
+                  전화번호
+                </FormLabel>
+                <Input type="mobile" mb="5%" size="md" style={{ color: 'white' }} placeholder="전화번호를 입력해주세요" value={mobile} onChange={getMobile} />
+              </FormControl>
+              {loading ? (
+                <Center>
+                  <Button color="#160627" mb="2rem" onClick={updateUser}>
+                    변경하기
+                  </Button>
+                </Center>
+              ) : (
+                <LoadingModal isOpen={isOpen} onClose={onClose} />
+              )}
+              <Divider />
+
+              <Text fontSize={'225%'} px="25%" pt="4rem" color="white" textAlign={'center'}>
+                비밀 번호 수정
+              </Text>
+
+              <FormLabel fontSize={'125%'} px="2%" pt="2rem" color="white">
+                변경 할 비밀번호
+              </FormLabel>
+              <Input type="password" style={{ color: 'white' }} placeholder="패스워드를 입력해주세요" id="password" size="md" onChange={getNewPw} />
+              <Text my="4%" px="2%" color={psError == true ? 'green' : 'red'} fontSize="1rem">
+                {psError === '' ? null : psError ? '사용 가능한 비밀번호입니다.' : '비밀번호는 영문자, 숫자, 특수문자 포함 8~15자여야 합니다.'}
+              </Text>
+              <FormLabel fontSize={'140%'} px="2%" pt="2rem" color="white">
+                비밀번호 확인
+              </FormLabel>
+              <Input type="password" style={{ color: 'white' }} placeholder="패스워드를 입력해주세요" id="password" size="md" onChange={confirmPw} />
+              {loading ? (
+                <Center>
+                  {' '}
+                  <Button
+                    mb="2rem"
+                    mt="2rem"
+                    color="#160627"
+                    disabled={confirmNewPw === newPw ? false : true}
+                    onClick={updatePassword} //updatePassword setLoading(false)
+                  >
+                    변경하기
+                  </Button>
+                </Center>
+              ) : (
+                <LoadingModal isOpen={isOpen} onClose={onClose} />
+              )}
+              <Divider />
+              <Text fontSize={'210%'} px="35%" pt="4rem" color="white" textAlign={'center'}>
+                {' '}
+                회원 탈퇴{' '}
+              </Text>
+
+              {loading ? (
+                <Center>
+                  <Button color="#160627" mb="5%" mt="5%" onClick={deleteUser}>
+                    {' '}
+                    회원탈퇴버튼
+                  </Button>
+                </Center>
+              ) : (
+                <LoadingModal isOpen={isOpen} onClose={onClose} />
+              )}
+            </Box>
+          )}
+        </Box>
+      </Center>
+    </>
   );
 };
 
