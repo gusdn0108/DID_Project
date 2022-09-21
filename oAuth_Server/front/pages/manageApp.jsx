@@ -1,5 +1,5 @@
 import { Box, Flex, Text, Divider, useDisclosure, Center, Button, Th, Tr, Td, Table, Thead, Tbody, Input } from '@chakra-ui/react';
-import axios from 'axios';
+import { request } from '../utils/axios.js';
 import { useEffect, useState } from 'react';
 import { backend } from '../utils/ip.js';
 import AppModal from '../components/appModal.jsx';
@@ -19,7 +19,7 @@ const manageApp = ({ appList, email, user }) => {
   const [impact, setImpact] = useState(false);
 
   const getAppinfo = async (restAPI) => {
-    const response = await axios.post(`${backend}/oauth/app/appinfo`, {
+    const response = await request.post(`/oauth/app/appinfo`, {
       restAPI,
     });
 
@@ -46,7 +46,7 @@ const manageApp = ({ appList, email, user }) => {
       alert(`uri 설정을 완료한 후 계속 진행해주세요.`);
       return;
     }
-    const response = await axios.post(`${backend}/oauth/app/updateRedirect`, {
+    const response = await request.post(`/oauth/app/updateRedirect`, {
       restAPI: appRestAPI,
       uris: uri,
     });
@@ -56,7 +56,7 @@ const manageApp = ({ appList, email, user }) => {
   const changeReq = async (k) => {
     getUserInfo[k].get = !getUserInfo[k].get;
 
-    const response = await axios.post(`${backend}/oauth/app/getInfoUpdate`, {
+    const response = await request.post(`/oauth/app/getInfoUpdate`, {
       getUserInfo: getUserInfo,
       restAPI: appRestAPI,
     });
@@ -117,7 +117,7 @@ const manageApp = ({ appList, email, user }) => {
   });
 
   const getMyApp = async () => {
-    const response = await axios.post(`${backend}/oauth/app/getMyApp`, {
+    const response = await request.post(`/oauth/app/getMyApp`, {
       email: email,
     });
 
@@ -128,7 +128,7 @@ const manageApp = ({ appList, email, user }) => {
     const returnValue = confirm(`어플리케이션을 삭제하면 복구가 불가능 합니다. 정말 삭제하시겠습니까?`);
 
     if (returnValue == true) {
-      const response = await axios.post(`${backend}/oauth/app/deleteApp`, {
+      const response = await request.post(`/oauth/app/deleteApp`, {
         restAPI: appRestAPI,
         client_secret: appSecret,
       });
@@ -292,7 +292,7 @@ export const getServerSideProps = async (ctx) => {
 
   const email = JSON.parse(Buffer.from(cookieNeeded[1], 'base64').toString('utf-8')).email;
 
-  const response = await axios.post(`${backend}/oauth/app/getMyApp`, {
+  const response = await request.post(`/oauth/app/getMyApp`, {
     email: email,
   });
 

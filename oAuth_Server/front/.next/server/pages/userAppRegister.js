@@ -15,8 +15,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _chakra_ui_react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(8930);
 /* harmony import */ var _chakra_ui_react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_chakra_ui_react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2167);
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _utils_axios_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1826);
 /* harmony import */ var _utils_ip_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(9997);
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(997);
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__);
@@ -48,7 +47,7 @@ const userAppRegister = ({
   const didRegister = async () => {
     const codeUrl = location.href;
     const email = codeUrl.split('?')[1].split('&')[0].split('=')[1];
-    const response = await axios__WEBPACK_IMPORTED_MODULE_1___default().post(`${_utils_ip_js__WEBPACK_IMPORTED_MODULE_3__/* .backend */ .y3}/oauth/app/userdidregister`, {
+    const response = await _utils_axios_js__WEBPACK_IMPORTED_MODULE_1__/* .request.post */ .W.post(`/oauth/app/userdidregister`, {
       restAPI,
       email,
       point: 50000,
@@ -58,7 +57,7 @@ const userAppRegister = ({
 
     if (response.data.status == true) {
       alert(response.data.msg);
-      location.href = `${_utils_ip_js__WEBPACK_IMPORTED_MODULE_3__/* .frontend */ .tQ}/login?clientId=${restAPI}&redirectUri=${redirectUri}`;
+      location.href = `${_utils_ip_js__WEBPACK_IMPORTED_MODULE_3__.frontend}/login?clientId=${restAPI}&redirectUri=${redirectUri}`;
     }
   };
 
@@ -149,7 +148,7 @@ const getServerSideProps = async ctx => {
   const redirectUri = ctx.query.redirectUri;
   const hash = ctx.query.hash;
   const giveUserInfo = ctx.query.giveUserInfo;
-  const response = await axios__WEBPACK_IMPORTED_MODULE_1___default().get(`${_utils_ip_js__WEBPACK_IMPORTED_MODULE_3__/* .backend */ .y3}/oauth/app/giveUserInfo?restAPI=${restAPI}`);
+  const response = await _utils_axios_js__WEBPACK_IMPORTED_MODULE_1__/* .request.get */ .W.get(`/oauth/app/giveUserInfo?restAPI=${restAPI}`);
   return {
     props: {
       getUserInfo: response.data.infos?.filter(Boolean),
@@ -163,20 +162,6 @@ const getServerSideProps = async ctx => {
   };
 };
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (userAppRegister);
-
-/***/ }),
-
-/***/ 9997:
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "tQ": () => (/* binding */ frontend),
-/* harmony export */   "y3": () => (/* binding */ backend)
-/* harmony export */ });
-/* unused harmony export cookieDomain */
-const backend = 'http://3.39.202.148';
-const frontend = 'http://3.35.86.127:80';
-const cookieDomain = 'localhost';
 
 /***/ }),
 
@@ -208,7 +193,7 @@ module.exports = require("react/jsx-runtime");
 var __webpack_require__ = require("../webpack-runtime.js");
 __webpack_require__.C(exports);
 var __webpack_exec__ = (moduleId) => (__webpack_require__(__webpack_require__.s = moduleId))
-var __webpack_exports__ = (__webpack_exec__(3553));
+var __webpack_exports__ = __webpack_require__.X(0, [826], () => (__webpack_exec__(3553)));
 module.exports = __webpack_exports__;
 
 })();

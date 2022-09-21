@@ -19,17 +19,13 @@ __webpack_require__.d(__webpack_exports__, {
 
 // EXTERNAL MODULE: external "@chakra-ui/react"
 var react_ = __webpack_require__(8930);
-// EXTERNAL MODULE: external "axios"
-var external_axios_ = __webpack_require__(2167);
-var external_axios_default = /*#__PURE__*/__webpack_require__.n(external_axios_);
+// EXTERNAL MODULE: ./utils/axios.js
+var axios = __webpack_require__(1826);
 // EXTERNAL MODULE: external "react"
 var external_react_ = __webpack_require__(6689);
-// EXTERNAL MODULE: ./utils/ip.js
-var ip = __webpack_require__(9997);
 // EXTERNAL MODULE: external "react/jsx-runtime"
 var jsx_runtime_ = __webpack_require__(997);
 ;// CONCATENATED MODULE: ./components/appModal.jsx
-
 
 
 
@@ -49,12 +45,12 @@ const AppModal = ({
 
   const getRestApi = async () => {
     if (!appName) {
-      alert("어플리케이션 이름을 설정해주세요");
+      alert('어플리케이션 이름을 설정해주세요');
       return;
     }
 
     try {
-      const response = await external_axios_default().post(`${ip/* backend */.y3}/oauth/app/apiDistribution`, {
+      const response = await axios/* request.post */.W.post(`/oauth/app/apiDistribution`, {
         appName,
         email
       });
@@ -86,7 +82,7 @@ const AppModal = ({
             children: [/*#__PURE__*/jsx_runtime_.jsx(react_.FormLabel, {
               fontSize: "150%",
               mb: "3%",
-              textAlign: "center",
+              textAlign: 'center',
               children: "\uC5B4\uD50C\uB9AC\uCF00\uC774\uC158 \uC0DD\uC131"
             }), /*#__PURE__*/jsx_runtime_.jsx(react_.Input, {
               type: "text",
@@ -173,7 +169,7 @@ const manageApp = ({
   } = (0,external_react_.useState)(false);
 
   const getAppinfo = async restAPI => {
-    const response = await external_axios_default().post(`${ip/* backend */.y3}/oauth/app/appinfo`, {
+    const response = await axios/* request.post */.W.post(`/oauth/app/appinfo`, {
       restAPI
     });
     setWhichApp(response.data.result.appName);
@@ -199,7 +195,7 @@ const manageApp = ({
       return;
     }
 
-    const response = await external_axios_default().post(`${ip/* backend */.y3}/oauth/app/updateRedirect`, {
+    const response = await axios/* request.post */.W.post(`/oauth/app/updateRedirect`, {
       restAPI: appRestAPI,
       uris: uri
     });
@@ -208,7 +204,7 @@ const manageApp = ({
 
   const changeReq = async k => {
     getUserInfo[k].get = !getUserInfo[k].get;
-    const response = await external_axios_default().post(`${ip/* backend */.y3}/oauth/app/getInfoUpdate`, {
+    const response = await axios/* request.post */.W.post(`/oauth/app/getInfoUpdate`, {
       getUserInfo: getUserInfo,
       restAPI: appRestAPI
     });
@@ -302,7 +298,7 @@ const manageApp = ({
   });
 
   const getMyApp = async () => {
-    const response = await external_axios_default().post(`${ip/* backend */.y3}/oauth/app/getMyApp`, {
+    const response = await axios/* request.post */.W.post(`/oauth/app/getMyApp`, {
       email: email
     });
     setmyAppList(response.data.myapp);
@@ -312,7 +308,7 @@ const manageApp = ({
     const returnValue = confirm(`어플리케이션을 삭제하면 복구가 불가능 합니다. 정말 삭제하시겠습니까?`);
 
     if (returnValue == true) {
-      const response = await external_axios_default().post(`${ip/* backend */.y3}/oauth/app/deleteApp`, {
+      const response = await axios/* request.post */.W.post(`/oauth/app/deleteApp`, {
         restAPI: appRestAPI,
         client_secret: appSecret
       });
@@ -552,7 +548,7 @@ const getServerSideProps = async ctx => {
   }
 
   const email = JSON.parse(Buffer.from(cookieNeeded[1], 'base64').toString('utf-8')).email;
-  const response = await external_axios_default().post(`${ip/* backend */.y3}/oauth/app/getMyApp`, {
+  const response = await axios/* request.post */.W.post(`/oauth/app/getMyApp`, {
     email: email
   });
   return {
@@ -562,20 +558,6 @@ const getServerSideProps = async ctx => {
   };
 };
 /* harmony default export */ const pages_manageApp = (manageApp);
-
-/***/ }),
-
-/***/ 9997:
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "tQ": () => (/* binding */ frontend),
-/* harmony export */   "y3": () => (/* binding */ backend)
-/* harmony export */ });
-/* unused harmony export cookieDomain */
-const backend = 'http://3.39.202.148';
-const frontend = 'http://3.35.86.127:80';
-const cookieDomain = 'localhost';
 
 /***/ }),
 
@@ -663,7 +645,7 @@ module.exports = require("react/jsx-runtime");
 var __webpack_require__ = require("../webpack-runtime.js");
 __webpack_require__.C(exports);
 var __webpack_exec__ = (moduleId) => (__webpack_require__(__webpack_require__.s = moduleId))
-var __webpack_exports__ = __webpack_require__.X(0, [121,675,750], () => (__webpack_exec__(8505)));
+var __webpack_exports__ = __webpack_require__.X(0, [121,675,826,750], () => (__webpack_exec__(8505)));
 module.exports = __webpack_exports__;
 
 })();
