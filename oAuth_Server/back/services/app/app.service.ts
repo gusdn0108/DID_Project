@@ -1,14 +1,13 @@
-import axios from "axios";
-import { Failable, IResponse_App } from "../../@types/response";
-import TotalPoint from "../../models/user/totalPoint.model";
-import App from "../../models/webSite/app.model";
-import DataNeeded from "../../models/webSite/dataNeeded.model";
-import RedirectURI from "../../models/webSite/redirectURI.model";
-import { filterNotNeeded, filterNull, generateHash, getUserinfo, infoStringToBool, insertNewUri, makeRedirectUriList, noWhiteSpace, rawVP, refineVP, responseObject } from "../../routers/app/utils";
+import axios from 'axios';
+import { Failable, IResponse_App } from '../../@types/response';
+import TotalPoint from '../../models/user/totalPoint.model';
+import App from '../../models/webSite/app.model';
+import DataNeeded from '../../models/webSite/dataNeeded.model';
+import RedirectURI from '../../models/webSite/redirectURI.model';
+import { filterNotNeeded, filterNull, generateHash, getUserinfo, infoStringToBool, insertNewUri, makeRedirectUriList, noWhiteSpace, rawVP, refineVP, responseObject } from '../../routers/app/utils';
 
 let response: IResponse_App;
 const MAX_REDIRECT_URI_NUM = 5;
-
 
 const apiDistribution = async (appName: string, email: string) => {
     try {
@@ -53,7 +52,7 @@ const apiDistribution = async (appName: string, email: string) => {
     return response;
 };
 
-const getMyApp = async (email:string) => {
+const getMyApp = async (email: string) => {
     try {
         const myAppName = await App.findAll({
             where: {
@@ -64,13 +63,12 @@ const getMyApp = async (email:string) => {
         response = {
             status: true,
             myapp: myAppName,
-        }
+        };
     } catch (e) {
         response = responseObject(false, e.message);
     }
     return response;
 };
-
 
 const deleteApp = async (restAPI: string, client_secret: string) => {
     try {
@@ -100,15 +98,17 @@ const deleteApp = async (restAPI: string, client_secret: string) => {
                     restAPI,
                 },
             }),
-        ]).then(() => {
-            console.log('어플리케이션 정보 삭제 완료');
-        }).catch((e: any) => response = responseObject(false, e.message));
+        ])
+            .then(() => {
+                console.log('어플리케이션 정보 삭제 완료');
+            })
+            .catch((e: any) => (response = responseObject(false, e.message)));
 
         await App.destroy({
-            where : {
-                restAPI
-            }
-        })
+            where: {
+                restAPI,
+            },
+        });
         response = responseObject(true, '어플리케이션이 삭제되었습니다');
     } catch (e) {
         response = responseObject(false, e.message);
@@ -156,13 +156,13 @@ const appInfo = async (restAPI: string) => {
         };
         response = {
             status: true,
-            result
-        }
+            result,
+        };
     } catch (e) {
         response = responseObject(false, e.message);
     }
     return response;
-}
+};
 
 const getInfoUpdate = async (getUserInfo: any, restAPI: string) => {
     const newGetInfo = infoStringToBool(getUserInfo);
@@ -189,7 +189,7 @@ const getInfoUpdate = async (getUserInfo: any, restAPI: string) => {
         response = responseObject(false, '서버 에러, 나중에 다시 시도해주세요.');
     }
     return response;
-}
+};
 
 const updateRedirect = async (uris: string[], restAPI: string) => {
     const uri = noWhiteSpace(uris);
@@ -254,9 +254,9 @@ const giveUserInfo = async (restAPI: any) => {
         response = responseObject(false, '비정상적인 접근입니다.');
     }
     return response;
-}
+};
 
-const userdidregister = async(data:any) => {
+const userdidregister = async (data: any) => {
     const { restAPI, email, point, hash, giveUserInfo } = data;
 
     try {
@@ -275,18 +275,18 @@ const userdidregister = async(data:any) => {
             point,
         });
 
-        const rawVp = await getUserinfo(restAPI, hash.replace(/ /g, '+'));
-        const refinedVP = refineVP(rawVp);
-        const data = {
-            vp: refinedVP,
-            email,
-        };
+        // const rawVp = await getUserinfo(restAPI, hash.replace(/ /g, '+'));
+        // const refinedVP = refineVP(rawVp);
+        // const data = {
+        //     vp: refinedVP,
+        //     email,
+        // };
 
-        const request = await axios.post(giveUserInfo, data);
+        // const request = await axios.post(giveUserInfo, data);
 
-        if (request.data.status == false) {
-            throw new Error('클라이언트 서버 에러');
-        }
+        // if (request.data.status == false) {
+        //     throw new Error('클라이언트 서버 에러');
+        // }
 
         response = responseObject(true, '정상적으로 등록되었습니다. 다시 로그인해주세요.');
         // 문제가 없다면 로그인, 쿠키 생성을 위해 클라이언트 서버의 백엔드로 리다이렉트
@@ -294,9 +294,7 @@ const userdidregister = async(data:any) => {
         response = responseObject(false, e.message);
     }
     return response;
-}
-
-
+};
 
 const appService = {
     apiDistribution,
@@ -308,6 +306,6 @@ const appService = {
     giveUserInfo,
     userdidregister,
     //getPoint
-}
+};
 
 export default appService;
