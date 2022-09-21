@@ -19,8 +19,11 @@ let response: any;
  *         required: true
  *         description: email for verification
  *         schema:
- *           type: string
- *           example: 'yellow_w@naver.com'
+ *           type: object
+ *           properties:
+ *             email:
+ *               type: string
+ *               example: 'yellow_w@naver.com'
  *     responses:
  *       '200':    
  *         description: OK.
