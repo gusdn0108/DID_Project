@@ -177,4 +177,60 @@ router.post('/usePoint', async (req: Request, res: Response) => {
     res.json(response);
 });
 
+/**
+ * @openapi
+ *  /Oauth/app/getPoint:
+ *   get:
+ *     tag:
+ *     -user, point, application
+ *     summary: load user's point
+ *     description: 사용자의 포인트 정보를 전송
+ *     parameters:
+ *       - in: query
+ *         name : restAPI
+ *         type : string
+ *         example : 
+ *         required: true
+ *       - in : query
+ *         name : email
+ *         type : string
+ *         example : 
+ *         required : true
+ *     responses:
+ *       '200':    
+ *         description: OK.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/Response/getPoint'
+ *       '404':
+ *         description: uri not found.
+ * components:
+ *   Response:
+ *     getPoint:
+ *       type: object
+ *       properties:
+ *         status:
+ *           type: boolean
+ *           example: true
+ *         msg:
+ *           type: integer
+ *           example: 50000
+ *       required:
+ *       - status
+ */
+
+router.get('/getPoint', async (req: Request, res: Response) => {
+    let response : any;
+
+    const { restAPI, email } = req.query;
+    try {
+        response = await pointService.getPoint(restAPI, email);
+        if (response.status !== true) throw new Error(response.msg);
+    } catch (e) {
+        if (e instanceof Error) console.log(e.message);
+    }
+    res.json(response);
+});
+
 export default router;
