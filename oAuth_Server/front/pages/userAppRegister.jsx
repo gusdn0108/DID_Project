@@ -1,5 +1,5 @@
 import { Box, Flex, Text, Img, Checkbox, Divider, Button } from '@chakra-ui/react';
-import { request } from '../utils/request.js';
+import { request } from '../utils/axios.js';
 import { frontend } from '../utils/ip.js';
 
 const userAppRegister = ({ getUserInfo, appName, restAPI, redirectUri, hash, giveUserInfo }) => {

@@ -1,8 +1,7 @@
 import { Box, Center, Text, Button, Flex, Checkbox, Divider, NumberInput, NumberInputField } from '@chakra-ui/react';
-import { request } from '../utils/request.js';
+import { request } from '../utils/axios.js';
 import { useState, useEffect } from 'react';
 import { setCookie } from 'cookies-next';
-import { request } from '../utils/axios';
 
 const payment = () => {
   const [payMenu, setPayMenu] = useState([]);

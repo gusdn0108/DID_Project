@@ -1,5 +1,5 @@
 import { Box, Flex, Text, Input, FormControl, FormLabel, Spinner, FormHelperText, Select, Radio, RadioGroup, Stack, useEditable, Checkbox, Center } from '@chakra-ui/react';
-import { request } from '../utils/request.js';
+import { request } from '../utils/axios.js';
 import { useEffect, useState } from 'react';
 import Header from '../components/Header.jsx';
 import { frontend } from '../utils/ip.js';

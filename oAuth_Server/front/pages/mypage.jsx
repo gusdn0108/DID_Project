@@ -1,5 +1,5 @@
 import { Box, Text, Divider, useDisclosure, Center, FormLabel, Button, FormControl, Input } from '@chakra-ui/react';
-import { request } from '../utils/request.js';
+import { request } from '../utils/axios.js';
 import { useEffect, useState } from 'react';
 import crypto from 'crypto';
 import { deleteCookie } from 'cookies-next';
