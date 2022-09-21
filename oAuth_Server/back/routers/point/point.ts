@@ -10,18 +10,17 @@ const router = express.Router();
  *     tag:
  *     - checkPoint
  *     summary: request user's point
- *     description: request user point
+ *     description: 유저가 보유하고 있는 포인트 정보 조회
  *     parameters:
  *       - in: body
- *         name: email
  *         required: true
  *         description: email for request
  *         schema:
  *           type: object
- *           peoperties:
+ *           properties:
  *             email:
  *               type: string
- *               example: "yellow_w@naver.com"
+ *               example: test@gmail.com
  *     responses:
  *       '200':    
  *         description: OK.
@@ -43,16 +42,22 @@ const router = express.Router();
  *           properties:
  *             id:
  *               type: integer
+ *               example: 1
  *             email:
  *               type: string
+ *               example: test@gmail.com
  *             restAPI:
  *               type: string
+ *               example: af27b2865ab2dd31aeb0c6fbc54a18b
  *             appName:
  *               type: string
+ *               example: '경일투어'
  *             point:
  *               type: integer
+ *               example: 50000
  *         error:
  *           type: string
+ *           example: '유저정보가 없습니다'
  *       required:
  *       - isError
  */
@@ -67,7 +72,6 @@ router.post('/checkPoint', async (req: Request, res: Response) => {
     res.json(response);
 });
 
-
 /**
  * @openapi
  * /Oauth/point/sendPoint:
@@ -75,7 +79,7 @@ router.post('/checkPoint', async (req: Request, res: Response) => {
  *     tag:
  *     -sendPoint
  *     summary: send user's point
- *     description: send usable point
+ *     description: 가용포인트에 대한 토큰 전송
  *     parameters:
  *       - in: body
  *         name: PointInfo
@@ -115,6 +119,8 @@ router.post('/sendToken', async (req: Request, res: Response) => {
         response = await pointService.sendToken(pointInfo);
         if (response.isError === true) throw new Error(response.error);
     } catch (e) {}
+    console.log(response)
+
     res.json(response);
 });
 
@@ -126,10 +132,12 @@ router.post('/sendToken', async (req: Request, res: Response) => {
  *     tag:
  *     - usePoint
  *     summary: send user's point
- *     description: send user's point
+ *     description: 포인트 사용에 관한 토큰 검증 및 정보 일치 시 포인트 사용
  *     parameters:
  *       - in: body
- *         name: ''
+ *         name: 'token'
+ *         type: string
+ *         example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwb2ludEluZm8iOnsiMSI6Ijg5MDAifSwiaWF0IjoxNjYzNjc1MDg1LCJleHAiOjE2NjM2NzU2ODV9.4S_NvC58-IVZ04EEiozy4apC8s7t4XgpYhXmzqpiOao'
  *         required: true
  *         description: object data for using poing
  *         schema:
@@ -137,7 +145,6 @@ router.post('/sendToken', async (req: Request, res: Response) => {
  *           properties:
  *             token:
  *               type: string
- *               example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwb2ludEluZm8iOnsiMSI6Ijg5MDAifSwiaWF0IjoxNjYzNjc1MDg1LCJleHAiOjE2NjM2NzU2ODV9.4S_NvC58-IVZ04EEiozy4apC8s7t4XgpYhXmzqpiOao'
  *           pointInfo:
  *             type: string
  *             example: { '1' : '8900' }
@@ -179,7 +186,7 @@ router.post('/usePoint', async (req: Request, res: Response) => {
 
 /**
  * @openapi
- *  /Oauth/app/getPoint:
+ *  /Oauth/point/getPoint:
  *   get:
  *     tag:
  *     -user, point, application
@@ -189,12 +196,12 @@ router.post('/usePoint', async (req: Request, res: Response) => {
  *       - in: query
  *         name : restAPI
  *         type : string
- *         example : 
+ *         example : 'af27b2865ab2dd31aeb0c6fbc54a18b'
  *         required: true
  *       - in : query
  *         name : email
  *         type : string
- *         example : 
+ *         example : 'test@gmail.com'
  *         required : true
  *     responses:
  *       '200':    
@@ -219,7 +226,6 @@ router.post('/usePoint', async (req: Request, res: Response) => {
  *       required:
  *       - status
  */
-
 router.get('/getPoint', async (req: Request, res: Response) => {
     let response : any;
 

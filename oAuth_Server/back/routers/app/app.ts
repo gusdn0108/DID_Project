@@ -16,7 +16,6 @@ let response: IResponse_App;
  *     description: 어플리케이션에 부여할 restAPI, client_secret 코드 생성
  *     parameters:
  *       - in: body
- *         name: ''
  *         required: true
  *         description: application owner's email
  *         schema:
@@ -358,6 +357,7 @@ router.post('/updateRedirect', async (req: Request, res: Response) => {
  *     parameters:
  *       - in: query
  *         name : restAPI
+ *         example: 'ed2bddf3ece5bf7bf4fd134c1fad973'
  *         type : string
  *         required: true
  *     responses:
@@ -381,7 +381,8 @@ router.post('/updateRedirect', async (req: Request, res: Response) => {
  *           type: string
  *           example: 'testApp'
  *         infos :
- *           type : [{att : 'email', value : true}, {att : 'name', value: 'true'}]
+ *           type : array
+ *           example: [{att : 'email', value : true}, {att : 'name', value: 'true'}]
  *       required:
  *       - status
  */

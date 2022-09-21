@@ -110,7 +110,7 @@ router.post('/authorize', async (req: Request, res: Response) => {
  *               example: 'http://localhost:4000/api/Oauth/getCode'
  *             email:
  *               type: string
- *               example: 'yellow_w@naver.com'
+ *               example: 'test@gmail.com'
  *             hash:
  *               type: string
  *               example: 'yDjrWmU0ZtWIWriqhPQAizW9LxkeuE3XW0cHNQSZ1Ng='
@@ -198,12 +198,10 @@ router.post('/codeAuthorize', async (req: Request, res: Response) => {
  */
 router.get('/codeAuthorize2', async (req: Request, res: Response) => {
     const bearer_token: any = req.headers.authorization;
-    const bearer_req: string[] = bearer_token.split(' ');
     try {
         response = await loginService.codeAuthorize2(bearer_token);
         if(response.status !==true )throw new Error(response.msg);
     } catch (e) {}
-    console.log(response)
     res.json(response);
 });
 
