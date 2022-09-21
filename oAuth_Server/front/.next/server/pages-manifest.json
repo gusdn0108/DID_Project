@@ -1,16 +1,6 @@
 {
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
-  "/animetion": "pages/animetion.html",
-  "/api/hello": "pages/api/hello.js",
-  "/": "pages/index.html",
-  "/localLogin": "pages/localLogin.html",
-  "/login": "pages/login.html",
-  "/mypage": "pages/mypage.html",
-  "/payment": "pages/payment.html",
-  "/register": "pages/register.html",
-  "/manageApp": "pages/manageApp.js",
-  "/userAppRegister": "pages/userAppRegister.js",
   "/_document": "pages/_document.js",
-  "/404": "pages/404.html"
+  "/localLogin": "pages/localLogin.js"
 }

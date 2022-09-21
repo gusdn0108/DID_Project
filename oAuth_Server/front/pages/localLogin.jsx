@@ -1,6 +1,6 @@
 import { Box, Button, Flex, Text, Input, Center, Spinner, Image, FormControl, FormLabel, FormErrorMessage, FormHelperText } from '@chakra-ui/react';
-import axios from 'axios';
 import { useState } from 'react';
+import { request } from '../utils/axios';
 import { setCookie } from 'cookies-next';
 import { backend, frontend } from '../utils/ip';
 import Header from '../components/Header';
@@ -19,7 +19,7 @@ export default function Home({ user }) {
 
   const didLoginHandler = async (req, res) => {
     setLoading(false);
-    const response = await axios.post(`${backend}/Oauth/login/localAuthorize`, {
+    const response = await request.post(`/Oauth/login/localAuthorize`, {
       email: DIDid,
       password: DIDPw,
     });

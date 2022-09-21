@@ -1,8 +1,8 @@
 import { Box, Flex, Text, Input, FormControl, FormLabel, Spinner, FormHelperText, Select, Radio, RadioGroup, Stack, useEditable, Checkbox, Center } from '@chakra-ui/react';
-import axios from 'axios';
+import { request } from '../utils/request.js';
 import { useEffect, useState } from 'react';
 import Header from '../components/Header.jsx';
-import { backend, frontend } from '../utils/ip.js';
+import { frontend } from '../utils/ip.js';
 import { pwdCheck } from '../utils/regiCheck.js';
 
 const register = ({ user }) => {
@@ -67,7 +67,7 @@ const register = ({ user }) => {
     const regiEmail = email + domain;
 
     try {
-      const response = await axios.post(`${backend}/Oauth/verifyEmail/email`, {
+      const response = await request.post(`/Oauth/verifyEmail/email`, {
         email: regiEmail,
       });
       setSentEmail(true);
@@ -92,7 +92,7 @@ const register = ({ user }) => {
     if (verifier == verifyNum) {
       try {
         const regiEmail = email + domain;
-        const response = await axios.post(`${backend}/Oauth/user/oauthregister`, {
+        const response = await request.post(`/Oauth/user/oauthregister`, {
           email: regiEmail,
           password,
           gender,

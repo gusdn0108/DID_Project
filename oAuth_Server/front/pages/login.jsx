@@ -1,7 +1,7 @@
 import { Box, Button, Flex, Text, Input, Image, FormControl, FormLabel, FormErrorMessage, FormHelperText } from '@chakra-ui/react';
-import axios from 'axios';
+import { request } from '../utils/axios';
 import { useState } from 'react';
-import { backend, frontend } from '../utils/ip';
+import { frontend } from '../utils/ip';
 
 export default function Home() {
   const [DIDid, setDIDid] = useState(undefined);
@@ -20,7 +20,7 @@ export default function Home() {
     const reURL = codeUrl.split('redirectUri=')[1].split('&')[0];
     const restAPI = codeUrl.split('clientId=')[1].split('&')[0];
     const giveUserInfo = codeUrl.split('giveUserInfo=')[1];
-    const response = await axios.post(`${backend}/oauth/login/authorize`, {
+    const response = await request.post(`/oauth/login/authorize`, {
       email: DIDid,
       password: DIdPw,
       reURL,

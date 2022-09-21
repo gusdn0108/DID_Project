@@ -1,35 +1,18 @@
-import {
-  Button,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  Text,
-  FormControl,
-  FormLabel,
-  Input,
-} from "@chakra-ui/react";
-import axios from "axios";
-import { backend } from "../utils/ip.js";
-import { useState, useEffect } from "react";
+import { Button, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text, FormControl, FormLabel, Input } from '@chakra-ui/react';
+import { request } from '../utils/axios.js';
+import { useState } from 'react';
 
 const AppModal = ({ isOpen, onClose, email }) => {
   const [appName, setAppName] = useState(undefined);
 
   const getRestApi = async () => {
     if (!appName) {
-      alert("어플리케이션 이름을 설정해주세요");
+      alert('어플리케이션 이름을 설정해주세요');
       return;
     }
 
     try {
-      const response = await axios.post(
-        `${backend}/oauth/app/apiDistribution`,
-        { appName, email }
-      );
+      const response = await request.post(`/oauth/app/apiDistribution`, { appName, email });
       if (response.data.status == true) {
         alert(response.data.msg);
         onClose();
@@ -50,17 +33,10 @@ const AppModal = ({ isOpen, onClose, email }) => {
 
           <ModalBody px="8%" pt="10%" pb="2%">
             <FormControl>
-              <FormLabel fontSize="150%" mb="3%" textAlign={"center"}>
+              <FormLabel fontSize="150%" mb="3%" textAlign={'center'}>
                 어플리케이션 생성
               </FormLabel>
-              <Input
-                type="text"
-                placeholder="어플리케이션 이름을 입력해주세요"
-                size="md"
-                id="Email"
-                mb="1%"
-                onChange={(e) => setAppName(e.target.value)}
-              />
+              <Input type="text" placeholder="어플리케이션 이름을 입력해주세요" size="md" id="Email" mb="1%" onChange={(e) => setAppName(e.target.value)} />
             </FormControl>
           </ModalBody>
 

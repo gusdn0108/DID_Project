@@ -1,8 +1,8 @@
 import { Box, Center, Text, Button, Flex, Checkbox, Divider, NumberInput, NumberInputField } from '@chakra-ui/react';
-import axios from 'axios';
+import { request } from '../utils/request.js';
 import { useState, useEffect } from 'react';
 import { setCookie } from 'cookies-next';
-import { backend, frontend } from '../utils/ip';
+import { request } from '../utils/axios';
 
 const payment = () => {
   const [payMenu, setPayMenu] = useState([]);
@@ -60,7 +60,7 @@ const payment = () => {
 
   const getPoint = async () => {
     const email = window.location.search.split('&')[0].split('=')[1];
-    const response = await axios.post(`${backend}/Oauth/point/checkPoint`, { email });
+    const response = await request.post(`/Oauth/point/checkPoint`, { email });
     if (!response.data.isError) {
       setPayMenu(response.data.value);
     } else {
@@ -69,7 +69,7 @@ const payment = () => {
   };
 
   const Pay = async (req, res) => {
-    const response = await axios.post(`${backend}/Oauth/point/sendToken`, { pointInfo: payPoint });
+    const response = await request.post(`/Oauth/point/sendToken`, { pointInfo: payPoint });
     document.domain = `localhost`;
     setCookie('item', response.data.value, {
       req,
