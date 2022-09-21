@@ -26,11 +26,7 @@ const Header = ({ user }) => {
               </a>
             </Box>
             {isLogin ? (
-<<<<<<< HEAD
-              <Box w={700}>
-=======
               <Flex w={700}>
->>>>>>> f0a93e2c26d03c01a84bb6119df9ae4fae767d3e
                 <Button
                   onClick={(req, res) => {
                     deleteCookie('user', { req, res, maxAge: 60 * 60 * 24 * 1000 });
@@ -40,21 +36,6 @@ const Header = ({ user }) => {
                 >
                   Logout
                 </Button>
-<<<<<<< HEAD
-                <a href={`http://${frontend}/mypage`}>
-                  <Button ml="3">Profile</Button>
-                </a>
-                <a href={`http://${frontend}/manageApp`}>
-                  <Button ml="3">MyApp</Button>
-                </a>
-              </Box>
-            ) : (
-              <Box w={450}>
-                <a href={`http://${frontend}/localLogin`}>
-                  <Button>Login</Button>
-                </a>
-                <a href={`http://${frontend}/register`}>
-=======
                 <a href={`${frontend}/mypage`}>
                   <Button ml="3">Profile</Button>
                 </a>
@@ -68,7 +49,6 @@ const Header = ({ user }) => {
                   <Button>Login</Button>
                 </a>
                 <a href={`${frontend}/register`}>
->>>>>>> f0a93e2c26d03c01a84bb6119df9ae4fae767d3e
                   <Button ml="3">Sign up</Button>
                 </a>
               </Box>
