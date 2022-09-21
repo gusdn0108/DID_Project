@@ -13,7 +13,7 @@ let response: IResponse_App;
  *     tag:
  *     - call_my_app
  *     summary: transfer data of applications
- *     description: Optional
+ *     description: 어플리케이션에 부여할 restAPI, client_secret 코드 생성
  *     parameters:
  *       - in: body
  *         name: ''
@@ -74,7 +74,7 @@ router.post('/apiDistribution', async (req: Request, res: Response) => {
  *     tag:
  *     - call_my_app
  *     summary: transfer data of applications
- *     description: Optional 디스크립션
+ *     description: 사용자가 관리하는 어플리케이션 리스트 출력
  *     parameters:
  *       - in: body
  *         name: ""
@@ -129,10 +129,10 @@ router.post('/getMyApp', async (req: Request, res: Response) => {
  *     tag:
  *     - delete, application
  *     summary: delete selected application
- *     description: stop syncing user's application
+ *     description: 사용자가 관리 중인 어플리케이션 연동 해제
  *     parameters:
  *       - in: body
- *         name: restAPI
+ *         name: ''
  *         required: true
  *         description: application's restAPI
  *         schema:
@@ -186,15 +186,18 @@ router.post('/deleteApp', async (req: Request, res: Response) => {
  *     tag:
  *     - call, application
  *     summary: load selected application's information
- *     description: same as summary
+ *     description: 어플리케이션의 정보 출력
  *     parameters:
  *       - in: body
- *         name: restAPI
+ *         name: ''
  *         required: true
  *         description: application's restAPI
  *         schema:
- *           type: string
- *           example: "ed2bddf3ece5bf7bf4fd134c1fad973"
+ *           type: object
+ *           properties:
+ *             restAPI:
+ *               type: string
+ *               example: '9474c4dbad6a0557192f9a5969285a1'
  *     responses:
  *       '200':    
  *         description: OK.
@@ -210,10 +213,13 @@ router.post('/deleteApp', async (req: Request, res: Response) => {
  *     properties:
  *       status:
  *         type: boolean
+ *         example : true
  *       result:
- *         type: object
+ *         type: object 
+ *         example : { email : 'test@gmail.com', appName : 'testApp', client_secret: 'ed2bddf3ece5bf7bf4fd134c1fad973', redirectURI: "http://localhost:4001/api/oauth/getCode", restAPI : '9474c4dbad6a0557192f9a5969285a1', neededInfo : [{att : 'name', get : true}, {att : 'email', get : true}, {att : 'gender', get : true}, {att : 'age', get : true}, { att: 'address', get : true}, {att : 'mobile', get : true}]}
  *     required:
  *     - status
+
  */
 
 router.use('/appInfo', async (req: Request, res: Response) => {
@@ -234,12 +240,12 @@ router.use('/appInfo', async (req: Request, res: Response) => {
  *     tag:
  *     - modify, application
  *     summary: select information provided
- *     description: select needed data
+ *     description: 사용자에게 제공 받을 정보 항목을 관리, 변경
  *     parameters:
  *       - in: body
  *         name: ''
  *         required: true
- *         description: application's restAPI
+ *         description: 사용자에게 제공받을지의 여부를 boolean으로 저장
  *         schema:
  *           type: object
  *           properties :
@@ -255,20 +261,22 @@ router.use('/appInfo', async (req: Request, res: Response) => {
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/Response'
+ *               $ref: '#/components/Response/getInfoUpdate'
  *       '404':
  *         description: uri not found.
  * components:
  *   Response:
- *     type: 
- *     properties:
- *       status:
- *         type: boolean
- *       msg:
- *         type: string
- *     required:
- *     - status
- *     - string
+ *     getInfoUpdate:
+ *       type: object
+ *       properties:
+ *         status:
+ *           type: boolean
+ *           example: true
+ *         msg:
+ *           type: string
+ *           example: '정상적으로 반영되었습니다.'
+ *       required:
+ *       - status
  */
 
 router.use('/getInfoUpdate', async (req: Request, res: Response) => {
@@ -289,11 +297,12 @@ router.use('/getInfoUpdate', async (req: Request, res: Response) => {
  *     tag:
  *     - modify, redirectURI, application
  *     summary: save redirectURI
- *     description: select needed data
+ *     description: sso 로그인시 사용할 리다이렉트 uri 관리
  *     parameters:
  *       - in: body
+ *         name : ''
  *         required: true
- *         description: application's restAPI
+ *         description: sso 로그인시 사용할 리다이렉트 uri 관리
  *         schema:
  *           type: object
  *           properties : 
@@ -309,20 +318,22 @@ router.use('/getInfoUpdate', async (req: Request, res: Response) => {
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/Response'
+ *               $ref: '#/components/Response/updateRedirect'
  *       '404':
  *         description: uri not found.
  * components:
  *   Response:
- *     type: 
- *     properties:
- *       status:
- *         type: boolean
- *       msg:
- *         type: string
- *     required:
- *     - status
- *     - string
+ *     updateRedirect:
+ *       type: object
+ *       properties:
+ *         status:
+ *           type: boolean
+ *           example: true
+ *         msg:
+ *           type: string
+ *           example: '정상적으로 반영되었습니다.'
+ *       required:
+ *       - status
  */
 
 router.post('/updateRedirect', async (req: Request, res: Response) => {
@@ -355,17 +366,24 @@ router.post('/updateRedirect', async (req: Request, res: Response) => {
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/Response'
+ *               $ref: '#/components/Response/giveUserInfo'
  *       '404':
  *         description: uri not found.
- * components:
+  * components:
  *   Response:
- *     type: 
- *     properties:
- *       status:
- *         type: boolean
- *     required:
- *     - status
+ *     giveUserInfo:
+ *       type: object
+ *       properties:
+ *         status:
+ *           type: boolean
+ *           example: true
+ *         appName:
+ *           type: string
+ *           example: 'testApp'
+ *         infos :
+ *           type : [{att : 'email', value : true}, {att : 'name', value: 'true'}]
+ *       required:
+ *       - status
  */
 
 router.get('/giveUserInfo', async (req: Request, res: Response) => {

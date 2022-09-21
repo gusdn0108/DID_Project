@@ -1,7 +1,7 @@
 import { Box, Button, Flex, Text, Input, Image, FormControl, FormLabel, FormErrorMessage, FormHelperText } from '@chakra-ui/react';
 import axios from 'axios';
 import { useState } from 'react';
-import { backend } from '../utils/ip';
+import { backend, frontend } from '../utils/ip';
 
 export default function Home() {
   const [DIDid, setDIDid] = useState(undefined);
@@ -43,22 +43,22 @@ export default function Home() {
 
   return (
     <>
-      <Box w="100%" h="65rem">
-        <Flex w="60%" mx="auto" mt="12%" justifyContent={'center'}>
-          <Box w="50%" mx="3%" px="5%" py="6%">
-            <Text fontSize={'1.5rem'} mb="2%">
-              DID login으로 a/b/c/d 사이트를 이용해보세요!
+      <Box w="100%" h="65rem" background={'#160627'}>
+        <Flex w="60%" mx="auto" pt="12%" justifyContent={'center'}>
+          <Box w="50%" mx="3%" px="5%" py="6%" color="white" border={'1px'} borderColor="gray.200" borderRadius={'5px'}>
+            <Text fontSize={'1.5rem'} mb="8%">
+              한 번의 로그인으로 다양한 사이트를 이용해보세요!
             </Text>
             <Text fontSize="0.75rem" mb="0.5%">
-              a/b/c/d 사이트는 DID login으로 이용할 수 있습니다
+              다양한 사이트를 하나의 아이디로 이용할 수 있습니다
             </Text>
-            <Text fontSize="0.75rem" mb="4%">
+            <Text fontSize="0.75rem" mb="12%">
               사용 중인 DID계정으로 로그인해 보세요
             </Text>
-            <Image mr="1%" src="https://accounts.kakao.com/assets/weblogin/techin/retina/banner_login2-7800b65948f0912306346a56a61832a98aa302c7e6cf3411eacd35db47d53a3c.png"></Image>
+            <Image src="https://accounts.kakao.com/assets/weblogin/techin/retina/banner_login2-7800b65948f0912306346a56a61832a98aa302c7e6cf3411eacd35db47d53a3c.png"></Image>
           </Box>
 
-          <Box w="35%" mx="3%" border={'1px'} borderColor="gray.200" px="5%" py="5%">
+          <Box w="35%" mx="3%" border={'1px'} borderColor="gray.200" px="5%" py="5%" color="white" borderRadius={'5px'}>
             <Text fontSize={'2rem'} mb="1rem">
               DID Service
             </Text>
@@ -73,8 +73,20 @@ export default function Home() {
               </FormLabel>
               <Input type="password" placeholder="password을 입력해주세요" size="md" id="userPw" mb="5%" onChange={getPw} />
             </FormControl>
-            <Button onClick={didLoginHandler} bg="yellow.300" w="100%">
+            <Button onClick={didLoginHandler} w="100%" mb="7%" color="#160627" border="1px #fff solid">
               로그인
+            </Button>
+            <Button
+              onClick={() => {
+                location.href = `${frontend}/register`;
+              }}
+              bg="#160627"
+              border="1px #fff solid"
+              w="100%"
+              color="#fff"
+              _hover={{ bg: '#160627' }}
+            >
+              회원가입
             </Button>
           </Box>
         </Flex>
