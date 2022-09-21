@@ -5,31 +5,30 @@ import { useEffect, useState } from 'react';
 import Header from '../components/Header';
 
 function MyApp({ Component, pageProps }) {
-	const [cemail, setEmail] = useState(undefined);
-	const [chashId, setHashId] = useState(undefined);
+  const [cemail, setEmail] = useState(undefined);
+  const [chashId, setHashId] = useState(undefined);
 
-	let userEmail = '';
-	let userHash = '';
-	let userInfo;
+  let userEmail = '';
+  let userHash = '';
+  let userInfo;
 
-	const user = getCookie('user');
-	if (user) {
-		userEmail = JSON.parse(Buffer.from(user, 'base64').toString('utf-8')).email;
-		userHash = JSON.parse(Buffer.from(user, 'base64').toString('utf-8')).hashId;
-		userInfo = JSON.parse(Buffer.from(user, 'base64').toString('utf-8'));
-	}
+  const user = getCookie('user');
+  if (user) {
+    userEmail = JSON.parse(Buffer.from(user, 'base64').toString('utf-8')).email;
+    userHash = JSON.parse(Buffer.from(user, 'base64').toString('utf-8')).hashId;
+    userInfo = JSON.parse(Buffer.from(user, 'base64').toString('utf-8'));
+  }
 
-	useEffect(() => {
-		setEmail(userEmail);
-		setHashId(userHash);
-	}, []);
+  useEffect(() => {
+    setEmail(userEmail);
+    setHashId(userHash);
+  }, []);
 
-	return (
-		<ChakraProvider>
-			<Header user={userInfo} />
-			<Component {...pageProps} email={cemail} hashId={chashId} />
-		</ChakraProvider>
-	);
+  return (
+    <ChakraProvider>
+      <Component {...pageProps} email={cemail} hashId={chashId} user={userInfo} />
+    </ChakraProvider>
+  );
 }
 
 export default MyApp;
