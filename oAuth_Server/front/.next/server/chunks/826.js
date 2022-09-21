@@ -26,8 +26,7 @@ const config = {
   baseURL: backend,
   headers: {
     withCredentials: true,
-    'Content-Type': 'application/json',
-    origin: frontend
+    'Content-Type': 'application/json'
   }
 };
 const request = axios.create(_objectSpread({}, config));
