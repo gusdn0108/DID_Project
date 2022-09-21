@@ -3,6 +3,7 @@ import sequelize from '../../models';
 import TotalPoint from '../../models/user/totalPoint.model';
 import jwt from 'jsonwebtoken';
 import { Op } from 'sequelize';
+import { responseObject } from '../../routers/app/utils';
 
 const checkPoint = async (email: string) => {
     let response: Failable<Point[], string>;
@@ -135,10 +136,31 @@ const usePoint = async (token: string, payPoint: any) => {
     return response;
 };
 
+const getPoint = async (restAPI: any, email: any) => {
+    let response: any;
+    try {
+        const userPoint = await TotalPoint.findOne({
+            where: {
+                restAPI,
+                email,
+            },
+        });
+
+        response = {
+            status: true,
+            point: userPoint.point,
+        };
+    } catch (e) {
+        response = responseObject(false, '포인트를 가져오지 못했습니디.');
+    }
+    return response;
+};
+
 const pointService = {
     checkPoint,
     sendToken,
     usePoint,
+    getPoint
 };
 
 export default pointService;
