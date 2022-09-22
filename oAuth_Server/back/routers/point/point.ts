@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import { Failable, Point } from '../../@types/response';
 import pointService from '../../services/point/point.service';
 const router = express.Router();
+let response: Failable<Point[], string> | Failable<string, string>;
 
 /**
  * @openapi
@@ -22,7 +23,7 @@ const router = express.Router();
  *               type: string
  *               example: test@gmail.com
  *     responses:
- *       '200':    
+ *       '200':
  *         description: OK.
  *         content:
  *           application/json:
@@ -63,12 +64,10 @@ const router = express.Router();
  */
 router.post('/checkPoint', async (req: Request, res: Response) => {
     const { email } = req.body;
-    let response: Failable<Point[], string>;
     try {
-        response = await pointService.checkPoint(email);
-        if(response.isError===true) throw new Error(response.error)
-    } catch (e) {
-    }
+        response = (await pointService.checkPoint(email)) as Failable<Point[], string>;
+        if (response.isError === true) throw new Error(response.error);
+    } catch (e) {}
     res.json(response);
 });
 
@@ -89,7 +88,7 @@ router.post('/checkPoint', async (req: Request, res: Response) => {
  *           type: obejct
  *           example: { '1' : '8900' }
  *     responses:
- *       '200':    
+ *       '200':
  *         description: OK.
  *         content:
  *           application/json:
@@ -114,16 +113,14 @@ router.post('/checkPoint', async (req: Request, res: Response) => {
  */
 router.post('/sendToken', async (req: Request, res: Response) => {
     const { pointInfo } = req.body;
-    let response: Failable<string, string>;
     try {
-        response = await pointService.sendToken(pointInfo);
+        response = (await pointService.sendToken(pointInfo)) as Failable<string, string>;
         if (response.isError === true) throw new Error(response.error);
     } catch (e) {}
-    console.log(response)
+    console.log(response);
 
     res.json(response);
 });
-
 
 /**
  * @openapi
@@ -149,7 +146,7 @@ router.post('/sendToken', async (req: Request, res: Response) => {
  *             type: string
  *             example: { '1' : '8900' }
  *     responses:
- *       '200':    
+ *       '200':
  *         description: OK.
  *         content:
  *           application/json:
@@ -175,12 +172,9 @@ router.post('/sendToken', async (req: Request, res: Response) => {
  */
 router.post('/usePoint', async (req: Request, res: Response) => {
     const { token, payPoint } = req.body;
-    console.log(token, payPoint)
-    let response: Failable<string, string>;
     try {
         response = await pointService.usePoint(token, payPoint);
     } catch (e) {}
-    console.log(response)
     res.json(response);
 });
 
@@ -204,7 +198,7 @@ router.post('/usePoint', async (req: Request, res: Response) => {
  *         example : 'test@gmail.com'
  *         required : true
  *     responses:
- *       '200':    
+ *       '200':
  *         description: OK.
  *         content:
  *           application/json:
@@ -227,8 +221,7 @@ router.post('/usePoint', async (req: Request, res: Response) => {
  *       - status
  */
 router.get('/getPoint', async (req: Request, res: Response) => {
-    let response : any;
-
+    let response: any;
     const { restAPI, email } = req.query;
     try {
         response = await pointService.getPoint(restAPI, email);
