@@ -1,10 +1,9 @@
 import { Box, Text, Divider, useDisclosure, Center, FormLabel, Button, FormControl, Input } from '@chakra-ui/react';
-import axios from 'axios';
+import { request } from '../utils/axios.js';
 import { useEffect, useState } from 'react';
 import crypto from 'crypto';
 import { deleteCookie } from 'cookies-next';
 import LoadingModal from '../components/LoadingModal.jsx';
-import { backend } from '../utils/ip.js';
 import Header from '../components/Header.jsx';
 
 const Mypage = ({ hashId, email, user }) => {
@@ -53,7 +52,7 @@ const Mypage = ({ hashId, email, user }) => {
   };
 
   const getUserInfo = async () => {
-    const response = await axios.post(`${backend}/Oauth/user/searchUser`, {
+    const response = await request.post(`/Oauth/user/searchUser`, {
       hashId: hashId,
     });
 
@@ -83,7 +82,7 @@ const Mypage = ({ hashId, email, user }) => {
   };
 
   //	비밀번호...수정
-  const updatePassword = async (e) => {
+  const updatePassword = async (req, res) => {
     setLoading(false);
     onOpen();
 
@@ -105,12 +104,12 @@ const Mypage = ({ hashId, email, user }) => {
       newPw,
     };
 
-    const response = await axios.post(`${backend}/Oauth/user/upDatePassword`, body);
+    const response = await request.post(`/Oauth/user/upDatePassword`, body);
 
     if (response.data.status == true) {
       onClose();
       alert(response.data.msg);
-      deleteCookie('user', { path: '/', domain: `localhost` });
+      deleteCookie('user', { req, res, maxAge: 60 * 60 * 24 * 1000 });
       window.location.replace('/');
     } else {
       alert(response.data.msg);
@@ -131,7 +130,7 @@ const Mypage = ({ hashId, email, user }) => {
       hashId,
     };
 
-    const response = await axios.post(`${backend}/Oauth/user/upDateUser`, body);
+    const response = await request.post(`/Oauth/user/upDateUser`, body);
 
     if (response.data.status == true) {
       setName(response.data.name);
@@ -150,7 +149,7 @@ const Mypage = ({ hashId, email, user }) => {
 
   const deleteUser = async (req, res) => {
     setLoading(false);
-    const response = await axios.post(`${backend}/oauth/user/deleteUser`, {
+    const response = await request.post(`/oauth/user/deleteUser`, {
       hashId,
       email,
     });

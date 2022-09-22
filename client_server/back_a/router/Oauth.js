@@ -82,55 +82,58 @@ router.get('/getCode', async (req, res) => {
     }
 });
 
-router.post('/giveUserinfo', async (req, res) => {
-    try {
-        const { vp, email } = req.body;
-        const isRegistered = await Account.findOne({
-            where: {
-                email,
-            },
-        });
+// router.post('/giveUserinfo', async (req, res) => {
+//     try {
+//         const { vp, email } = req.body;
+//         const isRegistered = await Account.findOne({
+//             where: {
+//                 email,
+//             },
+//         });
 
-        if (isRegistered) throw new Error('이미 등록된 사용자입니다.');
+//         console.log('check');
+//         console.log(isRegistered);
 
-        const saveUserInfo = await Account.create({
-            email,
-        });
+//         if (isRegistered) throw new Error('이미 등록된 사용자입니다.');
 
-        let name = '';
-        let mobile = '';
+//         const saveUserInfo = await Account.create({
+//             email,
+//         });
 
-        for (let i = 0; i < vp.length; i++) {
-            if (vp[i].att == 'name') {
-                name = vp[i].value;
-            }
-            if (vp[i].att == 'mobile') {
-                mobile = vp[i].value;
-            }
-        }
-        // 수정 요망
+//         let name = '';
+//         let mobile = '';
 
-        const insertVP = await UserInfo.create({
-            email,
-            name,
-            mobile,
-        });
+//         for (let i = 0; i < vp.length; i++) {
+//             if (vp[i].att == 'name') {
+//                 name = vp[i].value;
+//             }
+//             if (vp[i].att == 'mobile') {
+//                 mobile = vp[i].value;
+//             }
+//         }
+//         // 수정 요망
 
-        const response = {
-            status: true,
-            msg: '사용자 정보 수신 완료',
-        };
+//         const insertVP = await UserInfo.create({
+//             email,
+//             name,
+//             mobile,
+//         });
 
-        res.json(response);
-    } catch (e) {
-        console.log(e.message);
-        const response = {
-            status: false,
-            msg: e.message,
-        };
-        res.json(response);
-    }
-});
+//         const response = {
+//             status: true,
+//             msg: '사용자 정보 수신 완료',
+//         };
+
+//         res.json(response);
+//     } catch (e) {
+//         console.log(e.message);
+//         const response = {
+//             status: false,
+//             msg: e.message,
+//         };
+//         res.json(response);
+//     }
+// });
 
 router.get('/getoauthPoint', async (req, res) => {
     const { email } = req.query;
