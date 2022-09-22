@@ -132,17 +132,20 @@ const usePoint = async (token: string, payPoint: any) => {
             );
         }
         await tx.commit();
+        console.log('성공');
         response = {
             isError: false,
             value: '입력한 포인트 사용 및 차감 완료',
         };
     } catch (e) {
         await tx.rollback();
+        console.log('실패');
         response = {
             isError: true,
             error: `입력한 포인트 사용 불가 및 롤백`,
         };
     }
+    console.log('response', response);
     return response;
 };
 

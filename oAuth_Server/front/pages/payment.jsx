@@ -70,7 +70,7 @@ const payment = () => {
   const Pay = async (req, res) => {
     const response = await axios.post(`${backend}/Oauth/point/sendToken`, { pointInfo: payPoint });
     if (response.status) {
-      window.opener.postMessage({ type: 'token', data: response.data.value }, 'http://localhost:3000');
+      window.opener.postMessage({ type: 'token', token: response.data.value }, 'http://localhost:3000');
       window.self.close();
     }
     // document.domain = `localhost`;

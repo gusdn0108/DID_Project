@@ -82,7 +82,7 @@ const Mypage = ({ hashId, email, user }) => {
   };
 
   //	비밀번호...수정
-  const updatePassword = async (e) => {
+  const updatePassword = async (req, res) => {
     setLoading(false);
     onOpen();
 
@@ -109,7 +109,7 @@ const Mypage = ({ hashId, email, user }) => {
     if (response.data.status == true) {
       onClose();
       alert(response.data.msg);
-      deleteCookie('user', { path: '/', domain: `localhost` });
+      deleteCookie('user', { req, res, maxAge: 60 * 60 * 24 * 1000 });
       window.location.replace('/');
     } else {
       alert(response.data.msg);
