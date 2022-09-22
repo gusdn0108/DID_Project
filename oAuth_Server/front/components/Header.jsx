@@ -36,19 +36,19 @@ const Header = ({ user }) => {
                 >
                   Logout
                 </Button>
-                <a href={`${frontend}/mypage`}>
+                <a href={`/mypage`}>
                   <Button ml="3">Profile</Button>
                 </a>
-                <a href={`${frontend}/manageApp`}>
+                <a href={`/manageApp`}>
                   <Button ml="3">MyApp</Button>
                 </a>
               </Flex>
             ) : (
               <Box w={450}>
-                <a href={`${frontend}/localLogin`}>
+                <a href={`/localLogin`}>
                   <Button>Login</Button>
                 </a>
-                <a href={`${frontend}/register`}>
+                <a href={`/register`}>
                   <Button ml="3">Sign up</Button>
                 </a>
               </Box>
