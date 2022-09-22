@@ -35,7 +35,7 @@ const oAuthRegister = async (data: any) => {
             email,
         });
 
-        response = responseObject(true,'회원 가입이 완료되었습니다.');
+        response = responseObject(true, '회원 가입이 완료되었습니다.');
     } catch (e) {
         if (e instanceof Error) console.log(e.message);
         response = responseObject(false, e.message);
@@ -43,7 +43,7 @@ const oAuthRegister = async (data: any) => {
     return response;
 };
 
-const upDatePassword = async(data: any) => {
+const upDatePassword = async (data: any) => {
     const { hashId, email, newPw } = data;
 
     try {
@@ -53,16 +53,16 @@ const upDatePassword = async(data: any) => {
         const contract = await deployed();
         await contract.methods.updatePassword(hashId, newHash).send({
             from: process.env.WALLET_ADDRESS,
-            gas: 10000000
+            gas: 10000000,
         });
 
         response = responseObject(true, '비밀번호 변경이 완료되었습니다.');
     } catch (e) {
         if (e instanceof Error) console.log(e.message);
-        response = responseObject(false,'비밀번호 변경이 실패하였습니다.');
+        response = responseObject(false, '비밀번호 변경이 실패하였습니다.');
     }
     return response;
-}
+};
 
 const upDateUser = async (data: any) => {
     const { gender, name, age, addr, mobile, email, hashId } = data;
@@ -95,14 +95,14 @@ const upDateUser = async (data: any) => {
                 addr: result[3],
                 mobile: result[4],
                 msg: '회원정보가 변경되었습니다.',
-            }
+            };
         }
     } catch (e) {
         if (e instanceof Error) console.log(e.message);
-            response = responseObject(false,'회원정보를 변경하지 못하였습니다.')
+        response = responseObject(false, '회원정보를 변경하지 못하였습니다.');
     }
     return response;
-}
+};
 
 const searchUser = async (hashId: string) => {
     try {
@@ -117,7 +117,6 @@ const searchUser = async (hashId: string) => {
             addr: result[3],
             mobile: result[4],
         };
-        
     } catch (e) {
         if (e instanceof Error) console.log(e.message);
         response = responseObject(false, '유저 정보를 불러오는데 실패하였습니다.');
@@ -125,7 +124,7 @@ const searchUser = async (hashId: string) => {
     return response;
 };
 
-const deleteUser = async(hashId: string, email: string) => {
+const deleteUser = async (hashId: string, email: string) => {
     try {
         const contract = await deployed();
         await contract.methods.deleteUser(hashId).send({
@@ -166,7 +165,7 @@ const deleteUser = async(hashId: string, email: string) => {
         response = responseObject(false, '회원 탈퇴에 실패했습니다.');
     }
     return response;
-}
+};
 
 const userService = {
     oAuthRegister,
