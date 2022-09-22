@@ -47,7 +47,7 @@ const apiDistribution = async (appName: string, email: string) => {
             REST_API: restAPI,
         };
     } catch (e) {
-        response = responseObject(false, e.message);
+        if (e instanceof Error) response = responseObject(false, e.message);
     }
     return response;
 };
@@ -65,7 +65,7 @@ const getMyApp = async (email: string) => {
             myapp: myAppName,
         };
     } catch (e) {
-        response = responseObject(false, e.message);
+        if (e instanceof Error) response = responseObject(false, e.message);
     }
     return response;
 };
@@ -111,7 +111,7 @@ const deleteApp = async (restAPI: string, client_secret: string) => {
         });
         response = responseObject(true, '어플리케이션이 삭제되었습니다');
     } catch (e) {
-        response = responseObject(false, e.message);
+        if (e instanceof Error) response = responseObject(false, e.message);
     }
     return response;
 };
@@ -140,9 +140,9 @@ const appInfo = async (restAPI: string) => {
             tempUri[i] = urlInfo[i].redirectURI;
         }
         const result = {
-            email: appInfo.owner,
-            appName: appInfo.appName,
-            client_secret: appInfo.code,
+            email: appInfo?.owner,
+            appName: appInfo?.appName,
+            client_secret: appInfo?.code,
             redirectURI: tempUri,
             restAPI,
             neededInfo: [
@@ -159,7 +159,7 @@ const appInfo = async (restAPI: string) => {
             result,
         };
     } catch (e) {
-        response = responseObject(false, e.message);
+        if (e instanceof Error) response = responseObject(false, e.message);
     }
     return response;
 };
@@ -247,7 +247,7 @@ const giveUserInfo = async (restAPI: any) => {
 
         response = {
             status: true,
-            appName: appName.appName,
+            appName: appName?.appName,
             infos: filteredInfos,
         };
     } catch (e) {
@@ -291,7 +291,7 @@ const userdidregister = async (data: any) => {
         response = responseObject(true, '정상적으로 등록되었습니다. 다시 로그인해주세요.');
         // 문제가 없다면 로그인, 쿠키 생성을 위해 클라이언트 서버의 백엔드로 리다이렉트
     } catch (e) {
-        response = responseObject(false, e.message);
+        if (e instanceof Error) response = responseObject(false, e.message);
     }
     return response;
 };

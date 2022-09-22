@@ -21,23 +21,26 @@ const checkPoint = async (email: string) => {
                 model: TotalPoint,
             },
         );
-        if(result[0]==undefined) throw new Error('유저정보가 없습니다')
+        if (result[0] == undefined) throw new Error('유저정보가 없습니다');
         response = {
             isError: false,
             value: result,
         };
+        return response;
     } catch (e) {
-        response = {
-            isError: true,
-            error: e.message,
-        };
+        if (e instanceof Error) {
+            response = {
+                isError: true,
+                error: e.message,
+            };
+            return response;
+        }
     }
-    return response;
 };
 
 const sendToken = async (pointInfo: any) => {
     let token;
-    let response: Failable<string, string>;
+    let response: Failable<string | undefined, string>;
     try {
         if (pointInfo) {
             token = jwt.sign(
@@ -52,20 +55,24 @@ const sendToken = async (pointInfo: any) => {
             isError: false,
             value: token,
         };
+        return response;
     } catch (e) {
-        response = {
-            isError: true,
-            error: e.message,
-        };
+        if (e instanceof Error) {
+            response = {
+                isError: true,
+                error: e.message,
+            };
+            return response;
+        }
     }
-    return response;
 };
 
 const usePoint = async (token: string, payPoint: any) => {
     let response: Failable<string, string>;
 
     const verifyToken = (token: string) => {
-        const decoded = jwt.verify(token, process.env.SECRET_KEY, { algorithms: ['HS256'] });
+        if (!process.env.SECRET_KEY) return;
+        const decoded = jwt.verify(token as string, process.env.SECRET_KEY, { algorithms: ['HS256'] });
         const stringified = JSON.stringify(decoded);
         const parsed = JSON.parse(stringified).pointInfo;
         const compatible = JSON.stringify(parsed);
@@ -79,7 +86,10 @@ const usePoint = async (token: string, payPoint: any) => {
         };
         throw new Error(response.error);
     }
-    const { parsed, compatible } = verifyToken(token);
+
+    const rst = verifyToken(token);
+    if (!rst) throw new Error('토큰 검증이 불가능합니다');
+    const { parsed, compatible } = rst;
     const result = compatible == JSON.stringify(payPoint);
 
     if (!result) {
@@ -148,7 +158,7 @@ const getPoint = async (restAPI: any, email: any) => {
 
         response = {
             status: true,
-            point: userPoint.point,
+            point: userPoint?.point,
         };
     } catch (e) {
         response = responseObject(false, '포인트를 가져오지 못했습니디.');
@@ -160,7 +170,7 @@ const pointService = {
     checkPoint,
     sendToken,
     usePoint,
-    getPoint
+    getPoint,
 };
 
 export default pointService;
