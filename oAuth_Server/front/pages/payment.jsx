@@ -1,7 +1,6 @@
 import { Box, Center, Text, Button, Flex, Checkbox, Divider, NumberInput, NumberInputField } from '@chakra-ui/react';
-import { request } from '../utils/axios.js';
+import axios from 'axios';
 import { useState, useEffect } from 'react';
-import { setCookie } from 'cookies-next';
 import { backend, frontend } from '../utils/ip';
 
 const payment = () => {
@@ -60,7 +59,7 @@ const payment = () => {
 
   const getPoint = async () => {
     const email = window.location.search.split('&')[0].split('=')[1];
-    const response = await request.post(`/Oauth/point/checkPoint`, { email });
+    const response = await axios.post(`${backend}/Oauth/point/checkPoint`, { email });
     if (!response.data.isError) {
       setPayMenu(response.data.value);
     } else {
@@ -70,14 +69,17 @@ const payment = () => {
 
   const Pay = async (req, res) => {
     const response = await axios.post(`${backend}/Oauth/point/sendToken`, { pointInfo: payPoint });
-    document.domain = `localhost`;
-    setCookie('item', response.data.value, {
-      req,
-      res,
-      maxAge: 60 * 60 * 24 * 1000,
-    });
-    opener.location.reload();
-    window.self.close();
+    if (response.status) {
+      window.opener.postMessage({ type: 'token', data: response.data.value }, 'http://localhost:3000');
+      window.self.close();
+    }
+    // document.domain = `localhost`;
+    // setCookie('item', response.data.value, {
+    //   req,
+    //   res,
+    //   maxAge: 60 * 60 * 24 * 1000,
+    // });
+    // opener.location.reload();
   };
 
   useEffect(() => {

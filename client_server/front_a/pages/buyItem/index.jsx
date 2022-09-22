@@ -2,7 +2,7 @@ import useRouter from 'next/router';
 import { useState, useEffect } from 'react';
 import { Button, Divider, Stack, Flex, Box, Image, Text, Center } from '@chakra-ui/react';
 import axios from 'axios';
-import { getCookie, deleteCookie } from 'cookies-next';
+import { getCookie, deleteCookie, setCookie } from 'cookies-next';
 import { oauth, oauthBack } from '../../utils/ip';
 
 const BuyItem = ({ user, did }) => {
@@ -49,8 +49,7 @@ const BuyItem = ({ user, did }) => {
 
   // OAuth의 페이지 요청하는 함수
   const getPage = () => {
-    document.domain = 'localhost';
-    window.open(`http://${oauth}/payment?email=${email}&point=${formattedPrice}`, '', 'width=800, height=600');
+    const child = window.open(`http://${oauth}/payment?email=${email}&point=${formattedPrice}`, '', 'width=800, height=600');
   };
 
   // OAuth에 포인트를 차감 요청할 함수
@@ -58,6 +57,8 @@ const BuyItem = ({ user, did }) => {
     const Cookie = getCookie('item');
 
     const payPoint = JSON.parse(Buffer.from(Cookie.split('.')[1], 'base64').toString('utf-8')).pointInfo;
+
+    console.log(payPoint);
 
     const response = await axios.post(`http://${oauthBack}/Oauth/point/usePoint`, {
       token: Cookie,
@@ -86,6 +87,19 @@ const BuyItem = ({ user, did }) => {
     setTitle(router.query.title);
     setFormattedPrice(router.query.formattedPrice);
 
+    if (window) {
+      window.addEventListener('message', (e, req, res) => {
+        if (!getCookie('item') && e.data.type === 'token') {
+          setCookie('item', e.data, {
+            req,
+            res,
+            maxAge: 60 * 60 * 24 * 1000,
+          });
+          location.reload();
+        }
+      });
+    }
+
     if (user) {
       getPoint();
       setLogin(true);
@@ -105,6 +119,9 @@ const BuyItem = ({ user, did }) => {
 
   return (
     <Box m="10">
+      <Text className="tokenText" display="none">
+        test
+      </Text>
       <Flex>
         <Image flex={1} src={imageUrl} height={700} />
         <Stack flex={1} ml="5" direction="row" p={4}>
