@@ -4,3 +4,4 @@ package-lock.json
 /dist
 /contracts
 OAuth-Back.pem
+*.pem
