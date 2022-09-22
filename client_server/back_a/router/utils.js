@@ -9,7 +9,7 @@ const filterNull = (uris) => {
     return newRedirectUri;
 };
 
-const oauth_Front = 'http://3.35.86.127';
+const oauth_Front = 'http://teamdid.shop';
 const oauth_Back = 'http://13.124.225.13';
 const frontEnd = 'http://localhost:3000';
 
