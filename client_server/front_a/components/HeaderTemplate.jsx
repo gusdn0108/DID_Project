@@ -7,7 +7,7 @@ import LoginModal from './LoginModal.jsx';
 import MypageDrawer from './MypageDrawer.jsx';
 import { deleteCookie } from 'cookies-next';
 
-export default function Home({ user }) {
+export default function Home({ user, did }) {
   const [menu, setMenu] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
 
@@ -19,13 +19,16 @@ export default function Home({ user }) {
     if (user) {
       setIsLogin(true);
     }
+    if (did) {
+      setIsLogin(true);
+    }
   }, []);
 
   return (
     <>
       <HeaderTemplate>
         <Flex className="header">
-          <Link href="">
+          <Link href="/">
             <Center className="logo" h="4rem" fontSize="1.5rem" fontWeight="bold">
               Kyungil Mall
             </Center>
@@ -58,7 +61,11 @@ export default function Home({ user }) {
               <>
                 <Button
                   onClick={(req, res) => {
-                    deleteCookie('user', { req, res, maxAge: 60 * 60 * 24 * 1000 });
+                    if (user) {
+                      deleteCookie('userInfo_A', { req, res, maxAge: 60 * 60 * 24 * 1000 });
+                    } else if (did) {
+                      deleteCookie('accessToken', { req, res, maxAge: 60 * 60 * 24 * 1000 });
+                    }
                     setIsLogin(false);
                     window.location.replace('/');
                   }}
@@ -85,6 +92,7 @@ export default function Home({ user }) {
           <JoinModal joinIsOpen={joinIsOpen} joinOnClose={joinOnClose} />
           <LoginModal loginIsOpen={loginIsOpen} loginOnClose={loginOnClose} />
           {user ? <MypageDrawer MypageIsOpen={MypageIsOpen} MypageOnClose={MypageOnClose} user={user} /> : null}
+          {did ? <MypageDrawer MypageIsOpen={MypageIsOpen} MypageOnClose={MypageOnClose} did={did} /> : null}
         </Flex>
         {menu ? (
           <Box className="menuHover">

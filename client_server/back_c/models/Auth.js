@@ -6,11 +6,7 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
-            username: {
-                type: DataTypes.STRING,
-                allowNull: false,
-            },
-            password: {
+            userHash: {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
@@ -19,10 +15,18 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false,
                 default: 0,
             },
+            mobile: {
+                type: DataTypes.STRING,
+                allowNull: false,
+            },
+            name: {
+                type: DataTypes.STRING,
+                allowNull: false,
+            },
         },
         {
             timestamps: false,
-            tableName: 'Login',
+            tableName: 'Auth',
             charset: 'utf8mb4',
             collate: 'utf8mb4_general_ci',
             freezeTableName: true,

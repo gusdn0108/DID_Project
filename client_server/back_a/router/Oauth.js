@@ -1,130 +1,154 @@
 const express = require('express');
 const axios = require('axios');
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
-const crypto = require('crypto');
+const { filterNull, oauth_Front, oauth_Back, frontEnd } = require('./utils');
+const { Account, UserInfo } = require('../models');
+require('dotenv').config();
+
 const router = express.Router();
 
-const baseUrl = 'http://localhost:8000/api/Oauth';
-const asite = 'dkstnghks';
-const code = crypto.createHash('sha256').update(asite).digest('base64'); // * a사이트 인가코드
-
 const Otp = {
-    clientId: '41f18d0fe5000fefe118140548e11dd',
-    redirectUri: 'http://localhost:4000',
+    clientId: process.env.CLIENT_ID,
+    redirectUri: process.env.REDIRECT_URI,
+    client_secret: process.env.CLIENT_SECRET,
+    giveUserInfo: process.env.GIVE_USER_INFO,
 };
 
-router.get('/RedirectUrl', async (req, res) => {
-    // clientId = restAPI
-    const url = `http://localhost:8080/login?clientId=${Otp.clientId}&redirectUri=${Otp.redirectUri}&response_type=${code}`;
+router.get('/DIDLogin', async (req, res) => {
+    const url = `${oauth_Front}/login?clientId=${Otp.clientId}&redirectUri=${Otp.redirectUri}&response_type=code&giveUserInfo=${Otp.giveUserInfo}`;
     res.redirect(url);
 });
 
-router.post('/getCode', async (req, res) => {
-    console.log('asdf???')
-    console.log(req.body)
+router.get('/getCode', async (req, res) => {
+    const { email, hash1 } = req.query;
+    const url = `${oauth_Back}/oauth/login/codeAuthorize`;
 
+    const hash = decodeURIComponent(hash1);
 
+    const Data = {
+        grant_type: 'authorization_code',
+        restAPI: Otp.clientId,
+        client_secret: Otp.client_secret,
+        redirect: Otp.redirectUri,
+        email,
+        hash,
+    };
 
+    let access_token;
 
-    // const RestAPI = userOTP.clientId;
-
-    // const Data = {
-    //     clientId: RestAPI,
-    //     grant_type: 'authorization_code',
-    //     headers: {
-    //         'Content-Type': 'application/json',
-    //     },
-    // };
     try {
-        // await axios.post(`${baseUrl}/getToken`, Data);
+        const response = await axios.post(url, Data);
+        access_token = response.data.ACCESS_TOKEN;
     } catch (error) {
         console.log(error);
     }
-});
-
-router.post('/oAuthGetToken', async (req, res) => {
-    const response = req.body;
-
-    console.log(response);
-
-    // const ID_TOKEN = jwt.sign(
-    //     {
-    //         user,
-    //     },
-    //     process.env.SECRET_KEY,
-    // );
-    // ID_TOKEN.split('.')[1]
-
-    // response.id_token =ID_TOKEN.split('.')[1]
-
-    // const TokenUserId = JSON.parse(Buffer.from(splitToken, 'base64').toString('utf-8')).user.userId
-    // const TokenUserPw = JSON.parse(Buffer.from(splitToken, 'base64').toString('utf-8')).user.userPw
-    // console.log(TokenUserId,TokenUserPw)
-
-    /**
-     * oauth서버에서 DATA값받아옴
-     * 그 DATA 값에 id_token을 추가해서 front 에 token저장해줘야함 ;
-     * 프론트에서 그리고 그 토큰값을 풀어서 userId 랑 userpw 를 대조해서 맞으면 로그인을 성공시켜줘야함
-     * 의문점 ? : ACCESS_TOKEN에도 USER값이들어가있는데 굳이 왜 ID_TOKEN을 만들어주는지 모르겠음 ...
-     * 의문점 풀이 : access_token은 사실상 back oauth검증 / id _token은 백이랑 프론트 검증용? 이라고생각해보고있음..
-     * */
-});
-
-router.post('/oAuthRegister', async (req, res) => {
-    const { email, password } = req.body;
 
     try {
-        const _user = await Auth.findOne({
-            where: {
-                email: email,
+        const url = `${oauth_Back}/oauth/login/codeAuthorize2`;
+        const Header = {
+            headers: {
+                Authorization: access_token,
             },
-        });
+        };
 
-        const getEncodedHash = bcrypt.compareSync(password, _user.dataValues.password);
-        if (getEncodedHash === true) {
-            const userPwHash = _user.dataValues.password;
-            const toBlockData = {
-                email: email,
-                password: userPwHash,
-                clientId: Otp.clientId,
-            };
-            const hasUuid = _user.dataValues.uuid;
-            if (hasUuid !== null) {
-                res.json({
-                    status: false,
-                    msg: 2,
-                });
-            }
-            const response = await axios.post('http://localhost:8000/api/Oauth/register', toBlockData);
-            res.json({
-                status: true,
-                data: response.data.email,
-            });
-        } else {
-            res.json({
-                status: false,
-                msg: 1,
-            });
+        const response = await axios.get(url, Header);
+        const { VP, hash } = response.data;
+
+        const vpCookie = filterNull(VP);
+
+        let stringCookie = { email };
+        for (let i = 0; i < vpCookie.length; i++) {
+            stringCookie = { ...stringCookie, [vpCookie[i].att]: vpCookie[i].value };
         }
-    } catch (error) {
-        console.log(error.message);
+
+        const ACCESS_TOKEN = jwt.sign(
+            {
+                hash,
+                stringCookie,
+            },
+            process.env.SECRET_KEY,
+        );
+
+        const cookiOpt = { maxAge: 43199 };
+        res.cookie('accessToken', ACCESS_TOKEN, cookiOpt);
+        res.header('Access_control_allow_origin', `${frontEnd}`);
+        res.header('Content-Type', 'application/json');
+        const result = {
+            redirectUri: `${frontEnd}/login?accessToken=${ACCESS_TOKEN.split('.')[1]}`,
+        };
+        res.json(result);
+    } catch (e) {
+        console.log(e.message);
     }
 });
 
-router.post('/getuuid', async (req, res) => {
-    console.log('uuid옴???');
-    const { uuid, email } = req.body;
-    console.log(uuid, email);
-    const _user = await Auth.findOne({
-        where: {
-            email: {
-                [Op.eq]: email,
+router.post('/giveUserinfo', async (req, res) => {
+    try {
+        const { vp, email } = req.body;
+        const isRegistered = await Account.findOne({
+            where: {
+                email,
             },
-        },
-    });
-    if (_user) {
-        await Auth.update({ uuid: uuid }, { where: { email: email } });
+        });
+
+        if (isRegistered) throw new Error('이미 등록된 사용자입니다.');
+
+        const saveUserInfo = await Account.create({
+            email,
+        });
+
+        let name = '';
+        let mobile = '';
+
+        for (let i = 0; i < vp.length; i++) {
+            if (vp[i].att == 'name') {
+                name = vp[i].value;
+            }
+            if (vp[i].att == 'mobile') {
+                mobile = vp[i].value;
+            }
+        }
+        // 수정 요망
+
+        const insertVP = await UserInfo.create({
+            email,
+            name,
+            mobile,
+        });
+
+        const response = {
+            status: true,
+            msg: '사용자 정보 수신 완료',
+        };
+
+        res.json(response);
+    } catch (e) {
+        console.log(e.message);
+        const response = {
+            status: false,
+            msg: e.message,
+        };
+        res.json(response);
+    }
+});
+
+router.get('/getoauthPoint', async (req, res) => {
+    const { email } = req.query;
+    try {
+        const response = await axios.get(`${oauth_Back}/oauth/app/getPoint?email=${email}&restAPI=${Otp.clientId}`);
+        if (response.data.status == false) throw new Error(response.data.msg);
+
+        res.json({
+            status: true,
+            point: response.data.point,
+        });
+    } catch (e) {
+        console.log(e.message);
+        const response = {
+            status: false,
+            msg: e.message,
+        };
+        res.json(response);
     }
 });
 

@@ -1,98 +1,158 @@
 const express = require('express');
 const axios = require('axios');
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
-const crypto = require('crypto');
+const { filterNull, oauth_Front, oauth_Back, frontEnd } = require('./utils');
+const { Account, UserInfo } = require('../models');
+
+require('dotenv').config();
+
 const router = express.Router();
 
-    const baseUrl = 'http://localhost:8000/api/Oauth';
-    
+const Otp = {
+    clientId: process.env.CLIENT_ID,
+    redirectUri: process.env.REDIRECT_URI,
+    client_secret: process.env.CLIENT_SECRET,
+    giveUserInfo: process.env.GIVE_USER_INFO,
+};
 
-    const Otp = {
-    clientId: '460716d6dfc9d3e95765694659384cd',
-    redirectUri: 'http://localhost:4001',
-    };
-    
-
-
-
-
-
-router.get('/RedirectUrl', async(req, res) => {
-const url = `http://localhost:8080/login?clientId=${Otp.clientId}&redirectUri=${Otp.redirectUri}&response_type=code`;
-res.redirect(url);
+router.get('/DIDLogin', async (req, res) => {
+    const url = `${oauth_Front}/login?clientId=${Otp.clientId}&redirectUri=${Otp.redirectUri}&response_type=code&giveUserInfo=${Otp.giveUserInfo}`;
+    res.redirect(url);
 });
 
-router.post('/getCode', async (req, res) => {
-    console.log('여기까지오니??')
-    const {restAPI,redirectURI,name,gender,mobile,hash} = req.body
+router.get('/getCode', async (req, res) => {
+    const { email, hash1 } = req.query;
+    const url = `${oauth_Back}/oauth/login/codeAuthorize`;
 
-     // * 인가코드
-     const asite = 'dkstnghks';
-     const bsite = 'dltmdwns';
-     const csite = 'dlagusdn';
-     const dsite = 'rlawlgus';
- 
-     const code0 = crypto.createHash('sha256').update(asite).digest('base64'); // * a사이트 인가코드
-     console.log('히히코드0',code0);
-     const code1 = crypto.createHash('sha256').update(bsite).digest('base64'); // * b사이트 인가코드
-     console.log(code1);
-     const code2 = crypto.createHash('sha256').update(csite).digest('base64'); // * c사이트 인가코드
-     console.log('히히코드2',code2);
-     const code3 = crypto.createHash('sha256').update(dsite).digest('base64'); // * d사이트 인가코드
-     console.log('히히코드3',code3);
+    //const hash = hash1.replace(/ /g, '+');
+    const hash = decodeURIComponent(hash1);
+
+    const Data = {
+        grant_type: 'authorization_code',
+        restAPI: Otp.clientId,
+        client_secret: Otp.client_secret,
+        redirect: Otp.redirectUri,
+        email,
+        hash,
+    };
+
+    let access_token;
 
     try {
-       
-            if(restAPI){
-                const Data = {
-                    restAPI:restAPI,
-                    redirectURI:redirectURI,
-                    name:name,
-                    gender:gender,
-                    mobile:mobile,
-                    hash:hash,
-                    code:code0,
-                    headers: {
-                      "Content-Type": "application/json",
-                    },
-                  };
-                  await axios.post('http://localhost:8000/api/oauth/getToken',Data)
-            }else{
-                return res.status(403).send('RestAPI가 없습니다 ');
-            }
-            
-        } catch (error) {
+        const response = await axios.post(url, Data);
+        access_token = response.data.ACCESS_TOKEN;
+    } catch (error) {
         console.log(error);
+    }
+
+    // axios 두번 oauth 백으로 1. 코드를던져서 토큰을받기 2. 토큰을던져서 유저정보받기
+    try {
+        const url = `${oauth_Back}/oauth/login/codeAuthorize2`;
+        const Header = {
+            headers: {
+                Authorization: access_token,
+            },
+        };
+
+        const response = await axios.get(url, Header);
+        const { VP, hash } = response.data;
+
+        const vpCookie = filterNull(VP);
+
+        let stringCookie = { email, hash };
+        for (let i = 0; i < vpCookie.length; i++) {
+            stringCookie = { ...stringCookie, [vpCookie[i].att]: vpCookie[i].value };
+        }
+
+        const ACCESS_TOKEN = jwt.sign(
+            {
+                hash,
+                stringCookie,
+            },
+            process.env.SECRET_KEY,
+        );
+
+        const cookiOpt = { maxAge: 43199 };
+        res.cookie('accessToken', ACCESS_TOKEN, cookiOpt);
+        res.header('Access_control_allow_origin', `${frontEnd}`);
+        res.header('Content-Type', 'application/json');
+        const result = {
+            redirectUri: `${frontEnd}/login?accessToken=${ACCESS_TOKEN.split('.')[1]}`,
+        };
+        res.json(result);
+    } catch (e) {
+        console.log(e.message);
     }
 });
 
-router.post('/oAuthGetToken', async (req, res) => {
-    const response = req.body;
+router.post('/giveUserinfo', async (req, res) => {
+    try {
+        const { vp, email } = req.body;
+        const isRegistered = await Account.findOne({
+            where: {
+                email,
+            },
+        });
 
-    console.log(response);
+        if (isRegistered) throw new Error('이미 등록된 사용자입니다.');
 
-    // const ID_TOKEN = jwt.sign(
-    //     {
-    //         user,
-    //     },
-    //     process.env.SECRET_KEY,
-    // );
-    // ID_TOKEN.split('.')[1]
+        const saveUserInfo = await Account.create({
+            email,
+        });
 
-    // response.id_token =ID_TOKEN.split('.')[1]
+        let name = '';
+        let mobile = '';
 
-    // const TokenUserId = JSON.parse(Buffer.from(splitToken, 'base64').toString('utf-8')).user.userId
-    // const TokenUserPw = JSON.parse(Buffer.from(splitToken, 'base64').toString('utf-8')).user.userPw
-    // console.log(TokenUserId,TokenUserPw)
+        for (let i = 0; i < vp.length; i++) {
+            if (vp[i].att == 'name') {
+                name = vp[i].value;
+            }
+            if (vp[i].att == 'mobile') {
+                mobile = vp[i].value;
+            }
+        }
+        // 수정 요망
 
-    /**
-     * oauth서버에서 DATA값받아옴
-     * 그 DATA 값에 id_token을 추가해서 front 에 token저장해줘야함 ;
-     * 프론트에서 그리고 그 토큰값을 풀어서 userId 랑 userpw 를 대조해서 맞으면 로그인을 성공시켜줘야함
-     * 의문점 ? : ACCESS_TOKEN에도 USER값이들어가있는데 굳이 왜 ID_TOKEN을 만들어주는지 모르겠음 ...
-     * 의문점 풀이 : access_token은 사실상 back oauth검증 / id _token은 백이랑 프론트 검증용? 이라고생각해보고있음..
-     * */
+        const insertVP = await UserInfo.create({
+            email,
+            name,
+            mobile,
+        });
+
+        const response = {
+            status: true,
+            msg: '사용자 정보 수신 완료',
+        };
+
+        res.json(response);
+    } catch (e) {
+        console.log(e.message);
+        const response = {
+            status: false,
+            msg: e.message,
+        };
+        res.json(response);
+    }
+});
+
+router.get('/getoauthPoint', async (req, res) => {
+    const { email } = req.query;
+    try {
+        const response = await axios.get(`${oauth_Back}/oauth/point/getPoint?email=${email}&restAPI=${Otp.clientId}`);
+        if (response.data.status == false) throw new Error(response.data.msg);
+
+        res.json({
+            status: true,
+            point: response.data.point,
+        });
+    } catch (e) {
+        console.log(e.message);
+        const response = {
+            status: false,
+            msg: e.message,
+        };
+        res.json(response);
+    }
 });
 
 module.exports = router;

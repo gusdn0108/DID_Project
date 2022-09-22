@@ -10,6 +10,7 @@ const JoinModal = ({ joinIsOpen, joinOnClose }) => {
   const [password, setPassword] = useState('');
   const [passwordCheck, setPasswordCheck] = useState('');
   const [nickname, setNickname] = useState('');
+  const [mobile, setMobile] = useState('');
 
   const [emailAuth, setEmailAuth] = useState(false);
   const [emailNum, setEmailNum] = useState([]);
@@ -25,11 +26,7 @@ const JoinModal = ({ joinIsOpen, joinOnClose }) => {
         } else {
           let id = e.target.value + domain;
 
-          console.log('이메일 변경');
-
-          const response = await axios.post('http://localhost:4001/api/auth/idCheck', { email: id });
-
-          console.log(response.data);
+          const response = await axios.post('http://localhost:4000/api/auth/idCheck', { email: id });
 
           if (response.data.status === 1) {
             setEmailCheck('true');
@@ -50,11 +47,7 @@ const JoinModal = ({ joinIsOpen, joinOnClose }) => {
         } else {
           let id = email + e.target.value;
 
-          console.log('도메인 변경');
-
-          const response = await axios.post('http://localhost:4001/api/auth/idCheck', { email: id });
-
-          console.log(response.data);
+          const response = await axios.post('http://localhost:4000/api/auth/idCheck', { email: id });
 
           if (response.data.status === 1) {
             setEmailCheck('true');
@@ -87,14 +80,13 @@ const JoinModal = ({ joinIsOpen, joinOnClose }) => {
   };
 
   const auth = async () => {
-    const response = await axios.post('http://localhost:4001/api/auth/email', { email: email + domain });
+    const response = await axios.post('http://localhost:4000/api/auth/email', { email: email + domain });
 
     if (response.data.status) {
       setEmailAuth(true);
       setEmailNum(response.data.number);
       setEmailCheck('');
     }
-
     console.log(response.data.number);
   };
 
@@ -122,6 +114,7 @@ const JoinModal = ({ joinIsOpen, joinOnClose }) => {
     setPassword('');
     setPasswordCheck('');
     setNickname('');
+    setMobile('');
 
     setEmailAuth(false);
     setEmailNum([]);
@@ -136,9 +129,10 @@ const JoinModal = ({ joinIsOpen, joinOnClose }) => {
       email: email + domain,
       password,
       nickName: nickname,
+      mobile,
     };
 
-    const response = await axios.post('http://localhost:4001/api/auth/SignUp', body);
+    const response = await axios.post('http://localhost:4000/api/auth/SignUp', body);
 
     if (response.data.status === 1) {
       setEmail('');
@@ -148,6 +142,7 @@ const JoinModal = ({ joinIsOpen, joinOnClose }) => {
       setPassword('');
       setPasswordCheck('');
       setNickname('');
+      setMobile('');
 
       setEmailAuth(false);
       setEmailNum([]);
@@ -190,7 +185,7 @@ const JoinModal = ({ joinIsOpen, joinOnClose }) => {
                 <option value="@gmail.com">@gmail.com</option>
               </Select>
               {!emailAuth ? (
-                <Button w={120} ml={2} onClick={auth} disabled={emailCheck ? false : true}>
+                <Button w={120} ml={2} onClick={auth} disabled={emailCheck === 'true' ? false : true}>
                   이메일 인증
                 </Button>
               ) : (
@@ -215,8 +210,6 @@ const JoinModal = ({ joinIsOpen, joinOnClose }) => {
                     colorScheme="teal"
                     variant="outline"
                     onClick={() => {
-                      console.log(inputEmailNum.toString());
-                      console.log(emailNum.toString());
                       if (inputEmailNum.toString() === emailNum.toString()) {
                         setEmailNumCheck(true);
                       } else {
@@ -257,6 +250,13 @@ const JoinModal = ({ joinIsOpen, joinOnClose }) => {
               placeholder="Nickname"
               onChange={(e) => {
                 onChange(e, 'Nickname');
+              }}
+            />
+            <Input
+              variant="flushed"
+              placeholder="Mobile Number"
+              onChange={(e) => {
+                setMobile(e.target.value);
               }}
             />
           </ModalBody>

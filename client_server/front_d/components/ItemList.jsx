@@ -1,12 +1,15 @@
-import { Box, Image, Badge, Flex, Center } from '@chakra-ui/react';
+import { Box, Image, Badge, Flex, Center, Link, Button } from '@chakra-ui/react';
 import { StarIcon } from '@chakra-ui/icons';
-import BuyItemModal from '../components/BuyItemModal.jsx';
 
 const ItemList = ({ property }) => {
+	const movePage = (v) => {
+		location.href = `http://localhost:3003/buyItem/?imageUrl=${v.imageUrl}&title=${v.title}&formattedPrice=${v.formattedPrice}`;
+	};
+
 	const showItem = () => {
 		return property.map((v, k) => {
 			return (
-				<Box w='30%' borderWidth='1px' borderRadius='lg' overflow='hidden' m='0 1rem'>
+				<Box w='30%' m='0 1rem' borderWidth='1px' borderRadius='lg' overflow='hidden' key={k}>
 					<Image src={v.imageUrl} w='30rem' h='20rem' />
 
 					<Box p='6'>
@@ -37,7 +40,9 @@ const ItemList = ({ property }) => {
 						</Box>
 					</Box>
 					<Center>
-						<BuyItemModal bookInfo={property[k]} />
+						<Button mb='0.5rem' colorScheme='yellow' variant='outline' onClick={() => movePage(v)}>
+							구매하기
+						</Button>
 					</Center>
 				</Box>
 			);

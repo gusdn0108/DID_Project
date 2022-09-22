@@ -1,26 +1,33 @@
 import { Button, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, Lorem, ModalFooter, Input } from '@chakra-ui/react';
 import axios from 'axios';
 import { useState } from 'react';
-import { setCookie } from 'cookies-next';
+import { setCookie, getCookie, deleteCookie } from 'cookies-next';
 
 const LoginModal = ({ loginIsOpen, loginOnClose }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const onClick = async (req, res) => {
-    const response = await axios.post('http://localhost:4000/api/auth/login', {
+    const response = await axios.post('http://localhost:4002/api/auth/login', {
       userEmail: email,
       userPw: password,
     });
 
     if (response.data.status) {
       const payload = response.data.token.split('.')[1];
-      setCookie('user', payload, { req, res, maxAge: 60 * 60 * 24 * 1000 });
+      if (getCookie('accessToken')) {
+        deleteCookie('accessToken', { req, res, maxAge: 60 * 60 * 24 * 1000 });
+      }
+      setCookie('userInfo_C', payload, { req, res, maxAge: 60 * 60 * 24 * 1000 });
 
       window.location.replace('/');
     } else {
       alert(response.data.msg);
     }
+  };
+
+  const didLoginHandler = async () => {
+    location.href = 'http://localhost:4002/api/oauth/DIDLogin';
   };
 
   return (
@@ -36,15 +43,7 @@ const LoginModal = ({ loginIsOpen, loginOnClose }) => {
           </ModalBody>
 
           <ModalFooter>
-            <Button
-              width="7rem"
-              colorScheme="blue"
-              variant="outline"
-              mr="7.2rem"
-              onClick={() => {
-                console.log('DID 로그인');
-              }}
-            >
+            <Button width="7rem" colorScheme="blue" variant="outline" mr="7.2rem" onClick={didLoginHandler}>
               DID 로그인
             </Button>
             <Button width="5rem" colorScheme="blue" mr={3} onClick={loginOnClose}>
