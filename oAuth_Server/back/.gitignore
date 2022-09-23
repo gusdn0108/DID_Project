@@ -2,6 +2,5 @@
 package-lock.json
 .env
 /dist
-/contracts
 OAuth-Back.pem
 *.pem
