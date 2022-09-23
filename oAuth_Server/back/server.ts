@@ -5,6 +5,7 @@ import sequelize from './models';
 import cors from 'cors';
 import { swaggerSpec } from './openAPI/swagger';
 import swaggerUi from 'swagger-ui-express';
+import { frontend } from './routers/user/utils';
 
 const app = express();
 
@@ -13,7 +14,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(
     cors({
-        origin: '*',
+        origin: `${frontend}`,
         credentials: true,
     }),
 );
