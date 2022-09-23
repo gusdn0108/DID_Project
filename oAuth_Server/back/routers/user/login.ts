@@ -6,7 +6,7 @@ let response: any;
 
 /**
  * @openapi
- * /Oauth/user/authorize:
+ * /Oauth/login/authorize:
  *   post:
  *     tag:
  *     - authorize
@@ -82,7 +82,7 @@ router.post('/authorize', async (req: Request, res: Response) => {
 
 /**
  * @openapi
- * /Oauth/user/codeAuthorize:
+ * /Oauth/login/codeAuthorize:
  *   post:
  *     tag:
  *     - authorize
@@ -151,7 +151,7 @@ router.post('/codeAuthorize', async (req: Request, res: Response) => {
 
 /**
  * @openapi
- * /Oauth/user/codeAuthorize2:
+ * /Oauth/login/codeAuthorize2:
  *   post:
  *     tag:
  *     - codeAuthorize2
@@ -207,7 +207,7 @@ router.get('/codeAuthorize2', async (req: Request, res: Response) => {
 
 /**
  * @openapi
- * /Oauth/user/localAuthorize:
+ * /Oauth/login/localAuthorize:
  *   post:
  *     tag:
  *     -localAuthorize
