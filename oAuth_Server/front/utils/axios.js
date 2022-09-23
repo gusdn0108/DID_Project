@@ -6,6 +6,7 @@ const config = {
   headers: {
     withCredentials: true,
     'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*',
   },
 };
 
