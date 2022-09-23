@@ -30,6 +30,10 @@ module.exports = {
         source: '/authorize',
         headers: securityHeaders,
       },
+      {
+        source: '/locallogin',
+        headers: securityHeaders,
+      },
     ];
   },
 };
