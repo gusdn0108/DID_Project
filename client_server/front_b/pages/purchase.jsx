@@ -2,7 +2,7 @@ import { Box, Button, Flex, Text, Input, Image } from "@chakra-ui/react";
 
 import { useState } from "react";
 import axios from "axios";
-import { getCookie, deleteCookie } from "cookies-next";
+import { getCookie, deleteCookie, setCookie } from "cookies-next";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { oauth, oauthBack } from "../utils/ip";
@@ -33,8 +33,9 @@ const Purchase = ({ email, whichCookie, point }) => {
 
   const getPage = () => {
     document.domain = "localhost";
+    const site = location.href.split("/")[2];
     window.open(
-      `http://${oauth}/payment?email=${email}&point=${price}`,
+      `${oauth}/payment?email=${email}&point=${price}&site=${site}`,
       "",
       "width=800, height=600"
     );
@@ -78,13 +79,10 @@ const Purchase = ({ email, whichCookie, point }) => {
       Buffer.from(Cookie.split(".")[1], "base64").toString("utf-8")
     ).pointInfo;
 
-    const response = await axios.post(
-      `http://${oauthBack}/Oauth/point/usePoint`,
-      {
-        token: Cookie,
-        payPoint,
-      }
-    );
+    const response = await axios.post(`${oauthBack}/Oauth/point/usePoint`, {
+      token: Cookie,
+      payPoint,
+    });
 
     if (!response.data.isError) {
       alert(response.data.value);
@@ -99,6 +97,19 @@ const Purchase = ({ email, whichCookie, point }) => {
     getPoint();
     setProductInfo();
     setUserCookie(whichCookie);
+    if (window) {
+      window.addEventListener("message", (e, req, res) => {
+        if (!getCookie("item") && e.data.type === "token") {
+          setCookie("item", e.data.token, {
+            req,
+            res,
+            maxAge: 60 * 60 * 24 * 1000,
+          });
+          location.reload();
+        }
+      });
+    }
+
     if (!token) {
       if (getCookie("item")) {
         setTokenData(
