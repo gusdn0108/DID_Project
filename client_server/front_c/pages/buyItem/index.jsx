@@ -51,7 +51,7 @@ const BuyItem = ({ user, did }) => {
   const getPage = () => {
     document.domain = 'localhost';
     const site = location.href.split('/')[2];
-    window.open(`${oauth}payment?email=${email}&point=${formattedPrice}&site=${site}`, '', 'width=800, height=600');
+    window.open(`${oauth}/payment?email=${email}&point=${formattedPrice}&site=${site}`, 'target="_blank"', 'width=800, height=600');
   };
 
   // OAuth에 포인트를 차감 요청할 함수

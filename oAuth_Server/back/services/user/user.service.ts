@@ -37,7 +37,7 @@ const oAuthRegister = async (data: any) => {
 
         response = responseObject(true, '회원 가입이 완료되었습니다.');
     } catch (e) {
-        if (e instanceof Error) console.log(e.message);
+        if (e instanceof Error) console.log(e);
         response = responseObject(false, e.message);
     }
     return response;
