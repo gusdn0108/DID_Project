@@ -9,7 +9,7 @@ contract DID is IDID {
 
     string gender;
     string name;
-    uint8 age;
+    string age;
     string addr;
     string mobile;
     string email;

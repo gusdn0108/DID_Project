@@ -8,6 +8,7 @@ import { frontend } from '../../routers/user/utils';
 import App from '../../models/webSite/app.model';
 import DataNeeded from '../../models/webSite/dataNeeded.model';
 import VerifyId from '../../models/user/verifyId.model';
+import { cipher, decipher } from '../utils/hash.service';
 
 let response: any;
 
@@ -26,9 +27,10 @@ const authorize = async (data: any) => {
         if (!checkRedirectUri) throw new Error('존재하지 않는 어플리케이션 혹은 redirect Uri');
 
         const contract = await deployed;
+
         const result = await contract.methods.getUser(hash).call();
 
-        if ((result[0] == '' && result[2] == 0) || email !== result[5]) {
+        if (result[0] == '' || cipher(email) !== result[5]) {
             response = responseObject(false, 'id/pw를 확인해주세요');
             throw new Error(response.msg);
         }
@@ -141,7 +143,7 @@ const localAuthorize = async (email: string, password: string) => {
         const hash = crypto.createHash('sha256').update(userhash).digest('base64');
         const dbUser = await VerifyId.findOne({
             where: {
-                email
+                email,
             },
         });
 
@@ -150,9 +152,9 @@ const localAuthorize = async (email: string, password: string) => {
         const contract = await deployed;
         const result = await contract.methods.getUser(hash).call();
 
-        if ((result[0] == '' && result[2] == 0) || email !== result[5]) {
+        if (result[0] == '' || cipher(email) !== result[5]) {
             response = responseObject(false, 'id/pw를 확인해주세요');
-            throw new Error(response.msg)
+            return response;
         }
         if (result) {
             let token = jwt.sign(

@@ -5,7 +5,7 @@ interface IDID {
     struct User{
         string gender;
         string name;
-        uint8 age;
+        string age;
         string addr;
         string mobile;
         string email;

@@ -6,6 +6,7 @@ import DataNeeded from '../../models/webSite/dataNeeded.model';
 import RedirectURI from '../../models/webSite/redirectURI.model';
 import { responseObject } from '../../routers/app/utils';
 import deployed from '../../web3';
+import { cipher, decipher } from '../utils/hash.service';
 
 let response: any;
 
@@ -16,14 +17,16 @@ const oAuthRegister = async (data: any) => {
         const hash = crypto.createHash('sha256').update(userHash).digest('base64');
 
         const DATA = {
-            email,
-            gender,
-            name,
-            age,
-            addr,
-            mobile,
+            email: cipher(email),
+            gender: cipher(gender),
+            name: cipher(name),
+            age: cipher(age),
+            addr: cipher(addr),
+            mobile: cipher(mobile),
         };
+
         const contract = await deployed;
+
         await contract.methods.registerUser(hash, DATA).send({
             from: process.env.WALLET_ADDRESS,
         });
@@ -69,13 +72,15 @@ const upDateUser = async (data: any) => {
 
     try {
         const DATA = {
-            gender,
-            name,
-            age,
-            addr,
-            mobile,
-            email,
+            email: cipher(email),
+            gender: cipher(gender),
+            name: cipher(name),
+            age: cipher(age),
+            addr: cipher(addr),
+            mobile: cipher(mobile),
         };
+
+        console.log(DATA);
 
         const contract = await deployed;
         const checkUser = await contract.methods.isRegistered(hashId).call();
@@ -87,15 +92,19 @@ const upDateUser = async (data: any) => {
 
             const result = await contract.methods.getUser(hashId).call();
 
+            console.log('result', result);
+
             response = {
                 status: true,
-                name: result[1],
-                age: result[2],
-                gender: result[0],
-                addr: result[3],
-                mobile: result[4],
+                name: decipher(result[1]),
+                age: decipher(result[2]),
+                gender: decipher(result[0]),
+                addr: decipher(result[3]),
+                mobile: decipher(result[4]),
                 msg: '회원정보가 변경되었습니다.',
             };
+
+            console.log('response', response);
         }
     } catch (e) {
         if (e instanceof Error) console.log(e.message);
@@ -111,11 +120,11 @@ const searchUser = async (hashId: string) => {
 
         response = {
             status: true,
-            name: result[1],
-            age: result[2],
-            gender: result[0],
-            addr: result[3],
-            mobile: result[4],
+            name: decipher(result[1]),
+            age: decipher(result[2]),
+            gender: decipher(result[0]),
+            addr: decipher(result[3]),
+            mobile: decipher(result[4]),
         };
     } catch (e) {
         if (e instanceof Error) console.log(e.message);

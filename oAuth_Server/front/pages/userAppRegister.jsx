@@ -1,6 +1,6 @@
 import { Box, Flex, Text, Img, Checkbox, Divider, Button } from '@chakra-ui/react';
 import { request } from '../utils/axios.js';
-import { frontend } from '../utils/ip.js';
+import { backend, frontend } from '../utils/ip.js';
 
 const userAppRegister = ({ getUserInfo, appName, restAPI, redirectUri, hash, giveUserInfo }) => {
   const attributes = getUserInfo.map((v, k) => {
@@ -83,7 +83,9 @@ export const getServerSideProps = async (ctx) => {
   const hash = ctx.query.hash;
   const giveUserInfo = ctx.query.giveUserInfo;
 
-  const response = await request.get(`/oauth/app/giveUserInfo?restAPI=${restAPI}`);
+  const response = await request.get(`${backend}/oauth/app/giveUserInfo?restAPI=${restAPI}`);
+
+  console.log(response);
 
   return {
     props: {

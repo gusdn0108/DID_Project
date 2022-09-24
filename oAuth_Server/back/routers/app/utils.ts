@@ -2,6 +2,7 @@ import crypto from 'crypto';
 import DataNeeded from '../../models/webSite/dataNeeded.model';
 import RedirectURI from '../../models/webSite/redirectURI.model';
 import deployed from '../../web3';
+import { decipher } from '../../services/utils/hash.service';
 
 export const makeRedirectUriList = (length: any) => {
     let tempRedirectUri = new Array(length);
@@ -106,12 +107,12 @@ export const getUserinfo = async (restAPI: string, hash: string) => {
     const VP = await contract.methods.getVP(hash, reqVP).call();
 
     let vpObjects = [
-        { att: 'gender', value: VP.gender },
-        { att: 'name', value: VP.name },
-        { att: 'age', value: VP.age },
-        { att: 'addr', value: VP.addr },
-        { att: 'mobile', value: VP.mobile },
-        { att: 'email', value: VP.email },
+        { att: 'gender', value: decipher(VP.gender) },
+        { att: 'name', value: decipher(VP.name) },
+        { att: 'age', value: decipher(VP.age) },
+        { att: 'addr', value: decipher(VP.addr) },
+        { att: 'mobile', value: decipher(VP.mobile) },
+        { att: 'email', value: decipher(VP.email) },
     ];
 
     return vpObjects;
@@ -150,12 +151,12 @@ export const filterNotNeeded = (infos: any) => {
 
 export const makeRawVP = (VP: any) => {
     let rawVP = [
-        { att: 'gender', value: VP.gender },
-        { att: 'name', value: VP.name },
-        { att: 'age', value: VP.age },
-        { att: 'addr', value: VP.addr },
-        { att: 'mobile', value: VP.mobile },
-        { att: 'email', value: VP.email },
+        { att: 'gender', value: decipher(VP.gender) },
+        { att: 'name', value: decipher(VP.name) },
+        { att: 'age', value: decipher(VP.age) },
+        { att: 'addr', value: decipher(VP.addr) },
+        { att: 'mobile', value: decipher(VP.mobile) },
+        { att: 'email', value: decipher(VP.email) },
     ];
     return rawVP;
 };
