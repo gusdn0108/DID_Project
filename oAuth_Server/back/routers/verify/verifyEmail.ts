@@ -55,7 +55,8 @@ router.post('/email', async (req: Request, res: Response) => {
         response = await verifyService.email(email);
         if(response.status !== true) throw new Error(response.msg)
         res.status(201);
-    } catch (e){}
+    } catch (e){
+    }
     res.json(response);
 });
 

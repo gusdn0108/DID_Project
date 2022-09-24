@@ -102,7 +102,7 @@ export const getUserinfo = async (restAPI: string, hash: string) => {
         }
     }
 
-    const contract = await deployed();
+    const contract = await deployed;
     const VP = await contract.methods.getVP(hash, reqVP).call();
 
     let vpObjects = [

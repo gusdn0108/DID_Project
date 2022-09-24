@@ -58,9 +58,6 @@ let response: any;
  *         value:
  *           type: string
  *           example: '회원 가입이 완료되었습니다.'
- *         msg:
- *           type: string
- *           example: '회원 가입에 실패했습니다.'
  *       required:
  *       - status
  */
@@ -115,12 +112,9 @@ router.post('/oAuthRegister', async (req: Request, res: Response) => {
  *         status:
  *           type: boolean
  *           example: true
- *         value:
- *           type: string
- *           example: '비밀번호 변경이 완료되었습니다.'
  *         msg:
  *           type: string
- *           example: '비밀번호 변경이 실패하였습니다.'
+ *           example: '비밀번호가 변경되었습니다.'
  *       required:
  *       - status
  */

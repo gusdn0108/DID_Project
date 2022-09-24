@@ -9,6 +9,7 @@ const payment = () => {
   const [usePoint, setUsePoint] = useState([]);
 
   const [point, setPoint] = useState(0);
+  const [site, setSite] = useState('');
 
   const usedPay = (v, i) => {
     setPayPoint({ ...payPoint, [i]: v });
@@ -70,7 +71,7 @@ const payment = () => {
   const Pay = async (req, res) => {
     const response = await axios.post(`${backend}/Oauth/point/sendToken`, { pointInfo: payPoint });
     if (response.status) {
-      window.opener.postMessage({ type: 'token', token: response.data.value }, 'http://localhost:3000');
+      window.opener.postMessage({ type: 'token', token: response.data.value }, `http://${site}`);
       window.self.close();
     }
     // document.domain = `localhost`;
@@ -80,10 +81,15 @@ const payment = () => {
     //   maxAge: 60 * 60 * 24 * 1000,
     // });
     // opener.location.reload();
+
+    // front 에서 포인트 조회시 자신의 uri를 전달
+    // oauth_front(포인트사용창)에서 그 uri를 state로 저장
+    // 이를 주소로 삼아 토큰을 준다.
   };
 
   useEffect(() => {
     setPoint(window.location.search.split('&')[1].split('=')[1]);
+    setSite(window.location.search.split('&')[2].split('=')[1]);
     getPoint();
   }, []);
 

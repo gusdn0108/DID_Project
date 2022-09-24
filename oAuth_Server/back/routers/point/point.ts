@@ -73,10 +73,10 @@ router.post('/checkPoint', async (req: Request, res: Response) => {
 
 /**
  * @openapi
- * /Oauth/point/sendPoint:
+ * /Oauth/point/sendToken:
  *   post:
  *     tag:
- *     -sendPoint
+ *     -sendToken
  *     summary: send user's point
  *     description: 가용포인트에 대한 토큰 전송
  *     parameters:
@@ -93,12 +93,12 @@ router.post('/checkPoint', async (req: Request, res: Response) => {
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/Response/sendPoint'
+ *               $ref: '#/components/Response/sendToken'
  *       '404':
  *         description: server error
  * components:
  *   Response:
- *     sendPoint:
+ *     sendToken:
  *       type: object
  *       properties:
  *         isError:

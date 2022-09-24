@@ -23,7 +23,7 @@ const oAuthRegister = async (data: any) => {
             addr,
             mobile,
         };
-        const contract = await deployed();
+        const contract = await deployed;
         await contract.methods.registerUser(hash, DATA).send({
             from: process.env.WALLET_ADDRESS,
         });
@@ -37,7 +37,7 @@ const oAuthRegister = async (data: any) => {
 
         response = responseObject(true, '회원 가입이 완료되었습니다.');
     } catch (e) {
-        if (e instanceof Error) console.log(e.message);
+        if (e instanceof Error) console.log(e);
         response = responseObject(false, e.message);
     }
     return response;
@@ -50,7 +50,7 @@ const upDatePassword = async (data: any) => {
         const newpasswordId = email + newPw;
         const newHash = crypto.createHash('sha256').update(newpasswordId).digest('base64');
 
-        const contract = await deployed();
+        const contract = await deployed;
         await contract.methods.updatePassword(hashId, newHash).send({
             from: process.env.WALLET_ADDRESS,
             gas: 10000000,
@@ -77,7 +77,7 @@ const upDateUser = async (data: any) => {
             email,
         };
 
-        const contract = await deployed();
+        const contract = await deployed;
         const checkUser = await contract.methods.isRegistered(hashId).call();
         if (checkUser) {
             await contract.methods.updateUser(hashId, DATA).send({
@@ -106,7 +106,7 @@ const upDateUser = async (data: any) => {
 
 const searchUser = async (hashId: string) => {
     try {
-        const contract = await deployed();
+        const contract = await deployed;
         const result = await contract.methods.getUser(hashId).call();
 
         response = {
@@ -126,7 +126,7 @@ const searchUser = async (hashId: string) => {
 
 const deleteUser = async (hashId: string, email: string) => {
     try {
-        const contract = await deployed();
+        const contract = await deployed;
         await contract.methods.deleteUser(hashId).send({
             from: process.env.WALLET_ADDRESS,
             gas: 10000000,
