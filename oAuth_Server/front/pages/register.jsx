@@ -92,6 +92,8 @@ const register = ({ user }) => {
     if (verifier == verifyNum) {
       try {
         const regiEmail = email + domain;
+        console.log('hello');
+
         const response = await request.post(`${backend}/Oauth/user/oauthregister`, {
           email: regiEmail,
           password,

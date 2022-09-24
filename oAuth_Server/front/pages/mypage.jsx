@@ -226,7 +226,7 @@ const Mypage = ({ hashId, email, user }) => {
                 <FormLabel fontSize={'125%'} px="2%" mb="3%" color="white">
                   이메일
                 </FormLabel>
-                <Input type="text" style={{ color: 'white' }} id="userEmail" value={email} size="md" mb="5%" disabled />
+                <Input type="text" style={{ color: 'white' }} id="userEmail" value={email} size="md" mb="5%" disabled={true} />
 
                 <FormLabel fontSize={'125%'} px="2%" color="white">
                   이름
@@ -236,7 +236,7 @@ const Mypage = ({ hashId, email, user }) => {
                 <FormLabel fontSize={'125%'} px="2%" mb="2%" color="white">
                   성별
                 </FormLabel>
-                <Input type="text" style={{ color: 'white' }} size="md" mb="5%" value={gender === 'f' ? `여성` : `남성`} disabled="true" />
+                <Input type="text" style={{ color: 'white' }} size="md" mb="5%" value={gender === 'f' ? `여성` : `남성`} disabled={true} />
 
                 <FormLabel fontSize={'125%'} px="2%" color="white">
                   나이

@@ -7,8 +7,8 @@ interface Ioptions {
 
 const options: Ioptions = {
     development: {
-        username: 'root',
-        password: '11',
+        username: 'ash991213',
+        password: 'ash991213',
         database: 'oAuthDB',
         host: '127.0.0.1',
         dialect: 'mysql',
