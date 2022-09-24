@@ -14,4 +14,8 @@ const deployed = async () => {
     return deploy;
 };
 
-export default deployed;
+export default deployed()
+// new Web3 객체가 계속 생성되서 메모리가 터진다..
+// 그래서 싱글톤..
+// deployed의 결과값을 export해주어야 한다.
+// 
